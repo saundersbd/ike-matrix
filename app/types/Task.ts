@@ -4,8 +4,8 @@ export interface Task {
   description?: string;
   dueDate?: string;
   quadrant: number;
-  createdOn: string;
-  updatedOn?: string;
+  createdAt: Date;
+  updatedAt?: Date;
   completed: boolean;
   status: "todo" | "doing" | "done";
 }

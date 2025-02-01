@@ -8,11 +8,18 @@ import {
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarHeader,
+  SidebarFooter,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Input } from "@/components/ui/input";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
 // Menu items.
 const items = [
   {
@@ -46,19 +53,31 @@ export function AppSidebar() {
   return (
     <Sidebar
       side="right"
-      className="top-[--header-height] bg-zinc-50 h-[calc(100svh-var(--header-height)-theme(spacing.1))]"
+      className="top-(--header-height) bg-zinc-50 h-[calc(100svh-var(--header-height)-(--spacing(1)))]"
       variant="floating"
     >
-      <SidebarHeader className="p-4 pt-5 border-b border-zinc-200 gap-3">
+      <SidebarHeader className="p-4 pt-5 gap-3">
         <h2 className="text-lg font-medium text-zinc-800">Backlog</h2>
-        <Input placeholder="Quickly capture tasks to sort later" />
-        <Button variant="secondary" size="sm" className="w-max">
-          Add
-        </Button>
       </SidebarHeader>
-      <SidebarContent className="p-3.5">
-        <h3 className="text-base font-medium text-zinc-800">Parked tasks</h3>
-      </SidebarContent>
+      <SidebarContent className="p-3.5">Content</SidebarContent>
+      <SidebarFooter className="p-3.5 border-t border-zinc-200">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="sm" className="w-full">
+                <Plus className="w-4 h-4" />
+                New backlog item
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent className="max-w-[256px]">
+              <p>
+                Get your to-dos out of your brain so you can prioritize them
+                later.
+              </p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </SidebarFooter>
     </Sidebar>
   );
 }
