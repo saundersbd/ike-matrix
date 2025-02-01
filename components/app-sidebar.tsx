@@ -57,9 +57,7 @@ export function AppSidebar() {
         </Button>
       </SidebarHeader>
       <SidebarContent className="p-3.5">
-        <div className="flex flex-col gap-2 p-3 bg-zinc-100/[.75] rounded-xl">
-          <Input placeholder="Quickly capture tasks to sort later" />
-        </div>
+        <h3 className="text-base font-medium text-zinc-800">Parked tasks</h3>
       </SidebarContent>
     </Sidebar>
   );

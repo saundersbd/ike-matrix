@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
+import { Separator } from "@/components/ui/separator";
 import {
   SidebarProvider,
   SidebarTrigger,
   SidebarInset,
 } from "@/components/ui/sidebar";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { AppSidebar } from "@/components/app-sidebar";
 const geistSans = Geist({
@@ -52,18 +54,12 @@ export default function RootLayout({
         className={`${inter.variable} ${geistMono.variable} antialiased overflow-hidden font-sans`}
         style={{ "--header-height": HEADER_HEIGHT } as React.CSSProperties}
       >
-        <header className="flex h-[--header-height] items-center border-b border-zinc-200 px-5 z-20">
+        <header className="flex h-[--header-height] items-center bg-zinc-900 px-5 z-20 text-zinc-100">
           <h1 className="text-xl font-medium">Eisenhower Matrix</h1>
         </header>
         <SidebarProvider className="bg-zinc-50">
           <div className="flex-1 pt-5 pb-8 px-8 h-full min-h-[calc(100svh-var(--header-height))] bg-zinc-50">
-            <header className="mb-5 flex shrink-0 items-center justify-between h-12 gap-4">
-              <h2 className="text-lg font-medium">Eisenhower Matrix</h2>
-              <SidebarTrigger />
-            </header>
-            <div className="h-[calc(100svh-(var(--header-height) + 48px))]">
-              {children}
-            </div>
+            {children}
           </div>
           <AppSidebar />
         </SidebarProvider>
