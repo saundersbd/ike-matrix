@@ -2,8 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: Arial, Helvetica, sans-serif;
+:root {
+  font-feature-settings: "liga" 1, "calt" 1, "ss02" 1; /* fix for Chrome */
+  font-size: 15px;
 }
 
 @layer base {

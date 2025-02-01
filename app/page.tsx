@@ -36,30 +36,6 @@ export default function Home() {
               title="Task 4"
               description="Description of the task"
             />
-            <TaskListItem
-              title="Task 4"
-              description="Description of the task"
-            />
-            <TaskListItem
-              title="Task 4"
-              description="Description of the task"
-            />
-            <TaskListItem
-              title="Task 4"
-              description="Description of the task"
-            />
-            <TaskListItem
-              title="Task 4"
-              description="Description of the task"
-            />
-            <TaskListItem
-              title="Task 4"
-              description="Description of the task"
-            />
-            <TaskListItem
-              title="Task 4"
-              description="Description of the task"
-            />
           </Quadrant>
           <Quadrant title="Important but not urgent" />
           <Quadrant title="Urgent but not important" />
