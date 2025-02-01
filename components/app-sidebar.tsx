@@ -1,4 +1,4 @@
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react";
+import { Calendar, Home, Inbox, Plus, Search, Settings } from "lucide-react";
 
 import {
   Sidebar,
@@ -6,11 +6,12 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-
+import { Input } from "@/components/ui/input";
 // Menu items.
 const items = [
   {
@@ -43,24 +44,13 @@ const items = [
 export function AppSidebar() {
   return (
     <Sidebar side="left" className="top-[--header-height]">
-      <SidebarContent className="bg-white">
-        <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+      <SidebarHeader className="p-4">
+        <span className="text-base font-semibold text-zinc-800">Inbox</span>
+      </SidebarHeader>
+      <SidebarContent className="px-3.5">
+        <div className="flex flex-col gap-2 p-3 bg-zinc-100 rounded-xl">
+          <Input placeholder="Quickly capture a task" />
+        </div>
       </SidebarContent>
     </Sidebar>
   );
