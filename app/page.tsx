@@ -18,6 +18,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Quadrant } from "@/components/quadrant";
 import { TaskListItem } from "@/components/task-list-item";
 import { TaskListTableRow } from "@/components/task-list-table-row";
+import { NewTaskDialog } from "@/components/new-task-dialog";
 import { tasks } from "@/app/data/tasks";
 import { ArrowUpDown, Filter } from "lucide-react";
 import { THEME_COLORS, THEME_COLORS_LIST, ThemeName } from "@/app/types/Theme";
@@ -48,7 +49,8 @@ const sortTasks = (tasks: Task[], sortBy: string) => {
 const gridView = (sortBy: string) => (
   <div className="grid grid-cols-2 grid-rows-2 gap-6 h-[calc(100svh-(var(--header-height)+116px))]">
     <Quadrant
-      title="Important and urgent"
+      quadrant={0}
+      title="Important AND urgent"
       theme="red"
       taskCount={tasks.filter((task) => task.quadrant === 1).length}
     >
@@ -60,6 +62,7 @@ const gridView = (sortBy: string) => (
       ))}
     </Quadrant>
     <Quadrant
+      quadrant={1}
       title="Important but not urgent"
       theme="amber"
       taskCount={tasks.filter((task) => task.quadrant === 2).length}
@@ -71,6 +74,7 @@ const gridView = (sortBy: string) => (
         ))}
     </Quadrant>
     <Quadrant
+      quadrant={2}
       title="Urgent but not important"
       theme="sky"
       taskCount={tasks.filter((task) => task.quadrant === 3).length}
@@ -82,6 +86,7 @@ const gridView = (sortBy: string) => (
         ))}
     </Quadrant>
     <Quadrant
+      quadrant={3}
       title="Not urgent or important"
       theme="gray"
       taskCount={tasks.filter((task) => task.quadrant === 4).length}
@@ -269,6 +274,7 @@ export default function Home() {
               </DropdownMenuRadioGroup>
             </DropdownMenuContent>
           </DropdownMenu>
+          <NewTaskDialog />
           <Separator
             orientation="vertical"
             className="h-[24px] mx-2 bg-zinc-300"

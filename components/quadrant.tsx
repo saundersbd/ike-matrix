@@ -10,6 +10,7 @@ import { Plus, Maximize2, Eye, EyeClosed } from "lucide-react";
 import { THEME_COLORS, THEME_COLORS_LIST, ThemeName } from "@/app/types/Theme";
 
 interface QuadrantProps {
+  quadrant: number;
   title: string;
   taskCount: number;
   children?: React.ReactNode;
@@ -17,17 +18,38 @@ interface QuadrantProps {
   onMaximize?: () => void;
 }
 
-export function Quadrant({ title, taskCount, children, theme }: QuadrantProps) {
+const backgroundTexture = [
+  "background-tiled-1",
+  "background-tiled-2",
+  "background-tiled-3",
+  "background-tiled-4",
+];
+
+export function Quadrant({
+  title,
+  taskCount,
+  children,
+  theme,
+  quadrant,
+}: QuadrantProps) {
   const themeColors = THEME_COLORS[theme] || THEME_COLORS.sky;
-  const { bgColor, textColor, iconColor, fillColor, hoverColor } = themeColors;
+  const {
+    bgColor,
+    textColor,
+    iconColor,
+    fillColor,
+    hoverColor,
+    washHoverColor,
+    ringColor,
+  } = themeColors;
 
   const [isHidden, setIsHidden] = useState(false);
 
   return (
     <div
-      className={`relative flex flex-col rounded-2xl overflow-hidden ring-1 ring-black/[.08] transition-all duration-300 ${
+      className={`relative flex flex-col rounded-2xl overflow-hidden ring-1 transition-all duration-300 ${
         isHidden ? "shadow-none" : "shadow-sm"
-      }`}
+      } ${isHidden ? ringColor : "ring-black/[.08]"}`}
     >
       <header
         className={`shrink-0 py-3 pl-5 pr-4 flex items-center justify-between ${
@@ -106,17 +128,20 @@ export function Quadrant({ title, taskCount, children, theme }: QuadrantProps) {
         )}
       </div>
       <div
-        className={`absolute inset-0 z-20 opacity-100 animate-in fade-in slide-in-from-top fade-out zoom-out-75 duration-500 ease-out flex flex-col grow items-center justify-center bg-zinc-50 ${
+        className={`absolute inset-0 z-20 opacity-100 animate-in fade-in duration-250 ease-out flex flex-col grow items-center justify-center ${
           isHidden ? "" : "hidden opacity-50"
-        }`}
+        } ${backgroundTexture[quadrant]} ${bgColor}`}
       >
         <Button
           variant="ghost"
-          className="h-auto w-auto rounded-2xl px-6 py-4 hover:bg-zinc-200/[.5]"
+          className={`group h-auto w-auto rounded-2xl px-6 py-4 ${washHoverColor}`}
           onClick={() => setIsHidden(!isHidden)}
           aria-label={isHidden ? "Show tasks" : "Hide tasks"}
         >
-          <EyeClosed className="!h-14 !w-14 text-zinc-500" aria-hidden />
+          <EyeClosed
+            className="!h-14 !w-14 text-zinc-500 group-hover:text-zinc-600 transition-colors duration-200"
+            aria-hidden
+          />
         </Button>
       </div>
     </div>

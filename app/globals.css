@@ -78,3 +78,23 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
+
+@utility background-tiled-1 {
+  background-image: url("/pattern-1.svg");
+  background-repeat: repeat;
+}
+
+@utility background-tiled-2 {
+  background-image: url("/pattern-2.svg");
+  background-repeat: repeat;
+}
+
+@utility background-tiled-3 {
+  background-image: url("/pattern-3.svg");
+  background-repeat: repeat;
+}
+
+@utility background-tiled-4 {
+  background-image: url("/pattern-4.svg");
+  background-repeat: repeat;
+}

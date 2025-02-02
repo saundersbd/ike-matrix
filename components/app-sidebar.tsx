@@ -27,7 +27,7 @@ export function AppSidebar() {
       className="top-(--header-height) bg-zinc-50 h-[calc(100svh-var(--header-height)-(--spacing(1)))]"
       variant="floating"
     >
-      <SidebarHeader className="p-4 pt-5 gap-3">
+      <SidebarHeader className="p-4 pt-5 gap-3 border-b border-zinc-200">
         <h2 className="text-lg font-medium text-zinc-800">Backlog</h2>
       </SidebarHeader>
       <SidebarContent className="p-3.5">Content</SidebarContent>
