@@ -2,8 +2,16 @@
 
 import { useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
-import { Plus } from "lucide-react";
+import {
+  Plus,
+  ArrowUpDown,
+  Calendar as CalendarIcon,
+  Clock,
+  X,
+} from "lucide-react";
+import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -24,7 +32,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+
 import { QuadrantSelectOption } from "@/components/quadrant-select-option";
 import { THEME_COLORS, THEME_COLORS_LIST, ThemeName } from "@/app/types/Theme";
 
@@ -44,7 +68,8 @@ export function NewTaskDialog() {
 
   const [value, setValue] = useState("Backlog");
   const [valueType, setValueType] = useState<"quadrant" | "backlog">("backlog");
-
+  const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
+  const [dueTime, setDueTime] = useState<Date | undefined>(undefined);
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -58,78 +83,168 @@ export function NewTaskDialog() {
           <DialogTitle>Add a new task</DialogTitle>
         </DialogHeader>
 
-        <div className="flex flex-col gap-2 px-5 pb-3">
+        <div className="flex flex-col gap-8 px-5 pt-3 pb-5">
           <div className="flex flex-col gap-2">
             <Label htmlFor="task" className="sr-only">
-              Task description
+              Type your task
             </Label>
-            <TextareaAutosize
-              className="w-full bg-zinc-100 rounded-md py-2.5 px-3 resize-none"
-              placeholder="Start typing..."
-              id="task"
-            />
+            <div className="flex gap-3">
+              <div className="flex shrink-0 pt-1">
+                <Checkbox disabled className="disabled:cursor-default" />
+              </div>
+              <TextareaAutosize
+                className="grow bg-white p-0 resize-none outline-none"
+                placeholder="Start typing..."
+                id="task"
+              />
+            </div>
           </div>
-          <Button variant="link" size="sm" className="w-fit">
-            Add due date
-          </Button>
-        </div>
-        <DialogFooter className="flex items-center sm:justify-between border-t border-zinc-200 pt-4">
-          <div className="flex flex-col gap-2">
-            <Label className="sr-only">Select a destination</Label>
-            <Select
-              value={value}
-              onValueChange={(value) => {
-                setValue(value);
-                setValueType(value === "Backlog" ? "backlog" : "quadrant");
-              }}
-              name="destination"
-            >
-              <SelectTrigger className="w-[272px]">
-                <SelectValue>
-                  <QuadrantSelectOption
-                    label={value}
-                    type={valueType}
-                    theme={
-                      quadrantThemes[
-                        Number(
-                          Object.entries(quadrantTitles).find(
-                            ([_, title]) => title === value
-                          )?.[0]
-                        ) as keyof typeof quadrantThemes
-                      ]
-                    }
-                  />
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Backlog" className="cursor-pointer">
-                  <QuadrantSelectOption label="Backlog" type="backlog" />
-                </SelectItem>
-                <SelectSeparator />
-                <SelectGroup>
-                  <SelectLabel>Quadrants</SelectLabel>
-                  {Object.entries(quadrantTitles).map(([key, title]) => (
-                    <SelectItem
-                      key={key}
-                      value={title}
+          <div className="flex items-center gap-2 transition-all duration-200">
+            <div className="flex flex-col gap-2 transition-all duration-200">
+              <Label className="sr-only">Select a destination</Label>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="chip"
+                    className="rounded-lg text-xs font-semibold text-zinc-700"
+                  >
+                    <QuadrantSelectOption
+                      label={value}
+                      type={valueType}
+                      padding="dense"
+                    />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-68">
+                  <DropdownMenuLabel>Select a list</DropdownMenuLabel>
+                  <DropdownMenuRadioGroup
+                    value={value}
+                    onValueChange={(value) => {
+                      setValue(value);
+                      setValueType(
+                        value === "Backlog" ? "backlog" : "quadrant"
+                      );
+                    }}
+                  >
+                    <DropdownMenuRadioItem
+                      value="Backlog"
                       className="cursor-pointer"
                     >
-                      <QuadrantSelectOption
-                        label={title}
-                        theme={
-                          quadrantThemes[
-                            Number(key) as keyof typeof quadrantThemes
-                          ]
-                        }
-                        type="quadrant"
+                      <QuadrantSelectOption label="Backlog" type="backlog" />
+                    </DropdownMenuRadioItem>
+                    {Object.entries(quadrantTitles).map(([key, title]) => (
+                      <DropdownMenuRadioItem
+                        key={key}
+                        value={title}
+                        className="cursor-pointer"
+                      >
+                        <QuadrantSelectOption
+                          label={title}
+                          theme={
+                            quadrantThemes[
+                              Number(key) as keyof typeof quadrantThemes
+                            ]
+                          }
+                          type="quadrant"
+                        />
+                      </DropdownMenuRadioItem>
+                    ))}
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+            <div>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="chip"
+                    className="rounded-lg text-xs font-semibold text-zinc-700"
+                  >
+                    <CalendarIcon
+                      className={`w-4 h-4 ${
+                        dueDate ? "text-zinc-700" : "text-zinc-500"
+                      }`}
+                    />
+                    {dueDate ? (
+                      <span className="text-zinc-700 flex items-center gap-1">
+                        {format(dueDate, "MMM d, yyyy")}
+                        <span
+                          role="button"
+                          tabIndex={0}
+                          className="cursor-pointer hover:bg-zinc-200 rounded p-0.5"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setDueDate(undefined);
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.stopPropagation();
+                              setDueDate(undefined);
+                            }
+                          }}
+                        >
+                          <X className="w-4 h-4" />
+                        </span>
+                      </span>
+                    ) : (
+                      <span className="text-zinc-500">Due date</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    selected={dueDate}
+                    onSelect={setDueDate}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+            {dueDate && (
+              <div>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="chip"
+                      className="rounded-lg text-xs font-semibold text-zinc-700"
+                    >
+                      <Clock
+                        className={`w-4 h-4 ${
+                          dueTime ? "text-zinc-700" : "text-zinc-500"
+                        }`}
                       />
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
+                      {dueTime ? (
+                        <span className="text-zinc-700">
+                          {format(dueTime, "h:mm a")}
+                        </span>
+                      ) : (
+                        <span className="text-zinc-500">Time</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-5">
+                    <div className="flex flex-col gap-2 w-48">
+                      <Label htmlFor="time">Time</Label>
+                      <Input
+                        type="time"
+                        id="time"
+                        value={dueTime ? format(dueTime, "HH:mm") : ""}
+                        onChange={(e) => {
+                          setDueTime(new Date(`1970-01-01T${e.target.value}`));
+                        }}
+                      />
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
+            )}
           </div>
-          <Button>Add task</Button>
+        </div>
+        <DialogFooter className="flex items-center pt-1">
+          <Button size="sm">Add task</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
