@@ -129,7 +129,7 @@ const listView = (quadrants: boolean[], sortBy: string) => (
             </h3>
           </div>
 
-          <div className="px-5 py-3 ring-1 ring-black/[.08] rounded-xl bg-white">
+          <div className="px-5 py-3 ring-1 ring-black/[.08] rounded-2xl bg-white">
             {quadrantTasks.map((task) => (
               <TaskListTableRow key={task.id} task={task} />
             ))}

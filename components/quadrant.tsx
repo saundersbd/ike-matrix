@@ -24,7 +24,11 @@ export function Quadrant({ title, taskCount, children, theme }: QuadrantProps) {
   const [isHidden, setIsHidden] = useState(false);
 
   return (
-    <div className="flex flex-col rounded-2xl shadow-xs overflow-hidden ring-1 ring-black/[.08]">
+    <div
+      className={`relative flex flex-col rounded-2xl overflow-hidden ring-1 ring-black/[.08] transition-all duration-300 ${
+        isHidden ? "shadow-none" : "shadow-sm"
+      }`}
+    >
       <header
         className={`shrink-0 py-3 pl-5 pr-4 flex items-center justify-between ${
           isHidden ? "bg-white/[.35]" : bgColor
@@ -84,26 +88,35 @@ export function Quadrant({ title, taskCount, children, theme }: QuadrantProps) {
           )}
         </div>
       </header>
-      <div className={`flex flex-col grow ${isHidden ? "hidden" : ""}`}>
+      <div className={`flex flex-col grow`}>
         {taskCount > 0 ? (
           <ScrollArea className="grow px-3 bg-white">
             <div className="flex flex-col gap-0 py-4">{children}</div>
           </ScrollArea>
         ) : (
-          <div className="flex grow items-center justify-center gap-0 py-4 bg-white">
-            <p className="text-zinc-400 text-sm font-medium text-center">
+          <div className="flex flex-col grow items-center justify-center gap-5 py-4 bg-white">
+            <p className="text-zinc-500 text-sm font-medium text-center">
               No tasks to speak of.
             </p>
+            <Button variant="outline" size="sm" className="rounded-lg">
+              <Plus className="h-4 w-4" />
+              Add task
+            </Button>
           </div>
         )}
       </div>
       <div
-        className={`flex flex-col grow items-center justify-center bg-white/[.35] ${
-          isHidden ? "" : "hidden"
+        className={`absolute inset-0 z-20 opacity-100 animate-in fade-in slide-in-from-top fade-out zoom-out-75 duration-500 ease-out flex flex-col grow items-center justify-center bg-zinc-50 ${
+          isHidden ? "" : "hidden opacity-50"
         }`}
       >
-        <Button variant="ghost" className="h-auto w-auto">
-          <EyeClosed className="!h-14 !w-14 text-zinc-500" />
+        <Button
+          variant="ghost"
+          className="h-auto w-auto rounded-2xl px-6 py-4 hover:bg-zinc-200/[.5]"
+          onClick={() => setIsHidden(!isHidden)}
+          aria-label={isHidden ? "Show tasks" : "Hide tasks"}
+        >
+          <EyeClosed className="!h-14 !w-14 text-zinc-500" aria-hidden />
         </Button>
       </div>
     </div>

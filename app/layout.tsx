@@ -51,6 +51,7 @@ export default function RootLayout({
           <div className="flex-1 pt-5 pb-8 px-8 h-full min-h-[calc(100svh-var(--header-height))] bg-zinc-50">
             {children}
           </div>
+
           <AppSidebar />
         </SidebarProvider>
       </body>
