@@ -1,3 +1,5 @@
+import { ThemeName } from "./CustomTheme";
+
 export interface Task {
   id: string;
   title: string;
@@ -8,4 +10,7 @@ export interface Task {
   updatedAt?: Date;
   completed: boolean;
   status: "todo" | "doing" | "done";
+  context?: string;
+  tags?: string[];
+  theme?: ThemeName;
 }

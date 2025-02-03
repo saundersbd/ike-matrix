@@ -1,12 +1,12 @@
 "use client";
 
+import { useTasks } from "@/app/contexts/TaskContext";
+
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
@@ -19,153 +19,16 @@ import {
   SidebarTrigger,
   SidebarInset,
 } from "@/components/ui/sidebar";
-import { useSidebar } from "@/components/ui/sidebar";
+
 import { AppSidebar } from "@/components/app-sidebar";
 import { Quadrant } from "@/components/quadrant";
 import { TaskListItem } from "@/components/task-list-item";
 import { TaskListTableRow } from "@/components/task-list-table-row";
 import { NewTaskDialog } from "@/components/new-task-dialog";
-import { tasks } from "@/app/data/tasks";
 import { ArrowUpDown, Circle, Filter, Grid2X2, List } from "lucide-react";
-import { THEME_COLORS, THEME_COLORS_LIST, ThemeName } from "@/app/types/Theme";
+import { THEME_COLORS, ThemeName } from "@/app/types/Theme";
 import { useState } from "react";
 import { Task } from "@/app/types/Task";
-
-const sortTasks = (tasks: Task[], sortBy: string) => {
-  return [...tasks].sort((a, b) => {
-    switch (sortBy) {
-      case "created":
-        return (
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
-      case "updated":
-        if (!a.updatedAt) return 1;
-        if (!b.updatedAt) return -1;
-        return b.updatedAt.getTime() - a.updatedAt.getTime();
-      case "dueDate":
-        if (!a.dueDate) return 1;
-        if (!b.dueDate) return -1;
-        return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
-      default:
-        return 0;
-    }
-  });
-};
-
-const gridView = (sortBy: string) => (
-  <div className="grid grid-cols-2 grid-rows-2 gap-6 h-[calc(100svh-184px)]">
-    <Quadrant
-      quadrant={0}
-      title="Important AND urgent"
-      theme="red"
-      taskCount={tasks.filter((task) => task.quadrant === 1).length}
-    >
-      {sortTasks(
-        tasks.filter((task) => task.quadrant === 1),
-        sortBy
-      ).map((task) => (
-        <TaskListItem key={task.id} task={task} />
-      ))}
-    </Quadrant>
-    <Quadrant
-      quadrant={1}
-      title="Important but not urgent"
-      theme="amber"
-      taskCount={tasks.filter((task) => task.quadrant === 2).length}
-    >
-      {tasks
-        .filter((task) => task.quadrant === 2)
-        .map((task) => (
-          <TaskListItem key={task.id} task={task} />
-        ))}
-    </Quadrant>
-    <Quadrant
-      quadrant={2}
-      title="Urgent but not important"
-      theme="sky"
-      taskCount={tasks.filter((task) => task.quadrant === 3).length}
-    >
-      {tasks
-        .filter((task) => task.quadrant === 3)
-        .map((task) => (
-          <TaskListItem key={task.id} task={task} />
-        ))}
-    </Quadrant>
-    <Quadrant
-      quadrant={3}
-      title="Neither urgent nor important"
-      theme="purple"
-      taskCount={tasks.filter((task) => task.quadrant === 4).length}
-    >
-      {tasks
-        .filter((task) => task.quadrant === 4)
-        .map((task) => (
-          <TaskListItem key={task.id} task={task} />
-        ))}
-    </Quadrant>
-  </div>
-);
-
-const listView = (quadrants: boolean[], sortBy: string) => (
-  <div className="max-w-5xl mx-auto px-5 flex flex-col h-[calc(100svh-(var(--header-height)+82px))]">
-    {[1, 3, 2, 4].map((quadrantNumber) => {
-      if (!quadrants[quadrantNumber - 1]) return null;
-      const quadrantTasks = sortTasks(
-        tasks.filter((task) => task.quadrant === quadrantNumber),
-        sortBy
-      );
-      const quadrantTitles: Record<number, string> = {
-        1: "Important and urgent",
-        2: "Important but not urgent",
-        3: "Urgent but not important",
-        4: "Not urgent nor important",
-      };
-      const quadrantThemes: Record<number, ThemeName> = {
-        1: "red",
-        2: "amber",
-        3: "sky",
-        4: "gray",
-      };
-
-      return quadrantTasks.length > 0 ? (
-        <div key={quadrantNumber} className="mb-6 last:mb-0">
-          <div className="flex items-center gap-2.5 mb-4 ml-3">
-            <Circle
-              className={`w-[8px] h-[8px] ${
-                THEME_COLORS[quadrantThemes[quadrantNumber]].accentColor
-              }`}
-            />
-            <h3 className="text-sm font-semibold text-gray-500">
-              {quadrantTitles[quadrantNumber]}
-            </h3>
-          </div>
-
-          <div className="px-5 py-3 ring-1 ring-black/[.08] rounded-2xl bg-white shadow-sm">
-            {quadrantTasks.map((task) => (
-              <TaskListTableRow key={task.id} task={task} />
-            ))}
-          </div>
-        </div>
-      ) : (
-        <div key={quadrantNumber} className="mb-6 last:mb-0">
-          <div className="flex items-center gap-2.5 mb-4 ml-3">
-            <Circle
-              className={`w-[8px] h-[8px] ${
-                THEME_COLORS[quadrantThemes[quadrantNumber]].accentColor
-              }`}
-            />
-            <h3 className="text-sm font-medium text-gray-500">
-              {quadrantTitles[quadrantNumber]}
-            </h3>
-          </div>
-          <div className="flex items-center justify-center p-7 ring-1 ring-black/[.08] rounded-xl bg-white/50">
-            <span className="text-sm text-gray-500 text-center">No tasks</span>
-          </div>
-        </div>
-      );
-    })}
-  </div>
-);
 
 export default function Home() {
   const [view, setView] = useState<"grid" | "list">("grid");
@@ -173,153 +36,290 @@ export default function Home() {
   const [quadrants, setQuadrants] = useState([true, true, true, true]);
   const [open, setOpen] = useState(true);
 
-  return (
-    <div>
-      <Tabs
-        defaultValue="grid"
-        onValueChange={(value) => setView(value as "grid" | "list")}
+  const { tasks } = useTasks();
+
+  const sortTasks = (tasks: Task[], sortBy: string) => {
+    return [...tasks].sort((a, b) => {
+      switch (sortBy) {
+        case "created":
+          return (
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+        case "updated":
+          if (!a.updatedAt) return 1;
+          if (!b.updatedAt) return -1;
+          return b.updatedAt.getTime() - a.updatedAt.getTime();
+        case "dueDate":
+          if (!a.dueDate) return 1;
+          if (!b.dueDate) return -1;
+          return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+        default:
+          return 0;
+      }
+    });
+  };
+
+  const gridView = (sortBy: string) => (
+    <div className="grid grid-cols-2 grid-rows-2 gap-6 h-[calc(100svh-184px)]">
+      <Quadrant
+        quadrant={1}
+        title="Important AND urgent"
+        theme="red"
+        taskCount={tasks.filter((task) => task.quadrant === 1).length}
       >
-        <SidebarProvider
-          open={open}
-          onOpenChange={setOpen}
-          className="flex flex-col"
-        >
-          <header className="sticky top-0 mb-0 flex shrink-0 items-center justify-between gap-4 h-[calc(var(--header-height))] bg-white px-8 border-b border-zinc-100">
-            <SidebarTrigger />
-
-            <div className="flex items-center gap-3">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="rounded-lg"
-                    disabled={view !== "list"}
-                  >
-                    <Filter className="h-4 w-4" />
-                    Show
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56">
-                  <DropdownMenuLabel>Show sections</DropdownMenuLabel>
-                  <DropdownMenuCheckboxItem
-                    checked={quadrants[0]}
-                    onCheckedChange={() => {
-                      setQuadrants([
-                        !quadrants[0],
-                        quadrants[1],
-                        quadrants[2],
-                        quadrants[3],
-                      ]);
-                    }}
-                  >
-                    Important and urgent
-                  </DropdownMenuCheckboxItem>
-                  <DropdownMenuCheckboxItem
-                    checked={quadrants[1]}
-                    onCheckedChange={() => {
-                      setQuadrants([
-                        quadrants[0],
-                        !quadrants[1],
-                        quadrants[2],
-                        quadrants[3],
-                      ]);
-                    }}
-                  >
-                    Important but not urgent
-                  </DropdownMenuCheckboxItem>
-                  <DropdownMenuCheckboxItem
-                    checked={quadrants[2]}
-                    onCheckedChange={() => {
-                      setQuadrants([
-                        quadrants[0],
-                        quadrants[1],
-                        !quadrants[2],
-                        quadrants[3],
-                      ]);
-                    }}
-                  >
-                    Urgent but not important
-                  </DropdownMenuCheckboxItem>
-                  <DropdownMenuCheckboxItem
-                    checked={quadrants[3]}
-                    onCheckedChange={() => {
-                      setQuadrants([
-                        quadrants[0],
-                        quadrants[1],
-                        quadrants[2],
-                        !quadrants[3],
-                      ]);
-                    }}
-                  >
-                    Not urgent or important
-                  </DropdownMenuCheckboxItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="rounded-lg">
-                    <ArrowUpDown className="h-4 w-4" />
-                    <span className="text-sm font-medium">
-                      Sort by:{" "}
-                      {sortBy.charAt(0).toUpperCase() + sortBy.slice(1)}
-                    </span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56">
-                  <DropdownMenuRadioGroup
-                    value={sortBy}
-                    onValueChange={setSortBy}
-                  >
-                    <DropdownMenuRadioItem value="created">
-                      Created
-                    </DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem value="updated">
-                      Last updated
-                    </DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem value="dueDate">
-                      Due date
-                    </DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem value="custom">
-                      Custom
-                    </DropdownMenuRadioItem>
-                  </DropdownMenuRadioGroup>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              <TabsList className="bg-zinc-200/[.75] rounded-lg">
-                <TabsTrigger value="grid" className="rounded-md">
-                  <Grid2X2 className="w-4 h-4" />
-                </TabsTrigger>
-                <TabsTrigger value="list" className="rounded-md">
-                  <List className="w-4 h-4" />
-                </TabsTrigger>
-              </TabsList>
-              <Separator
-                orientation="vertical"
-                className="h-[20px] mx-2 bg-zinc-300"
-              />
-              <NewTaskDialog defaultDestination="Backlog" />
-            </div>
-          </header>
-          <div className="flex flex-1">
-            <AppSidebar tasks={tasks.filter((task) => task.quadrant === 0)} />
-            <SidebarInset
-              className={`${open ? "md:mx-5" : "md:mx-8"} md:my-8 md:mr-8`}
-            >
-              <div className="flex-1 h-full min-h-[calc(100svh-76px-128px)]">
-                <div className="h-[calc(100svh-(var(--header-height)+120px))]">
-                  <TabsContent value="grid">{gridView(sortBy)}</TabsContent>
-                  <TabsContent value="list">
-                    {listView(quadrants, sortBy)}
-                  </TabsContent>
-                </div>
-              </div>
-            </SidebarInset>
-          </div>
-        </SidebarProvider>
-      </Tabs>
+        {sortTasks(
+          tasks.filter((task) => task.quadrant === 1),
+          sortBy
+        ).map((task) => (
+          <TaskListItem key={task.id} task={task} />
+        ))}
+      </Quadrant>
+      <Quadrant
+        quadrant={2}
+        title="Important but not urgent"
+        theme="amber"
+        taskCount={tasks.filter((task) => task.quadrant === 2).length}
+      >
+        {tasks
+          .filter((task) => task.quadrant === 2)
+          .map((task) => (
+            <TaskListItem key={task.id} task={task} />
+          ))}
+      </Quadrant>
+      <Quadrant
+        quadrant={3}
+        title="Urgent but not important"
+        theme="sky"
+        taskCount={tasks.filter((task) => task.quadrant === 3).length}
+      >
+        {tasks
+          .filter((task) => task.quadrant === 3)
+          .map((task) => (
+            <TaskListItem key={task.id} task={task} />
+          ))}
+      </Quadrant>
+      <Quadrant
+        quadrant={4}
+        title="Neither urgent nor important"
+        theme="purple"
+        taskCount={tasks.filter((task) => task.quadrant === 4).length}
+      >
+        {tasks
+          .filter((task) => task.quadrant === 4)
+          .map((task) => (
+            <TaskListItem key={task.id} task={task} />
+          ))}
+      </Quadrant>
     </div>
+  );
+
+  const listView = (quadrants: boolean[], sortBy: string) => (
+    <div className="max-w-5xl mx-auto px-5 flex flex-col h-[calc(100svh-(var(--header-height)+82px))]">
+      {[1, 3, 2, 4].map((quadrantNumber) => {
+        if (!quadrants[quadrantNumber - 1]) return null;
+        const quadrantTasks = sortTasks(
+          tasks.filter((task) => task.quadrant === quadrantNumber),
+          sortBy
+        );
+        const quadrantTitles: Record<number, string> = {
+          1: "Important and urgent",
+          2: "Important but not urgent",
+          3: "Urgent but not important",
+          4: "Not urgent nor important",
+        };
+        const quadrantThemes: Record<number, ThemeName> = {
+          1: "red",
+          2: "amber",
+          3: "sky",
+          4: "gray",
+        };
+
+        return quadrantTasks.length > 0 ? (
+          <div key={quadrantNumber} className="mb-6 last:mb-0">
+            <div className="flex items-center gap-2.5 mb-4 ml-3">
+              <Circle
+                className={`w-[8px] h-[8px] ${
+                  THEME_COLORS[quadrantThemes[quadrantNumber]].accentColor
+                }`}
+              />
+              <h3 className="text-sm font-semibold text-gray-500">
+                {quadrantTitles[quadrantNumber]}
+              </h3>
+            </div>
+
+            <div className="px-5 py-3 ring-1 ring-black/[.08] rounded-2xl bg-white shadow-sm">
+              {quadrantTasks.map((task) => (
+                <TaskListTableRow key={task.id} task={task} />
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div key={quadrantNumber} className="mb-6 last:mb-0">
+            <div className="flex items-center gap-2.5 mb-4 ml-3">
+              <Circle
+                className={`w-[8px] h-[8px] ${
+                  THEME_COLORS[quadrantThemes[quadrantNumber]].accentColor
+                }`}
+              />
+              <h3 className="text-sm font-medium text-gray-500">
+                {quadrantTitles[quadrantNumber]}
+              </h3>
+            </div>
+            <div className="flex items-center justify-center p-7 ring-1 ring-black/[.08] rounded-xl bg-white/50">
+              <span className="text-sm text-gray-500 text-center">
+                No tasks
+              </span>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+
+  return (
+    <Tabs
+      defaultValue="grid"
+      onValueChange={(value) => setView(value as "grid" | "list")}
+    >
+      <SidebarProvider
+        open={open}
+        onOpenChange={setOpen}
+        className="flex flex-col"
+      >
+        <header className="sticky top-0 mb-0 flex shrink-0 items-center justify-between gap-4 h-[calc(var(--header-height))] bg-white px-8 border-b border-zinc-100">
+          <SidebarTrigger />
+
+          <div className="flex items-center gap-3">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="rounded-lg"
+                  disabled={view !== "list"}
+                >
+                  <Filter className="h-4 w-4" />
+                  Show
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56">
+                <DropdownMenuLabel>Show sections</DropdownMenuLabel>
+                <DropdownMenuCheckboxItem
+                  checked={quadrants[0]}
+                  onCheckedChange={() => {
+                    setQuadrants([
+                      !quadrants[0],
+                      quadrants[1],
+                      quadrants[2],
+                      quadrants[3],
+                    ]);
+                  }}
+                >
+                  Important and urgent
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem
+                  checked={quadrants[1]}
+                  onCheckedChange={() => {
+                    setQuadrants([
+                      quadrants[0],
+                      !quadrants[1],
+                      quadrants[2],
+                      quadrants[3],
+                    ]);
+                  }}
+                >
+                  Important but not urgent
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem
+                  checked={quadrants[2]}
+                  onCheckedChange={() => {
+                    setQuadrants([
+                      quadrants[0],
+                      quadrants[1],
+                      !quadrants[2],
+                      quadrants[3],
+                    ]);
+                  }}
+                >
+                  Urgent but not important
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem
+                  checked={quadrants[3]}
+                  onCheckedChange={() => {
+                    setQuadrants([
+                      quadrants[0],
+                      quadrants[1],
+                      quadrants[2],
+                      !quadrants[3],
+                    ]);
+                  }}
+                >
+                  Not urgent or important
+                </DropdownMenuCheckboxItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="rounded-lg">
+                  <ArrowUpDown className="h-4 w-4" />
+                  <span className="text-sm font-medium">
+                    Sort by: {sortBy.charAt(0).toUpperCase() + sortBy.slice(1)}
+                  </span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56">
+                <DropdownMenuRadioGroup
+                  value={sortBy}
+                  onValueChange={setSortBy}
+                >
+                  <DropdownMenuRadioItem value="created">
+                    Created
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="updated">
+                    Last updated
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="dueDate">
+                    Due date
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="custom">
+                    Custom
+                  </DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <TabsList className="bg-zinc-200/[.75] rounded-lg">
+              <TabsTrigger value="grid" className="rounded-md">
+                <Grid2X2 className="w-4 h-4" />
+              </TabsTrigger>
+              <TabsTrigger value="list" className="rounded-md">
+                <List className="w-4 h-4" />
+              </TabsTrigger>
+            </TabsList>
+            <Separator
+              orientation="vertical"
+              className="h-[20px] mx-2 bg-zinc-300"
+            />
+            <NewTaskDialog defaultDestination="Backlog" />
+          </div>
+        </header>
+        <div className="flex flex-1">
+          <AppSidebar tasks={tasks.filter((task) => task.quadrant === 0)} />
+          <SidebarInset
+            className={`${open ? "md:mx-5" : "md:mx-8"} md:my-8 md:mr-8`}
+          >
+            <div className="flex-1 h-full min-h-[calc(100svh-76px-128px)]">
+              <div className="h-[calc(100svh-(var(--header-height)+120px))]">
+                <TabsContent value="grid">{gridView(sortBy)}</TabsContent>
+                <TabsContent value="list">
+                  {listView(quadrants, sortBy)}
+                </TabsContent>
+              </div>
+            </div>
+          </SidebarInset>
+        </div>
+      </SidebarProvider>
+    </Tabs>
   );
 }

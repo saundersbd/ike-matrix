@@ -10,16 +10,11 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
 import { NewTaskDialog } from "@/components/new-task-dialog";
-import { Plus, Ellipsis, Eye, EyeClosed, Archive } from "lucide-react";
-import { THEME_COLORS, THEME_COLORS_LIST, ThemeName } from "@/app/types/Theme";
+import { Ellipsis, Eye, EyeClosed, Archive } from "lucide-react";
+import { THEME_COLORS, ThemeName } from "@/app/types/Theme";
 
 interface QuadrantProps {
   quadrant: number;
@@ -37,13 +32,6 @@ const backgroundTexture = [
   "background-tiled-4",
 ];
 
-const quadrantTitles: Record<number, string> = {
-  1: "Important and urgent",
-  2: "Important but not urgent",
-  3: "Urgent but not important",
-  4: "Neither urgent nor important",
-};
-
 export function Quadrant({
   title,
   taskCount,
@@ -56,7 +44,6 @@ export function Quadrant({
     bgColor,
     textColor,
     iconColor,
-    fillColor,
     hoverColor,
     washHoverColor,
     ringColor,
@@ -116,13 +103,13 @@ export function Quadrant({
               <NewTaskDialog
                 theme={theme}
                 defaultDestination={
-                  quadrant === 0
+                  quadrant === 1
                     ? "Important and urgent"
-                    : quadrant === 1
-                    ? "Important but not urgent"
                     : quadrant === 2
+                    ? "Important but not urgent"
+                    : quadrant === 3
                     ? "Urgent but not important"
-                    : "Neither urgent or important"
+                    : "Neither urgent nor important"
                 }
                 inlineTrigger
               />
@@ -178,13 +165,13 @@ export function Quadrant({
             <NewTaskDialog
               theme={theme}
               defaultDestination={
-                quadrant === 0
+                quadrant === 1
                   ? "Important and urgent"
-                  : quadrant === 1
-                  ? "Important but not urgent"
                   : quadrant === 2
+                  ? "Important but not urgent"
+                  : quadrant === 3
                   ? "Urgent but not important"
-                  : "Not urgent nor important"
+                  : "Neither urgent nor important"
               }
               buttonVariant="outline"
             />
@@ -194,7 +181,7 @@ export function Quadrant({
       <div
         className={cn(
           "absolute opacity-0 inset-0 z-20 flex flex-col grow items-center justify-center transition-all duration-200 ease-in-out",
-          backgroundTexture[quadrant],
+          backgroundTexture[quadrant - 1],
           bgColor,
           {
             "animate-in fade-in zoom-in-75 opacity-100": isHidden,

@@ -1,22 +1,24 @@
 "use client";
 
+import { useTasks } from "@/app/contexts/TaskContext";
+
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import TextareaAutosize from "react-textarea-autosize";
 import {
   Plus,
-  ArrowUpDown,
   Calendar as CalendarIcon,
   Clock,
   X,
+  CircleAlert,
 } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -27,7 +29,6 @@ import { Switch } from "@/components/ui/switch";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
@@ -42,7 +43,7 @@ import {
 } from "@/components/ui/popover";
 
 import { QuadrantSelectOption } from "@/components/quadrant-select-option";
-import { THEME_COLORS, THEME_COLORS_LIST, ThemeName } from "@/app/types/Theme";
+import { THEME_COLORS, ThemeName } from "@/app/types/Theme";
 
 export function NewTaskDialog({
   defaultDestination = "Backlog",
@@ -55,12 +56,61 @@ export function NewTaskDialog({
   theme?: ThemeName;
   buttonVariant?: "default" | "outline";
 }) {
+  const { createTask } = useTasks();
+  const [open, setOpen] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleCreateTask = () => {
+    // Validate title
+    if (!taskText.trim()) {
+      setError("You need to add a task title.");
+      return;
+    }
+
+    // Clear any previous errors
+    setError("");
+
+    createTask({
+      title: taskText.trim(),
+      description: taskDescriptionText.trim(),
+      dueDate: dueDate
+        ? format(
+            // Combine date and time if both are present
+            dueTime
+              ? new Date(
+                  dueDate.setHours(dueTime.getHours(), dueTime.getMinutes())
+                )
+              : dueDate,
+            "MMM dd, yyyy" + (dueTime ? " h:mm a" : "")
+          )
+        : undefined,
+      quadrant: Number(
+        Object.keys(quadrantTitles).find(
+          (key) => quadrantTitles[Number(key)] === value.value
+        )
+      ),
+      createdAt: new Date(),
+      completed: false,
+      status: "todo",
+    });
+
+    if (!continueAdding) {
+      setOpen(false);
+    }
+    // Reset form
+    setTaskText("");
+    setTaskDescriptionText("");
+    setDueDate(undefined);
+    setDueTime(undefined);
+    setError("");
+  };
+
   const quadrantTitles: Record<number, string> = {
     0: "Backlog",
     1: "Important and urgent",
     2: "Important but not urgent",
     3: "Urgent but not important",
-    4: "Not urgent or important",
+    4: "Neither urgent nor important",
   };
   const quadrantThemes: Record<number, ThemeName> = {
     0: "gray",
@@ -85,7 +135,9 @@ export function NewTaskDialog({
     defaultDestination === "Backlog" ? "backlog" : "quadrant"
   );
   const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
-  const [dueTime, setDueTime] = useState<Date | undefined>(undefined);
+  const [dueTime, setDueTime] = useState<Date | undefined>(
+    new Date(new Date().setHours(12, 0, 0, 0))
+  );
   const [continueAdding, setContinueAdding] = useState(false);
   const [taskText, setTaskText] = useState("");
   const [taskDescriptionText, setTaskDescriptionText] = useState("");
@@ -93,7 +145,7 @@ export function NewTaskDialog({
   const { iconColor, hoverColor } = themeColors;
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {inlineTrigger ? (
           <Button
@@ -130,6 +182,13 @@ export function NewTaskDialog({
         </DialogHeader>
 
         <div className="flex flex-col gap-8 px-5 pt-3 pb-5">
+          {error && (
+            <Alert variant="destructive">
+              <CircleAlert className="h-4 w-4" />
+              <AlertTitle className="sr-only">Error</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
           <div className="flex flex-col gap-2 px-0.5">
             <Label htmlFor="task" className="sr-only">
               Type your task
@@ -227,7 +286,10 @@ export function NewTaskDialog({
                   <Button
                     variant="outline"
                     size="chip"
-                    className="rounded-lg text-xs font-semibold text-zinc-700 hover:ring-zinc-300 transition-all duration-150"
+                    className={cn(
+                      "rounded-lg text-xs font-semibold text-zinc-700 hover:ring-zinc-300 transition-all duration-150",
+                      dueDate ? "pr-1" : ""
+                    )}
                   >
                     <CalendarIcon
                       className={`!w-4 !h-4 ${
@@ -235,12 +297,12 @@ export function NewTaskDialog({
                       }`}
                     />
                     {dueDate ? (
-                      <span className="text-zinc-700 flex items-center gap-1">
+                      <span className="text-zinc-700 flex items-center gap-0.5">
                         {format(dueDate, "MMM d, yyyy")}
                         <span
                           role="button"
                           tabIndex={0}
-                          className="cursor-pointer hover:bg-zinc-200 rounded p-0.5"
+                          className="text-zinc-600 cursor-pointer hover:bg-zinc-200 rounded p-0.5"
                           onClick={(e) => {
                             e.stopPropagation();
                             setDueDate(undefined);
@@ -252,7 +314,7 @@ export function NewTaskDialog({
                             }
                           }}
                         >
-                          <X className="w-4 h-4" />
+                          <X className="w-3.5 h-3.5" />
                         </span>
                       </span>
                     ) : (
@@ -276,7 +338,10 @@ export function NewTaskDialog({
                     <Button
                       variant="outline"
                       size="chip"
-                      className="rounded-lg text-xs font-semibold text-zinc-700"
+                      className={cn(
+                        "rounded-lg text-xs font-semibold text-zinc-700 hover:ring-zinc-300 transition-all duration-150",
+                        dueDate ? "pr-1" : ""
+                      )}
                     >
                       <Clock
                         className={`w-4 h-4 ${
@@ -284,8 +349,25 @@ export function NewTaskDialog({
                         }`}
                       />
                       {dueTime ? (
-                        <span className="text-zinc-700">
+                        <span className="flex items-center gap-0.5 text-zinc-700">
                           {format(dueTime, "h:mm a")}
+                          <span
+                            role="button"
+                            tabIndex={0}
+                            className="text-zinc-600 cursor-pointer hover:bg-zinc-200 rounded p-0.5"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setDueTime(undefined);
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" || e.key === " ") {
+                                e.stopPropagation();
+                                setDueTime(undefined);
+                              }
+                            }}
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </span>
                         </span>
                       ) : (
                         <span className="text-zinc-500">Time</span>
@@ -311,7 +393,7 @@ export function NewTaskDialog({
           </div>
         </div>
         <DialogFooter className="flex items-center pt-2 gap-3">
-          <Button size="sm" className="rounded-md">
+          <Button size="sm" className="rounded-md" onClick={handleCreateTask}>
             Submit
           </Button>
           <div className="flex items-center space-x-2">

@@ -15,10 +15,13 @@ export const tasks: Task[] = [
   {
     id: "2",
     title: "Define color palette",
+    dueDate: "Feb 5, 2025",
     quadrant: 2,
     createdAt: new Date("2025-02-02"),
     completed: false,
     status: "todo",
+    context: "personal",
+    tags: ["Project A"],
   },
   {
     id: "3",
