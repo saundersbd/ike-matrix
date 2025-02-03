@@ -1,6 +1,6 @@
 import { Calendar, Home, Inbox, Plus, Search, Settings } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Sidebar,
   SidebarContent,
@@ -13,42 +13,37 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Task } from "@/app/types/Task";
 
-export function AppSidebar() {
+import { NewTaskDialog } from "@/components/new-task-dialog";
+import { BacklogListItem } from "@/components/backlog-list-item";
+export function AppSidebar({ tasks }: { tasks: Task[] }) {
   return (
     <Sidebar
-      side="right"
-      className="top-(--header-height) bg-zinc-50 h-[calc(100svh-var(--header-height)-(--spacing(1)))]"
+      className="top-[150px] bg-zinc-50 h-[calc(100svh-128px-var(--spacing(1))]"
       variant="floating"
     >
-      <SidebarHeader className="p-4 pt-5 gap-3 border-b border-zinc-200">
-        <h2 className="text-lg font-medium text-zinc-800">Backlog</h2>
+      <SidebarHeader className="flex flex-row items-center justify-between px-5 py-3 gap-3 bg-zinc-100">
+        <h2 className="w-max text-sm font-semibold inline-flex text-zinc-800">
+          Backlog
+        </h2>
+        <NewTaskDialog
+          defaultDestination="Backlog"
+          theme="gray"
+          inlineTrigger
+        />
       </SidebarHeader>
-      <SidebarContent className="p-3.5">Content</SidebarContent>
-      <SidebarFooter className="p-3.5 border-t border-zinc-200">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="sm" className="w-full">
-                <Plus className="w-4 h-4" />
-                New backlog item
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent className="max-w-[256px]">
-              <p>
-                Get your to-dos out of your brain so you can prioritize them
-                later.
-              </p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </SidebarFooter>
+      <SidebarContent>
+        <ScrollArea className="grow py-5 px-3">
+          <div className="flex flex-col gap-0">
+            {tasks.length > 0
+              ? tasks.map((task) => (
+                  <BacklogListItem key={task.id} task={task} />
+                ))
+              : "Empty"}
+          </div>
+        </ScrollArea>
+      </SidebarContent>
     </Sidebar>
   );
 }

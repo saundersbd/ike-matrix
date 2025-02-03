@@ -2,9 +2,6 @@ import type { Metadata } from "next";
 import { Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
-import { SidebarProvider } from "@/components/ui/sidebar";
-
-import { AppSidebar } from "@/components/app-sidebar";
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -41,19 +38,13 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${geistMono.variable}`}>
       <body
-        className={`antialiased overflow-hidden font-sans`}
+        className={`antialiased overflow-hidden font-sans bg-zinc-50`}
         style={{ "--header-height": HEADER_HEIGHT } as React.CSSProperties}
       >
         <header className="flex h-(--header-height) items-center bg-zinc-900 px-5 z-20 text-zinc-100">
           <h1 className="text-xl font-medium">Eisenhower Matrix</h1>
         </header>
-        <SidebarProvider className="bg-zinc-50">
-          <div className="flex-1 pt-5 pb-8 px-8 h-full min-h-[calc(100svh-var(--header-height))] bg-zinc-50">
-            {children}
-          </div>
-
-          <AppSidebar />
-        </SidebarProvider>
+        {children}
       </body>
     </html>
   );

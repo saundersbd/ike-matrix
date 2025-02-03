@@ -11,8 +11,7 @@ export function TaskListItem({ task }: { task: Task }) {
       </p>
       <div className="flex">
         {task.dueDate && (
-          <div className="flex items-center gap-1.5 text-sm font-medium text-zinc-400 group-hover:text-zinc-500">
-            <Flag size={13} />
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-400 group-hover:text-zinc-500">
             {task.dueDate}
           </div>
         )}

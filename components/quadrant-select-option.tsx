@@ -27,7 +27,7 @@ export function QuadrantSelectOption({
         {type === "quadrant" && (
           <div className={`h-[7px] w-[7px] rounded-full ${accentColor}`}></div>
         )}
-        {type === "backlog" && <Inbox className="w-4 h-4" />}
+        {type === "backlog" && <Inbox className="!w-4 !h-4" />}
       </div>
       <span className="leading-tight">{label}</span>
     </div>

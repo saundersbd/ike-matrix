@@ -14,13 +14,18 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import {
+  SidebarProvider,
+  SidebarTrigger,
+  SidebarInset,
+} from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
 import { Quadrant } from "@/components/quadrant";
 import { TaskListItem } from "@/components/task-list-item";
 import { TaskListTableRow } from "@/components/task-list-table-row";
 import { NewTaskDialog } from "@/components/new-task-dialog";
 import { tasks } from "@/app/data/tasks";
-import { ArrowUpDown, Filter } from "lucide-react";
+import { ArrowUpDown, Filter, Grid2X2, List } from "lucide-react";
 import { THEME_COLORS, THEME_COLORS_LIST, ThemeName } from "@/app/types/Theme";
 import { useState } from "react";
 import { Task } from "@/app/types/Task";
@@ -47,7 +52,7 @@ const sortTasks = (tasks: Task[], sortBy: string) => {
 };
 
 const gridView = (sortBy: string) => (
-  <div className="grid grid-cols-2 grid-rows-2 gap-6 h-[calc(100svh-(var(--header-height)+116px))]">
+  <div className="grid grid-cols-2 grid-rows-2 gap-6 h-[calc(100svh-184px)]">
     <Quadrant
       quadrant={0}
       title="Important AND urgent"
@@ -88,7 +93,7 @@ const gridView = (sortBy: string) => (
     <Quadrant
       quadrant={3}
       title="Not urgent or important"
-      theme="gray"
+      theme="purple"
       taskCount={tasks.filter((task) => task.quadrant === 4).length}
     >
       {tasks
@@ -101,7 +106,7 @@ const gridView = (sortBy: string) => (
 );
 
 const listView = (quadrants: boolean[], sortBy: string) => (
-  <div className="flex flex-col h-[calc(100svh-(var(--header-height)+82px))]">
+  <div className="max-w-5xl mx-auto flex flex-col h-[calc(100svh-(var(--header-height)+82px))]">
     {[1, 3, 2, 4].map((quadrantNumber) => {
       if (!quadrants[quadrantNumber - 1]) return null;
       const quadrantTasks = sortTasks(
@@ -122,8 +127,8 @@ const listView = (quadrants: boolean[], sortBy: string) => (
       };
 
       return quadrantTasks.length > 0 ? (
-        <div key={quadrantNumber} className="mb-5 last:mb-0">
-          <div className="flex items-center gap-2.5 mb-3 ml-3">
+        <div key={quadrantNumber} className="mb-6 last:mb-0">
+          <div className="flex items-center gap-2.5 mb-4 ml-3">
             <div
               className={`w-[7px] h-[7px] rounded-full ${
                 THEME_COLORS[quadrantThemes[quadrantNumber]].accentColor
@@ -134,15 +139,15 @@ const listView = (quadrants: boolean[], sortBy: string) => (
             </h3>
           </div>
 
-          <div className="px-5 py-3 ring-1 ring-black/[.08] rounded-2xl bg-white">
+          <div className="px-5 py-3 ring-1 ring-black/[.08] rounded-2xl bg-white shadow-sm">
             {quadrantTasks.map((task) => (
               <TaskListTableRow key={task.id} task={task} />
             ))}
           </div>
         </div>
       ) : (
-        <div key={quadrantNumber} className="mb-5 last:mb-0">
-          <div className="flex items-center gap-2.5 mb-3 ml-3">
+        <div key={quadrantNumber} className="mb-6 last:mb-0">
+          <div className="flex items-center gap-2.5 mb-4 ml-3">
             <div
               className={`w-[7px] h-[7px] rounded-full ${
                 THEME_COLORS[quadrantThemes[quadrantNumber]].accentColor
@@ -166,128 +171,146 @@ export default function Home() {
   const [sortBy, setSortBy] = useState("created");
   const [quadrants, setQuadrants] = useState([true, true, true, true]);
   return (
-    <Tabs
-      defaultValue="grid"
-      onValueChange={(value) => setView(value as "grid" | "list")}
-    >
-      <header className="mb-5 flex shrink-0 items-center justify-between h-12 gap-4">
-        <TabsList className="bg-zinc-200/[.75]">
-          <TabsTrigger value="grid">Grid</TabsTrigger>
-          <TabsTrigger value="list">List</TabsTrigger>
-        </TabsList>
-        <div className="flex items-center gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                className="rounded-lg"
-                disabled={view !== "list"}
-              >
-                <Filter className="h-4 w-4" />
-                Show
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56">
-              <DropdownMenuLabel>Show sections</DropdownMenuLabel>
-              <DropdownMenuCheckboxItem
-                checked={quadrants[0]}
-                onCheckedChange={() => {
-                  setQuadrants([
-                    !quadrants[0],
-                    quadrants[1],
-                    quadrants[2],
-                    quadrants[3],
-                  ]);
-                }}
-              >
-                Important and urgent
-              </DropdownMenuCheckboxItem>
-              <DropdownMenuCheckboxItem
-                checked={quadrants[1]}
-                onCheckedChange={() => {
-                  setQuadrants([
-                    quadrants[0],
-                    !quadrants[1],
-                    quadrants[2],
-                    quadrants[3],
-                  ]);
-                }}
-              >
-                Important but not urgent
-              </DropdownMenuCheckboxItem>
-              <DropdownMenuCheckboxItem
-                checked={quadrants[2]}
-                onCheckedChange={() => {
-                  setQuadrants([
-                    quadrants[0],
-                    quadrants[1],
-                    !quadrants[2],
-                    quadrants[3],
-                  ]);
-                }}
-              >
-                Urgent but not important
-              </DropdownMenuCheckboxItem>
-              <DropdownMenuCheckboxItem
-                checked={quadrants[3]}
-                onCheckedChange={() => {
-                  setQuadrants([
-                    quadrants[0],
-                    quadrants[1],
-                    quadrants[2],
-                    !quadrants[3],
-                  ]);
-                }}
-              >
-                Not urgent or important
-              </DropdownMenuCheckboxItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+    <div>
+      <Tabs
+        defaultValue="grid"
+        onValueChange={(value) => setView(value as "grid" | "list")}
+      >
+        <SidebarProvider className="flex flex-col">
+          <header className="sticky top-0 mb-0 flex shrink-0 items-center justify-between h-12 gap-4 h-[calc(var(--header-height))] bg-white px-8 border-b border-zinc-100">
+            <SidebarTrigger />
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="rounded-lg">
-                <ArrowUpDown className="h-4 w-4" />
-                <span className="text-sm font-medium">
-                  Sort by: {sortBy.charAt(0).toUpperCase() + sortBy.slice(1)}
-                </span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56">
-              <DropdownMenuLabel>
-                Sort by: {sortBy.charAt(0).toUpperCase() + sortBy.slice(1)}
-              </DropdownMenuLabel>
-              <DropdownMenuRadioGroup value={sortBy} onValueChange={setSortBy}>
-                <DropdownMenuRadioItem value="created">
-                  Created
-                </DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="updated">
-                  Last updated
-                </DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="dueDate">
-                  Due date
-                </DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="custom">
-                  Custom
-                </DropdownMenuRadioItem>
-              </DropdownMenuRadioGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <NewTaskDialog />
-          <Separator
-            orientation="vertical"
-            className="h-[24px] mx-2 bg-zinc-300"
-          />
-          <SidebarTrigger />
-        </div>
-      </header>
-      <main>
-        <div className="h-[calc(100svh-(var(--header-height)+120px))]">
-          <TabsContent value="grid">{gridView(sortBy)}</TabsContent>
-          <TabsContent value="list">{listView(quadrants, sortBy)}</TabsContent>
-        </div>
-      </main>
-    </Tabs>
+            <div className="flex items-center gap-3">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="rounded-lg"
+                    disabled={view !== "list"}
+                  >
+                    <Filter className="h-4 w-4" />
+                    Show
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56">
+                  <DropdownMenuLabel>Show sections</DropdownMenuLabel>
+                  <DropdownMenuCheckboxItem
+                    checked={quadrants[0]}
+                    onCheckedChange={() => {
+                      setQuadrants([
+                        !quadrants[0],
+                        quadrants[1],
+                        quadrants[2],
+                        quadrants[3],
+                      ]);
+                    }}
+                  >
+                    Important and urgent
+                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem
+                    checked={quadrants[1]}
+                    onCheckedChange={() => {
+                      setQuadrants([
+                        quadrants[0],
+                        !quadrants[1],
+                        quadrants[2],
+                        quadrants[3],
+                      ]);
+                    }}
+                  >
+                    Important but not urgent
+                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem
+                    checked={quadrants[2]}
+                    onCheckedChange={() => {
+                      setQuadrants([
+                        quadrants[0],
+                        quadrants[1],
+                        !quadrants[2],
+                        quadrants[3],
+                      ]);
+                    }}
+                  >
+                    Urgent but not important
+                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem
+                    checked={quadrants[3]}
+                    onCheckedChange={() => {
+                      setQuadrants([
+                        quadrants[0],
+                        quadrants[1],
+                        quadrants[2],
+                        !quadrants[3],
+                      ]);
+                    }}
+                  >
+                    Not urgent or important
+                  </DropdownMenuCheckboxItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="rounded-lg">
+                    <ArrowUpDown className="h-4 w-4" />
+                    <span className="text-sm font-medium">
+                      Sort by:{" "}
+                      {sortBy.charAt(0).toUpperCase() + sortBy.slice(1)}
+                    </span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56">
+                  <DropdownMenuRadioGroup
+                    value={sortBy}
+                    onValueChange={setSortBy}
+                  >
+                    <DropdownMenuRadioItem value="created">
+                      Created
+                    </DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="updated">
+                      Last updated
+                    </DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="dueDate">
+                      Due date
+                    </DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="custom">
+                      Custom
+                    </DropdownMenuRadioItem>
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              <TabsList className="bg-zinc-200/[.75]">
+                <TabsTrigger value="grid">
+                  <Grid2X2 className="w-4 h-4" />
+                </TabsTrigger>
+                <TabsTrigger value="list">
+                  <List className="w-4 h-4" />
+                </TabsTrigger>
+              </TabsList>
+              <Separator
+                orientation="vertical"
+                className="h-[20px] mx-2 bg-zinc-300"
+              />
+              <NewTaskDialog defaultDestination="Backlog" />
+            </div>
+          </header>
+          <div className="flex flex-1">
+            <AppSidebar tasks={tasks.filter((task) => task.quadrant === 0)} />
+            <SidebarInset className="md:m-8 md:mr-8">
+              <div className="flex-1 h-full min-h-[calc(100svh-76px-128px)]">
+                <div className="h-[calc(100svh-(var(--header-height)+120px))]">
+                  <TabsContent value="grid">{gridView(sortBy)}</TabsContent>
+                  <TabsContent value="list">
+                    {listView(quadrants, sortBy)}
+                  </TabsContent>
+                </div>
+              </div>
+            </SidebarInset>
+          </div>
+        </SidebarProvider>
+      </Tabs>
+    </div>
   );
 }

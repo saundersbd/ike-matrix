@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 import TextareaAutosize from "react-textarea-autosize";
 import {
   Plus,
@@ -52,31 +53,57 @@ import {
 import { QuadrantSelectOption } from "@/components/quadrant-select-option";
 import { THEME_COLORS, THEME_COLORS_LIST, ThemeName } from "@/app/types/Theme";
 
-export function NewTaskDialog() {
+export function NewTaskDialog({
+  defaultDestination = "Backlog",
+  inlineTrigger = false,
+  theme = "sky",
+}: {
+  defaultDestination: string;
+  inlineTrigger?: boolean;
+  theme?: ThemeName;
+}) {
   const quadrantTitles: Record<number, string> = {
-    1: "Important and urgent",
-    2: "Important but not urgent",
-    3: "Urgent but not important",
-    4: "Not urgent or important",
+    0: "Important and urgent",
+    1: "Important but not urgent",
+    2: "Urgent but not important",
+    3: "Not urgent or important",
   };
   const quadrantThemes: Record<number, ThemeName> = {
-    1: "red",
-    2: "amber",
-    3: "sky",
-    4: "gray",
+    0: "red",
+    1: "amber",
+    2: "sky",
+    3: "gray",
   };
 
-  const [value, setValue] = useState("Backlog");
-  const [valueType, setValueType] = useState<"quadrant" | "backlog">("backlog");
+  const [value, setValue] = useState(defaultDestination);
+  const [valueType, setValueType] = useState<"quadrant" | "backlog">(() =>
+    defaultDestination === "Backlog" ? "backlog" : "quadrant"
+  );
   const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
   const [dueTime, setDueTime] = useState<Date | undefined>(undefined);
+  const themeColors = THEME_COLORS[theme] || THEME_COLORS.sky;
+  const { iconColor, hoverColor } = themeColors;
+
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button size="sm" className="rounded-lg">
-          <Plus className="w-4 h-4" />
-          New task
-        </Button>
+        {inlineTrigger ? (
+          <Button
+            variant="ghost"
+            size="icon"
+            className={cn("h-8 w-8", hoverColor)}
+            onClick={() => {
+              setValue(defaultDestination);
+            }}
+          >
+            <Plus className={iconColor} />
+          </Button>
+        ) : (
+          <Button size="sm" className="rounded-lg">
+            <Plus className="w-4 h-4" />
+            New task
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -84,7 +111,7 @@ export function NewTaskDialog() {
         </DialogHeader>
 
         <div className="flex flex-col gap-8 px-5 pt-3 pb-5">
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 px-0.5">
             <Label htmlFor="task" className="sr-only">
               Type your task
             </Label>
@@ -113,6 +140,7 @@ export function NewTaskDialog() {
                       label={value}
                       type={valueType}
                       padding="dense"
+                      theme={theme}
                     />
                   </Button>
                 </DropdownMenuTrigger>
@@ -163,7 +191,7 @@ export function NewTaskDialog() {
                     className="rounded-lg text-xs font-semibold text-zinc-700"
                   >
                     <CalendarIcon
-                      className={`w-4 h-4 ${
+                      className={`!w-4 !h-4 ${
                         dueDate ? "text-zinc-700" : "text-zinc-500"
                       }`}
                     />
@@ -243,8 +271,14 @@ export function NewTaskDialog() {
             )}
           </div>
         </div>
-        <DialogFooter className="flex items-center pt-1">
-          <Button size="sm">Add task</Button>
+        <DialogFooter className="flex items-center pt-2 gap-2">
+          <Button size="sm" className="rounded-md">
+            Submit
+          </Button>
+          <div className="flex items-center space-x-2">
+            <Checkbox id="continue" />
+            <Label htmlFor="continue">Add another</Label>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>

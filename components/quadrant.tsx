@@ -6,6 +6,7 @@ import { Pill } from "@/components/pill";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Toggle } from "@/components/ui/toggle";
+import { NewTaskDialog } from "@/components/new-task-dialog";
 import { Plus, Maximize2, Eye, EyeClosed } from "lucide-react";
 import { THEME_COLORS, THEME_COLORS_LIST, ThemeName } from "@/app/types/Theme";
 
@@ -24,6 +25,13 @@ const backgroundTexture = [
   "background-tiled-3",
   "background-tiled-4",
 ];
+
+const quadrantTitles: Record<number, string> = {
+  1: "Important and urgent",
+  2: "Important but not urgent",
+  3: "Urgent but not important",
+  4: "Not urgent or important",
+};
 
 export function Quadrant({
   title,
@@ -44,12 +52,32 @@ export function Quadrant({
   } = themeColors;
 
   const [isHidden, setIsHidden] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  const handleToggleHidden = () => {
+    if (!isHidden) {
+      setIsAnimating(true);
+      setIsHidden(true);
+    } else {
+      setIsHidden(false);
+      // Add a delay that matches your animation duration
+      setTimeout(() => {
+        setIsAnimating(false);
+      }, 1000); // 1000ms = duration-1000
+    }
+  };
 
   return (
     <div
-      className={`relative flex flex-col rounded-2xl overflow-hidden ring-1 transition-all duration-300 ${
-        isHidden ? "shadow-none" : "shadow-sm"
-      } ${isHidden ? ringColor : "ring-black/[.08]"}`}
+      data-hidden={isHidden}
+      className={cn(
+        "group relative flex flex-col rounded-2xl overflow-hidden ring-1 transition-all duration-300",
+        "data-[hidden=true]:shadow-none data-[hidden=false]:shadow-sm",
+        {
+          [ringColor]: isHidden,
+          "ring-black/[.08]": !isHidden,
+        }
+      )}
     >
       <header
         className={`shrink-0 py-3 pl-5 pr-4 flex items-center justify-between ${
@@ -74,20 +102,19 @@ export function Quadrant({
         <div className="flex items-center">
           {isHidden ? null : (
             <>
-              <Button
-                variant="ghost"
-                size="icon"
-                className={cn("h-8 w-8", hoverColor)}
-              >
-                <Plus className={iconColor} />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className={cn("h-8 w-8", hoverColor)}
-              >
-                <Maximize2 className={iconColor} />
-              </Button>
+              <NewTaskDialog
+                theme={theme}
+                defaultDestination={
+                  quadrant === 0
+                    ? "Important and urgent"
+                    : quadrant === 1
+                    ? "Important but not urgent"
+                    : quadrant === 2
+                    ? "Urgent but not important"
+                    : "Not urgent or important"
+                }
+                inlineTrigger
+              />
               <Toggle
                 variant="ghost"
                 size="sm"
@@ -96,7 +123,7 @@ export function Quadrant({
                   hoverColor,
                   isHidden ? "hover:data-[state=on]:bg-zinc-100" : ""
                 )}
-                onClick={() => setIsHidden(!isHidden)}
+                onClick={handleToggleHidden}
               >
                 {isHidden ? (
                   <EyeClosed
@@ -128,14 +155,21 @@ export function Quadrant({
         )}
       </div>
       <div
-        className={`absolute inset-0 z-20 opacity-100 animate-in fade-in duration-250 ease-out flex flex-col grow items-center justify-center ${
-          isHidden ? "" : "hidden opacity-50"
-        } ${backgroundTexture[quadrant]} ${bgColor}`}
+        className={cn(
+          "absolute opacity-0 inset-0 z-20 flex flex-col grow items-center justify-center transition-all duration-200 ease-in-out",
+          backgroundTexture[quadrant],
+          bgColor,
+          {
+            "animate-in fade-in zoom-in-75 opacity-100": isHidden,
+            "animate-out fade-out zoom-out-75 opacity-0": !isHidden,
+            hidden: !isHidden && !isAnimating,
+          }
+        )}
       >
         <Button
           variant="ghost"
           className={`group h-auto w-auto rounded-2xl px-6 py-4 ${washHoverColor}`}
-          onClick={() => setIsHidden(!isHidden)}
+          onClick={handleToggleHidden}
           aria-label={isHidden ? "Show tasks" : "Hide tasks"}
         >
           <EyeClosed
