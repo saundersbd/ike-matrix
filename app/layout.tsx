@@ -3,6 +3,8 @@ import { Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 
+import { InfoSheet } from "@/components/info-sheet";
+
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
@@ -38,11 +40,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${geistMono.variable}`}>
       <body
-        className={`antialiased overflow-hidden font-sans bg-zinc-50`}
+        className={`antialiased overflow-hidden font-sans bg-zinc-50 text-zinc-800`}
         style={{ "--header-height": HEADER_HEIGHT } as React.CSSProperties}
       >
-        <header className="flex h-(--header-height) items-center bg-zinc-900 px-5 z-20 text-zinc-100">
-          <h1 className="text-xl font-medium">Eisenhower Matrix</h1>
+        <header className="flex h-(--header-height) items-center justify-between bg-zinc-900 pl-10 pr-8 z-20 text-zinc-100 gap-2">
+          <h1 className="inline-flex text-xl font-medium">Eisenhower Matrix</h1>
+          <InfoSheet />
         </header>
         {children}
       </body>

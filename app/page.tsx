@@ -19,13 +19,14 @@ import {
   SidebarTrigger,
   SidebarInset,
 } from "@/components/ui/sidebar";
+import { useSidebar } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Quadrant } from "@/components/quadrant";
 import { TaskListItem } from "@/components/task-list-item";
 import { TaskListTableRow } from "@/components/task-list-table-row";
 import { NewTaskDialog } from "@/components/new-task-dialog";
 import { tasks } from "@/app/data/tasks";
-import { ArrowUpDown, Filter, Grid2X2, List } from "lucide-react";
+import { ArrowUpDown, Circle, Filter, Grid2X2, List } from "lucide-react";
 import { THEME_COLORS, THEME_COLORS_LIST, ThemeName } from "@/app/types/Theme";
 import { useState } from "react";
 import { Task } from "@/app/types/Task";
@@ -92,7 +93,7 @@ const gridView = (sortBy: string) => (
     </Quadrant>
     <Quadrant
       quadrant={3}
-      title="Not urgent or important"
+      title="Neither urgent nor important"
       theme="purple"
       taskCount={tasks.filter((task) => task.quadrant === 4).length}
     >
@@ -106,7 +107,7 @@ const gridView = (sortBy: string) => (
 );
 
 const listView = (quadrants: boolean[], sortBy: string) => (
-  <div className="max-w-5xl mx-auto flex flex-col h-[calc(100svh-(var(--header-height)+82px))]">
+  <div className="max-w-5xl mx-auto px-5 flex flex-col h-[calc(100svh-(var(--header-height)+82px))]">
     {[1, 3, 2, 4].map((quadrantNumber) => {
       if (!quadrants[quadrantNumber - 1]) return null;
       const quadrantTasks = sortTasks(
@@ -117,7 +118,7 @@ const listView = (quadrants: boolean[], sortBy: string) => (
         1: "Important and urgent",
         2: "Important but not urgent",
         3: "Urgent but not important",
-        4: "Not urgent or important",
+        4: "Not urgent nor important",
       };
       const quadrantThemes: Record<number, ThemeName> = {
         1: "red",
@@ -129,12 +130,12 @@ const listView = (quadrants: boolean[], sortBy: string) => (
       return quadrantTasks.length > 0 ? (
         <div key={quadrantNumber} className="mb-6 last:mb-0">
           <div className="flex items-center gap-2.5 mb-4 ml-3">
-            <div
-              className={`w-[7px] h-[7px] rounded-full ${
+            <Circle
+              className={`w-[8px] h-[8px] ${
                 THEME_COLORS[quadrantThemes[quadrantNumber]].accentColor
               }`}
             />
-            <h3 className="text-sm font-medium text-gray-500">
+            <h3 className="text-sm font-semibold text-gray-500">
               {quadrantTitles[quadrantNumber]}
             </h3>
           </div>
@@ -148,8 +149,8 @@ const listView = (quadrants: boolean[], sortBy: string) => (
       ) : (
         <div key={quadrantNumber} className="mb-6 last:mb-0">
           <div className="flex items-center gap-2.5 mb-4 ml-3">
-            <div
-              className={`w-[7px] h-[7px] rounded-full ${
+            <Circle
+              className={`w-[8px] h-[8px] ${
                 THEME_COLORS[quadrantThemes[quadrantNumber]].accentColor
               }`}
             />
@@ -170,14 +171,20 @@ export default function Home() {
   const [view, setView] = useState<"grid" | "list">("grid");
   const [sortBy, setSortBy] = useState("created");
   const [quadrants, setQuadrants] = useState([true, true, true, true]);
+  const [open, setOpen] = useState(true);
+
   return (
     <div>
       <Tabs
         defaultValue="grid"
         onValueChange={(value) => setView(value as "grid" | "list")}
       >
-        <SidebarProvider className="flex flex-col">
-          <header className="sticky top-0 mb-0 flex shrink-0 items-center justify-between h-12 gap-4 h-[calc(var(--header-height))] bg-white px-8 border-b border-zinc-100">
+        <SidebarProvider
+          open={open}
+          onOpenChange={setOpen}
+          className="flex flex-col"
+        >
+          <header className="sticky top-0 mb-0 flex shrink-0 items-center justify-between gap-4 h-[calc(var(--header-height))] bg-white px-8 border-b border-zinc-100">
             <SidebarTrigger />
 
             <div className="flex items-center gap-3">
@@ -281,11 +288,11 @@ export default function Home() {
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              <TabsList className="bg-zinc-200/[.75]">
-                <TabsTrigger value="grid">
+              <TabsList className="bg-zinc-200/[.75] rounded-lg">
+                <TabsTrigger value="grid" className="rounded-md">
                   <Grid2X2 className="w-4 h-4" />
                 </TabsTrigger>
-                <TabsTrigger value="list">
+                <TabsTrigger value="list" className="rounded-md">
                   <List className="w-4 h-4" />
                 </TabsTrigger>
               </TabsList>
@@ -298,7 +305,9 @@ export default function Home() {
           </header>
           <div className="flex flex-1">
             <AppSidebar tasks={tasks.filter((task) => task.quadrant === 0)} />
-            <SidebarInset className="md:m-8 md:mr-8">
+            <SidebarInset
+              className={`${open ? "md:mx-5" : "md:mx-8"} md:my-8 md:mr-8`}
+            >
               <div className="flex-1 h-full min-h-[calc(100svh-76px-128px)]">
                 <div className="h-[calc(100svh-(var(--header-height)+120px))]">
                   <TabsContent value="grid">{gridView(sortBy)}</TabsContent>

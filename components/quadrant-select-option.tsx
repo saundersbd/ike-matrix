@@ -1,4 +1,5 @@
-import { List } from "lucide-react";
+import { Circle, List } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { THEME_COLORS, ThemeName } from "@/app/types/Theme";
 
 interface QuadrantSelectOptionProps {
@@ -19,13 +20,17 @@ export function QuadrantSelectOption({
 
   return (
     <div
-      className={`flex flex-row items-center ${
-        padding === "dense" ? "gap-1" : "gap-2"
-      }`}
+      className={cn(
+        "flex flex-row items-center",
+        padding === "dense" && type === "quadrant"
+          ? "!gap-0.25 -ml-1"
+          : "gap-2",
+        padding === "dense" && type === "backlog" ? "!gap-0.5" : "gap-2"
+      )}
     >
       <div className="flex w-5 h-5 items-center justify-center">
         {type === "quadrant" && (
-          <div className={`h-[7px] w-[7px] rounded-full ${accentColor}`}></div>
+          <Circle className={`!w-[8px] !h-[8px] ${accentColor}`} />
         )}
         {type === "backlog" && <List className="!w-4 !h-4" />}
       </div>

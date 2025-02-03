@@ -23,16 +23,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectSeparator,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -95,6 +86,9 @@ export function NewTaskDialog({
   );
   const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
   const [dueTime, setDueTime] = useState<Date | undefined>(undefined);
+  const [continueAdding, setContinueAdding] = useState(false);
+  const [taskText, setTaskText] = useState("");
+  const [taskDescriptionText, setTaskDescriptionText] = useState("");
   const themeColors = THEME_COLORS[theme] || THEME_COLORS.sky;
   const { iconColor, hoverColor } = themeColors;
 
@@ -144,11 +138,27 @@ export function NewTaskDialog({
               <div className="flex shrink-0 pt-1">
                 <Checkbox disabled className="disabled:cursor-default" />
               </div>
-              <TextareaAutosize
-                className="grow bg-white p-0 resize-none outline-none"
-                placeholder="Start typing..."
-                id="task"
-              />
+              <div className="flex flex-col gap-2.5 grow">
+                <TextareaAutosize
+                  className="grow bg-white p-0 resize-none outline-none"
+                  placeholder="Task title"
+                  id="task"
+                  value={taskText}
+                  onChange={(e) => setTaskText(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                    }
+                  }}
+                />
+                <TextareaAutosize
+                  className="grow bg-white p-0 resize-none outline-none text-sm"
+                  placeholder="Description"
+                  id="task"
+                  value={taskDescriptionText}
+                  onChange={(e) => setTaskDescriptionText(e.target.value)}
+                />
+              </div>
             </div>
           </div>
           <div className="flex items-center gap-2 transition-all duration-200">
@@ -159,7 +169,7 @@ export function NewTaskDialog({
                   <Button
                     variant="outline"
                     size="chip"
-                    className="rounded-lg text-xs font-semibold text-zinc-700"
+                    className="rounded-lg text-xs font-semibold text-zinc-700 hover:ring-zinc-300 transition-all duration-150"
                   >
                     <QuadrantSelectOption
                       label={value}
@@ -217,7 +227,7 @@ export function NewTaskDialog({
                   <Button
                     variant="outline"
                     size="chip"
-                    className="rounded-lg text-xs font-semibold text-zinc-700"
+                    className="rounded-lg text-xs font-semibold text-zinc-700 hover:ring-zinc-300 transition-all duration-150"
                   >
                     <CalendarIcon
                       className={`!w-4 !h-4 ${
@@ -300,13 +310,19 @@ export function NewTaskDialog({
             )}
           </div>
         </div>
-        <DialogFooter className="flex items-center pt-2 gap-2">
+        <DialogFooter className="flex items-center pt-2 gap-3">
           <Button size="sm" className="rounded-md">
             Submit
           </Button>
           <div className="flex items-center space-x-2">
-            <Checkbox id="continue" />
-            <Label htmlFor="continue">Add another</Label>
+            <Switch
+              id="continue"
+              checked={continueAdding}
+              onCheckedChange={setContinueAdding}
+            />
+            <Label htmlFor="continue" className="font-medium">
+              Add another
+            </Label>
           </div>
         </DialogFooter>
       </DialogContent>

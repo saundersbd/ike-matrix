@@ -41,7 +41,7 @@ const quadrantTitles: Record<number, string> = {
   1: "Important and urgent",
   2: "Important but not urgent",
   3: "Urgent but not important",
-  4: "Not urgent or important",
+  4: "Neither urgent nor important",
 };
 
 export function Quadrant({
@@ -122,7 +122,7 @@ export function Quadrant({
                     ? "Important but not urgent"
                     : quadrant === 2
                     ? "Urgent but not important"
-                    : "Not urgent or important"
+                    : "Neither urgent or important"
                 }
                 inlineTrigger
               />
@@ -171,8 +171,8 @@ export function Quadrant({
             <div className="flex flex-col gap-0 py-4">{children}</div>
           </ScrollArea>
         ) : (
-          <div className="flex flex-col grow items-center justify-center gap-5 py-4 bg-white">
-            <p className="text-zinc-500 text-sm font-medium text-center">
+          <div className="flex flex-col grow items-center justify-center gap-6 py-4 bg-white">
+            <p className="text-zinc-400 text-sm font-medium text-center">
               No tasks to speak of.
             </p>
             <NewTaskDialog
@@ -184,7 +184,7 @@ export function Quadrant({
                   ? "Important but not urgent"
                   : quadrant === 2
                   ? "Urgent but not important"
-                  : "Not urgent or important"
+                  : "Not urgent nor important"
               }
               buttonVariant="outline"
             />
