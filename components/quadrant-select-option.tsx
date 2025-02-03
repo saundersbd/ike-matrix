@@ -1,21 +1,21 @@
-import { Inbox } from "lucide-react";
+import { List } from "lucide-react";
 import { THEME_COLORS, ThemeName } from "@/app/types/Theme";
 
 interface QuadrantSelectOptionProps {
-  label: string;
-  theme?: ThemeName;
+  label: {
+    value: string;
+    theme: ThemeName;
+  };
   type: "quadrant" | "backlog";
   padding?: "dense" | "normal";
 }
 
 export function QuadrantSelectOption({
   label,
-  theme,
   type,
   padding = "normal",
 }: QuadrantSelectOptionProps) {
-  const themeColors = theme ? THEME_COLORS[theme] : THEME_COLORS.sky;
-  const { accentColor } = themeColors;
+  const { accentColor } = THEME_COLORS[label.theme];
 
   return (
     <div
@@ -27,9 +27,9 @@ export function QuadrantSelectOption({
         {type === "quadrant" && (
           <div className={`h-[7px] w-[7px] rounded-full ${accentColor}`}></div>
         )}
-        {type === "backlog" && <Inbox className="!w-4 !h-4" />}
+        {type === "backlog" && <List className="!w-4 !h-4" />}
       </div>
-      <span className="leading-tight">{label}</span>
+      <span className="leading-tight">{label.value}</span>
     </div>
   );
 }

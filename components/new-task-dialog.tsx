@@ -57,25 +57,39 @@ export function NewTaskDialog({
   defaultDestination = "Backlog",
   inlineTrigger = false,
   theme = "sky",
+  buttonVariant = "default",
 }: {
   defaultDestination: string;
   inlineTrigger?: boolean;
   theme?: ThemeName;
+  buttonVariant?: "default" | "outline";
 }) {
   const quadrantTitles: Record<number, string> = {
-    0: "Important and urgent",
-    1: "Important but not urgent",
-    2: "Urgent but not important",
-    3: "Not urgent or important",
+    0: "Backlog",
+    1: "Important and urgent",
+    2: "Important but not urgent",
+    3: "Urgent but not important",
+    4: "Not urgent or important",
   };
   const quadrantThemes: Record<number, ThemeName> = {
-    0: "red",
-    1: "amber",
-    2: "sky",
-    3: "gray",
+    0: "gray",
+    1: "red",
+    2: "amber",
+    3: "sky",
+    4: "purple",
   };
 
-  const [value, setValue] = useState(defaultDestination);
+  const [value, setValue] = useState({
+    value: defaultDestination,
+    theme:
+      quadrantThemes[
+        Number(
+          Object.keys(quadrantTitles).find(
+            (key) => quadrantTitles[Number(key)] === defaultDestination
+          )
+        )
+      ],
+  });
   const [valueType, setValueType] = useState<"quadrant" | "backlog">(() =>
     defaultDestination === "Backlog" ? "backlog" : "quadrant"
   );
@@ -93,13 +107,24 @@ export function NewTaskDialog({
             size="icon"
             className={cn("h-8 w-8", hoverColor)}
             onClick={() => {
-              setValue(defaultDestination);
+              setValue({
+                value: defaultDestination,
+                theme:
+                  quadrantThemes[
+                    Number(
+                      Object.keys(quadrantTitles).find(
+                        (key) =>
+                          quadrantTitles[Number(key)] === defaultDestination
+                      )
+                    )
+                  ],
+              });
             }}
           >
             <Plus className={iconColor} />
           </Button>
         ) : (
-          <Button size="sm" className="rounded-lg">
+          <Button size="sm" className="rounded-lg" variant={buttonVariant}>
             <Plus className="w-4 h-4" />
             New task
           </Button>
@@ -140,27 +165,30 @@ export function NewTaskDialog({
                       label={value}
                       type={valueType}
                       padding="dense"
-                      theme={theme}
                     />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-68">
                   <DropdownMenuLabel>Select a list</DropdownMenuLabel>
                   <DropdownMenuRadioGroup
-                    value={value}
+                    value={value.value}
                     onValueChange={(value) => {
-                      setValue(value);
+                      setValue({
+                        value: value,
+                        theme:
+                          quadrantThemes[
+                            Number(
+                              Object.keys(quadrantTitles).find(
+                                (key) => quadrantTitles[Number(key)] === value
+                              )
+                            )
+                          ],
+                      });
                       setValueType(
                         value === "Backlog" ? "backlog" : "quadrant"
                       );
                     }}
                   >
-                    <DropdownMenuRadioItem
-                      value="Backlog"
-                      className="cursor-pointer"
-                    >
-                      <QuadrantSelectOption label="Backlog" type="backlog" />
-                    </DropdownMenuRadioItem>
                     {Object.entries(quadrantTitles).map(([key, title]) => (
                       <DropdownMenuRadioItem
                         key={key}
@@ -168,13 +196,14 @@ export function NewTaskDialog({
                         className="cursor-pointer"
                       >
                         <QuadrantSelectOption
-                          label={title}
-                          theme={
-                            quadrantThemes[
-                              Number(key) as keyof typeof quadrantThemes
-                            ]
-                          }
-                          type="quadrant"
+                          label={{
+                            value: title,
+                            theme:
+                              quadrantThemes[
+                                Number(key) as keyof typeof quadrantThemes
+                              ],
+                          }}
+                          type={Number(key) === 0 ? "backlog" : "quadrant"}
                         />
                       </DropdownMenuRadioItem>
                     ))}

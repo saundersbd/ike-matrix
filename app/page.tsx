@@ -157,7 +157,7 @@ const listView = (quadrants: boolean[], sortBy: string) => (
               {quadrantTitles[quadrantNumber]}
             </h3>
           </div>
-          <div className="flex items-center justify-center p-7 ring-1 ring-black/[.08] rounded-xl bg-white">
+          <div className="flex items-center justify-center p-7 ring-1 ring-black/[.08] rounded-xl bg-white/50">
             <span className="text-sm text-gray-500 text-center">No tasks</span>
           </div>
         </div>

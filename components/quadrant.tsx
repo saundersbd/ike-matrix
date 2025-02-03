@@ -6,8 +6,19 @@ import { Pill } from "@/components/pill";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Toggle } from "@/components/ui/toggle";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuCheckboxItem,
+} from "@/components/ui/dropdown-menu";
 import { NewTaskDialog } from "@/components/new-task-dialog";
-import { Plus, Maximize2, Eye, EyeClosed } from "lucide-react";
+import { Plus, Ellipsis, Eye, EyeClosed, Archive } from "lucide-react";
 import { THEME_COLORS, THEME_COLORS_LIST, ThemeName } from "@/app/types/Theme";
 
 interface QuadrantProps {
@@ -133,6 +144,23 @@ export function Quadrant({
                   <Eye className={isHidden ? "text-zinc-500" : iconColor} />
                 )}
               </Toggle>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={cn("h-8 w-8", hoverColor)}
+                  >
+                    <Ellipsis className={`w-4 h-4 ${iconColor}`} />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56">
+                  <DropdownMenuItem>
+                    <Archive className="h-4 w-4" />
+                    Archive all
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </>
           )}
         </div>
@@ -147,10 +175,19 @@ export function Quadrant({
             <p className="text-zinc-500 text-sm font-medium text-center">
               No tasks to speak of.
             </p>
-            <Button variant="outline" size="sm" className="rounded-lg">
-              <Plus className="h-4 w-4" />
-              Add task
-            </Button>
+            <NewTaskDialog
+              theme={theme}
+              defaultDestination={
+                quadrant === 0
+                  ? "Important and urgent"
+                  : quadrant === 1
+                  ? "Important but not urgent"
+                  : quadrant === 2
+                  ? "Urgent but not important"
+                  : "Not urgent or important"
+              }
+              buttonVariant="outline"
+            />
           </div>
         )}
       </div>
