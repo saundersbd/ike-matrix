@@ -25,7 +25,7 @@ export function QuadrantSelectOption({
         padding === "dense" && type === "quadrant"
           ? "!gap-0.25 -ml-1"
           : "gap-2",
-        padding === "dense" && type === "backlog" ? "!gap-0.5" : "gap-2"
+        padding === "dense" && type === "backlog" ? "!gap-1" : "gap-2"
       )}
     >
       <div className="flex w-5 h-5 items-center justify-center">
@@ -34,7 +34,7 @@ export function QuadrantSelectOption({
         )}
         {type === "backlog" && <List className="!w-4 !h-4" />}
       </div>
-      <span className="leading-tight">{label.value}</span>
+      <span className="leading-snug text-sm">{label.value}</span>
     </div>
   );
 }

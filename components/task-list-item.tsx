@@ -1,26 +1,51 @@
 "use client";
 
 import { useTasks } from "@/app/contexts/TaskContext";
+import { useState } from "react";
 
 import { cn } from "@/lib/utils";
+import { motion } from "motion/react";
 import Link from "next/link";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Task } from "@/app/types/Task";
 import { CUSTOM_THEME_COLORS, ThemeName } from "@/app/types/CustomTheme";
 
-export function TaskListItem({ task }: { task: Task }) {
+export function TaskListItem({
+  task,
+  onComplete,
+}: {
+  task: Task;
+  onComplete?: (taskId: string) => void;
+}) {
   const { updateTask } = useTasks();
+  const [isExiting, setIsExiting] = useState(false);
 
   const themeColors =
     CUSTOM_THEME_COLORS[task.theme as ThemeName] || CUSTOM_THEME_COLORS.teal;
   const { borderColor, textColor } = themeColors;
 
   const handleCheckboxChange = (checked: boolean) => {
-    updateTask(task.id, { completed: checked });
+    if (checked) {
+      setIsExiting(true);
+      updateTask(task.id, { completed: checked });
+
+      // Notify parent after animation starts
+      onComplete?.(task.id);
+    }
   };
 
   return (
-    <div className="group/task-list-item flex gap-3 py-2.5 px-3.5 rounded-lg hover:bg-zinc-100/[.5] hover:cursor-pointer transition-all duration-150">
+    <motion.div
+      layout
+      initial={{ opacity: 1 }}
+      animate={{
+        opacity: isExiting ? 0 : 1,
+        transition: {
+          opacity: { duration: 0.2 },
+        },
+      }}
+      className="group/task-list-item flex gap-3 py-2.5 px-3.5 rounded-lg hover:bg-zinc-100/[.5] hover:cursor-pointer transition-all duration-150"
+    >
       <Checkbox
         checked={task.completed}
         onCheckedChange={handleCheckboxChange}
@@ -38,7 +63,7 @@ export function TaskListItem({ task }: { task: Task }) {
             {task.tags?.map((tag) => (
               <div
                 key={tag}
-                className={`w-max h-[22px] flex items-center gap-1.5 text-xs font-semibold px-[6px] rounded-md ${textColor} ${borderColor}`}
+                className={`w-max h-[22px] flex items-center gap-1.5 text-[.8rem] font-semibold px-[6px] rounded-md ${textColor} ${borderColor}`}
               >
                 {tag}
               </div>
@@ -57,6 +82,6 @@ export function TaskListItem({ task }: { task: Task }) {
           {task.dueDate}
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }

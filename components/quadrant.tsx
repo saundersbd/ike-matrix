@@ -1,20 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "motion/react";
 import { Pill } from "@/components/pill";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Toggle } from "@/components/ui/toggle";
+import { Task } from "@/app/types/Task";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Separator } from "@/components/ui/separator";
 import { NewTaskDialog } from "@/components/new-task-dialog";
-import { Ellipsis, Eye, EyeClosed, Archive } from "lucide-react";
+import { Ellipsis, EyeClosed, Archive } from "lucide-react";
 import { THEME_COLORS, ThemeName } from "@/app/types/Theme";
+import { TaskListItem } from "./task-list-item";
 
 interface QuadrantProps {
   quadrant: number;
@@ -23,6 +26,7 @@ interface QuadrantProps {
   children?: React.ReactNode;
   theme: ThemeName;
   hidden?: boolean;
+  tasks: Task[];
   onHideChange?: (hidden: boolean) => void;
 }
 
@@ -36,11 +40,11 @@ const backgroundTexture = [
 export function Quadrant({
   title,
   taskCount,
-  children,
   theme,
   quadrant,
   hidden,
   onHideChange,
+  tasks,
 }: QuadrantProps) {
   const themeColors = THEME_COLORS[theme] || THEME_COLORS.sky;
   const {
@@ -50,9 +54,17 @@ export function Quadrant({
     hoverColor,
     washHoverColor,
     ringColor,
+    separatorColor,
   } = themeColors;
 
   const [isAnimating, setIsAnimating] = useState(false);
+  const [exitingTaskIds, setExitingTaskIds] = useState<Set<string>>(new Set());
+
+  const visibleTasks = useMemo(() => {
+    return tasks.filter(
+      (task) => !task.completed && !exitingTaskIds.has(task.id)
+    );
+  }, [tasks, exitingTaskIds]);
 
   const handleToggleHidden = () => {
     onHideChange?.(!hidden);
@@ -63,6 +75,18 @@ export function Quadrant({
         setIsAnimating(false);
       }, 1000);
     }
+  };
+
+  const handleTaskComplete = (taskId: string) => {
+    setExitingTaskIds((prev) => new Set(prev).add(taskId));
+
+    setTimeout(() => {
+      setExitingTaskIds((prev) => {
+        const next = new Set(prev);
+        next.delete(taskId);
+        return next;
+      });
+    }, 500);
   };
 
   return (
@@ -113,22 +137,10 @@ export function Quadrant({
                 }
                 inlineTrigger
               />
-              <Toggle
-                variant="ghost"
-                size="sm"
-                className={cn(
-                  "h-8 w-8",
-                  hoverColor,
-                  hidden ? "hover:data-[state=on]:bg-zinc-100" : ""
-                )}
-                onClick={handleToggleHidden}
-              >
-                {hidden ? (
-                  <EyeClosed className={hidden ? "text-zinc-500" : iconColor} />
-                ) : (
-                  <Eye className={hidden ? "text-zinc-500" : iconColor} />
-                )}
-              </Toggle>
+              <Separator
+                orientation="vertical"
+                className={`mx-2 h-4 ${separatorColor}`}
+              />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
@@ -150,29 +162,26 @@ export function Quadrant({
           )}
         </div>
       </header>
-      <div className={`flex flex-col grow`}>
+      <div className={`flex flex-col grow transition-all duration-300`}>
         {taskCount > 0 ? (
           <ScrollArea className="grow px-3 bg-white">
-            <div className="flex flex-col gap-0 py-4">{children}</div>
+            <div className="flex flex-col gap-0 py-4">
+              <AnimatePresence initial={false}>
+                {visibleTasks.map((task) => (
+                  <TaskListItem
+                    key={task.id}
+                    task={task}
+                    onComplete={handleTaskComplete}
+                  />
+                ))}
+              </AnimatePresence>
+            </div>
           </ScrollArea>
         ) : (
-          <div className="flex flex-col grow items-center justify-center gap-6 py-4 bg-white">
+          <div className="flex flex-col grow items-center justify-center gap-6 py-4 bg-white/50">
             <p className="text-zinc-400 text-sm font-medium text-center">
               No tasks to speak of.
             </p>
-            <NewTaskDialog
-              theme={theme}
-              defaultDestination={
-                quadrant === 1
-                  ? "Important and urgent"
-                  : quadrant === 2
-                  ? "Important but not urgent"
-                  : quadrant === 3
-                  ? "Urgent but not important"
-                  : "Neither urgent nor important"
-              }
-              buttonVariant="outline"
-            />
           </div>
         )}
       </div>

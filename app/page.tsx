@@ -1,7 +1,7 @@
 "use client";
 
 import { useTasks } from "@/app/contexts/TaskContext";
-
+import { motion } from "motion/react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -79,12 +79,16 @@ export default function Home() {
   };
 
   const gridView = (sortBy: string) => (
-    <div className="grid grid-cols-2 grid-rows-2 gap-6 h-[calc(100svh-184px)]">
+    <motion.div
+      layout
+      className="grid grid-cols-2 grid-rows-2 gap-6 h-[calc(100svh-184px)]"
+    >
       <Quadrant
         quadrant={1}
         title="Important AND urgent"
         theme="red"
         taskCount={tasks.filter((task) => task.quadrant === 1).length}
+        tasks={tasks.filter((task) => task.quadrant === 1)}
         hidden={
           focusedQuadrant === "All tasks"
             ? isQuadrant1Hidden
@@ -92,19 +96,13 @@ export default function Home() {
               focusedQuadrant !== quadrantTitles[1]
         }
         onHideChange={setIsQuadrant1Hidden}
-      >
-        {sortTasks(
-          tasks.filter((task) => task.quadrant === 1),
-          sortBy
-        ).map((task) => (
-          <TaskListItem key={task.id} task={task} />
-        ))}
-      </Quadrant>
+      />
       <Quadrant
         quadrant={2}
         title="Important but not urgent"
         theme="amber"
         taskCount={tasks.filter((task) => task.quadrant === 2).length}
+        tasks={tasks.filter((task) => task.quadrant === 2)}
         hidden={
           focusedQuadrant === "All tasks"
             ? isQuadrant2Hidden
@@ -112,18 +110,13 @@ export default function Home() {
               focusedQuadrant !== quadrantTitles[2]
         }
         onHideChange={setIsQuadrant2Hidden}
-      >
-        {tasks
-          .filter((task) => task.quadrant === 2)
-          .map((task) => (
-            <TaskListItem key={task.id} task={task} />
-          ))}
-      </Quadrant>
+      />
       <Quadrant
         quadrant={3}
         title="Urgent but not important"
         theme="sky"
         taskCount={tasks.filter((task) => task.quadrant === 3).length}
+        tasks={tasks.filter((task) => task.quadrant === 3)}
         hidden={
           focusedQuadrant === "All tasks"
             ? isQuadrant3Hidden
@@ -131,18 +124,13 @@ export default function Home() {
               focusedQuadrant !== quadrantTitles[3]
         }
         onHideChange={setIsQuadrant3Hidden}
-      >
-        {tasks
-          .filter((task) => task.quadrant === 3)
-          .map((task) => (
-            <TaskListItem key={task.id} task={task} />
-          ))}
-      </Quadrant>
+      />
       <Quadrant
         quadrant={4}
         title="Neither urgent nor important"
         theme="purple"
         taskCount={tasks.filter((task) => task.quadrant === 4).length}
+        tasks={tasks.filter((task) => task.quadrant === 4)}
         hidden={
           focusedQuadrant === "All tasks"
             ? isQuadrant4Hidden
@@ -150,14 +138,8 @@ export default function Home() {
               focusedQuadrant !== quadrantTitles[4]
         }
         onHideChange={setIsQuadrant4Hidden}
-      >
-        {tasks
-          .filter((task) => task.quadrant === 4)
-          .map((task) => (
-            <TaskListItem key={task.id} task={task} />
-          ))}
-      </Quadrant>
-    </div>
+      />
+    </motion.div>
   );
 
   const listView = (quadrants: boolean[], sortBy: string) => (
@@ -257,7 +239,7 @@ export default function Home() {
         onOpenChange={setOpen}
         className="flex flex-col"
       >
-        <header className="sticky top-0 mb-0 flex shrink-0 items-center justify-between gap-4 h-[calc(var(--header-height))] bg-white px-8 border-b border-zinc-100">
+        <header className="sticky top-0 mb-0 flex shrink-0 items-center justify-between gap-4 h-[calc(var(--header-height))] bg-white px-8 border-b border-zinc-200/70">
           <SidebarTrigger />
 
           <div className="flex items-center gap-3">
@@ -367,7 +349,11 @@ export default function Home() {
           </div>
         </header>
         <div className="flex flex-1">
-          <AppSidebar tasks={tasks.filter((task) => task.quadrant === 0)} />
+          <AppSidebar
+            tasks={tasks.filter(
+              (task) => task.quadrant === 0 && task.completed === false
+            )}
+          />
           <SidebarInset
             className={`${open ? "md:mx-5" : "md:mx-8"} md:my-8 md:mr-8`}
           >

@@ -56,7 +56,9 @@ export default function TaskModal({
     return null;
   }
 
-  const hasChanges = localTask?.quadrant !== originalTask?.quadrant;
+  const hasChanges =
+    localTask?.quadrant !== originalTask?.quadrant ||
+    localTask?.completed !== originalTask?.completed;
 
   const handleQuadrantChange = (quadrant: number) => {
     setLocalTask({ ...localTask, quadrant });
@@ -64,7 +66,10 @@ export default function TaskModal({
 
   const handleSave = () => {
     // Only update the actual task state when saving
-    updateTask(localTask.id, { quadrant: localTask.quadrant });
+    updateTask(localTask.id, {
+      quadrant: localTask.quadrant,
+      completed: localTask.completed,
+    });
     router.back();
   };
 
@@ -84,6 +89,10 @@ export default function TaskModal({
 
   const handleCancelClose = () => {
     setShowUnsavedChangesAlert(false);
+  };
+
+  const handleCheckboxChange = (checked: boolean) => {
+    setLocalTask({ ...localTask, completed: checked });
   };
 
   const quadrantTitles: Record<number, string> = {
@@ -110,7 +119,11 @@ export default function TaskModal({
           <DialogTitle className="sr-only">Edit task</DialogTitle>
 
           <div className="flex gap-3.5 p-6 pb-8">
-            <Checkbox className="shrink-0 mt-[4px]" />
+            <Checkbox
+              className="shrink-0 mt-[4px]"
+              checked={localTask.completed}
+              onCheckedChange={handleCheckboxChange}
+            />
             <div className="flex flex-col grow gap-8">
               <div className="flex flex-col gap-3">
                 <h1 className="text-lg font-medium leading-snug">

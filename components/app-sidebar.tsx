@@ -26,7 +26,7 @@ export function AppSidebar({ tasks }: { tasks: Task[] }) {
       </SidebarHeader>
       <SidebarContent>
         <ScrollArea className="grow py-5 px-3">
-          <div className="flex flex-col gap-0">
+          <div className="flex flex-col gap-0 transition-all duration-300">
             {tasks.length > 0
               ? tasks.map((task) => (
                   <BacklogListItem key={task.id} task={task} />
