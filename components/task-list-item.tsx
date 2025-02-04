@@ -23,13 +23,8 @@ export function TaskListItem({ task }: { task: Task }) {
   return (
     <div
       className={cn(
-        "group/task-list-item flex gap-3 py-2.5 px-3.5 rounded-lg hover:bg-zinc-100/[.5] hover:cursor-pointer",
-        "transform-gpu transition-all duration-300 ease-in-out will-change-transform",
-        task.isCompletionTransitioning && "opacity-0 -translate-x-4"
+        "group/task-list-item flex gap-3 py-2.5 px-3.5 rounded-lg hover:bg-zinc-100/[.5] hover:cursor-pointer"
       )}
-      style={{
-        transformOrigin: "top center",
-      }}
     >
       <Checkbox
         checked={task.completed}

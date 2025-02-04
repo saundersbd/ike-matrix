@@ -1,6 +1,7 @@
 "use client";
 
 import { useTasks } from "@/app/contexts/TaskContext";
+import { useHotkeys } from "react-hotkeys-hook";
 import { useToast } from "@/hooks/use-toast";
 
 import { useState } from "react";
@@ -60,22 +61,34 @@ export function NewTaskDialog({
   inlineTrigger = false,
   theme = "sky",
   buttonVariant = "default",
+  isOpen,
+  onOpenChange,
 }: {
   defaultDestination: string;
   inlineTrigger?: boolean;
   theme?: ThemeName;
   buttonVariant?: "default" | "outline";
+  isOpen?: boolean;
+  onOpenChange?: (isOpen: boolean) => void;
 }) {
   const { toast } = useToast();
 
   const { createTask } = useTasks();
   const [open, setOpen] = useState(false);
+  const handleOpenChange = (newOpen: boolean) => {
+    setOpen(newOpen);
+    onOpenChange?.(newOpen);
+  };
+
+  const isDialogOpen = isOpen ?? open;
+  const setIsDialogOpen = onOpenChange ?? setOpen;
+
   const [error, setError] = useState("");
 
   const handleCreateTask = () => {
     // Validate title
     if (!taskText.trim()) {
-      setError("How are you supposed to complete a task with no title?");
+      setError("You have to name a task if you hope to complete it some day.");
       return;
     }
 
@@ -87,7 +100,6 @@ export function NewTaskDialog({
       description: taskDescriptionText.trim(),
       dueDate: dueDate
         ? format(
-            // Combine date and time if both are present
             dueTime
               ? new Date(
                   dueDate.setHours(dueTime.getHours(), dueTime.getMinutes())
@@ -107,7 +119,7 @@ export function NewTaskDialog({
     });
 
     if (!continueAdding) {
-      setOpen(false);
+      setIsDialogOpen(false);
     }
     // Reset form
     setTaskText("");
@@ -216,9 +228,23 @@ export function NewTaskDialog({
     setShowUnsavedChangesAlert(false);
   };
 
+  useHotkeys(
+    "mod+enter",
+    (e) => {
+      e.preventDefault();
+      if (isDialogOpen) {
+        handleCreateTask();
+      }
+    },
+    {
+      enableOnFormTags: true,
+    },
+    [isDialogOpen, handleCreateTask]
+  );
+
   return (
     <>
-      <Dialog open={open} onOpenChange={handleClose}>
+      <Dialog open={isDialogOpen} onOpenChange={handleOpenChange}>
         <DialogTrigger asChild onClick={() => setOpen(true)}>
           {inlineTrigger ? (
             <Button
@@ -253,7 +279,7 @@ export function NewTaskDialog({
           <DialogTitle className="sr-only">Add a new task</DialogTitle>
 
           {error && (
-            <div className="pt-7 px-5">
+            <div className="pt-6 px-5">
               <Alert variant="destructive">
                 <OctagonAlert className="h-4 w-4" />
                 <AlertTitle className="sr-only">Error</AlertTitle>
@@ -484,7 +510,7 @@ export function NewTaskDialog({
                   variant="outline"
                   onClick={() => handleClose(false)}
                 >
-                  Cancel
+                  Dismiss
                 </Button>
                 <Button
                   size="sm"

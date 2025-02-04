@@ -1,6 +1,7 @@
 "use client";
 
 import { useTasks } from "@/app/contexts/TaskContext";
+import { useHotkeys } from "react-hotkeys-hook";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -39,6 +40,21 @@ export default function Home() {
   const [isQuadrant2Hidden, setIsQuadrant2Hidden] = useState(false);
   const [isQuadrant3Hidden, setIsQuadrant3Hidden] = useState(false);
   const [isQuadrant4Hidden, setIsQuadrant4Hidden] = useState(false);
+  const [isNewTaskDialogOpen, setIsNewTaskDialogOpen] = useState(false);
+
+  useHotkeys(
+    "mod+k",
+    (e) => {
+      e.preventDefault();
+      if (!isNewTaskDialogOpen) {
+        setIsNewTaskDialogOpen(true);
+      }
+    },
+    {
+      enableOnFormTags: true,
+    },
+    [isNewTaskDialogOpen]
+  );
 
   const sortTasks = (tasks: Task[], sortBy: string) => {
     return [...tasks].sort((a, b) => {
@@ -183,7 +199,9 @@ export default function Home() {
 
           const quadrantTasks = sortTasks(
             tasks.filter(
-              (task) => task.quadrant === quadrantNumber && !task.completed
+              (task) =>
+                task.quadrant === quadrantNumber &&
+                (!task.completed || task.isCompletionTransitioning)
             ),
             sortBy
           );
@@ -375,13 +393,22 @@ export default function Home() {
               orientation="vertical"
               className="h-[20px] mx-2 bg-zinc-300"
             />
-            <NewTaskDialog defaultDestination="Backlog" />
+            <NewTaskDialog
+              defaultDestination="Backlog"
+              isOpen={isNewTaskDialogOpen}
+              onOpenChange={setIsNewTaskDialogOpen}
+            />
           </div>
         </header>
         <div className="flex flex-1">
           <AppSidebar
-            tasks={tasks.filter(
-              (task) => task.quadrant === 0 && task.completed === false
+            tasks={sortTasks(
+              tasks.filter(
+                (task) =>
+                  task.quadrant === 0 &&
+                  (!task.completed || task.isCompletionTransitioning)
+              ),
+              sortBy
             )}
           />
           <SidebarInset

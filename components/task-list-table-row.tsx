@@ -6,11 +6,13 @@ import Link from "next/link";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Task } from "@/app/types/Task";
 
+import { handleTaskCompletion } from "@/app/utils/taskHandlers";
+
 export function TaskListTableRow({ task }: { task: Task }) {
   const { updateTask } = useTasks();
 
   const handleCheckboxChange = (checked: boolean) => {
-    updateTask(task.id, { completed: checked });
+    handleTaskCompletion(checked, task, updateTask);
   };
 
   return (

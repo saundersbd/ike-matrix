@@ -76,7 +76,7 @@ export function Quadrant({
     <div
       data-hidden={hidden}
       className={cn(
-        "group relative flex flex-col rounded-2xl overflow-hidden ring-1 transition-all duration-300",
+        "group relative flex flex-col rounded-2xl overflow-hidden ring-1",
         "data-[hidden=true]:shadow-none data-[hidden=false]:shadow-sm",
         {
           [ringColor]: hidden,
@@ -145,34 +145,17 @@ export function Quadrant({
           )}
         </div>
       </header>
-      <div
-        className={`flex flex-col grow transition-all duration-300 bg-white`}
-      >
+      <div className="flex flex-col grow bg-white">
         {tasksToDisplay.length > 0 ? (
           <ScrollArea className="grow px-3 bg-white">
             <div className="grid grid-cols-1 auto-rows-max gap-0 py-4">
               {tasks.map((task) => (
-                <div
-                  key={task.id}
-                  className={cn(
-                    "transition-all duration-300 ease-in-out",
-                    task.completed &&
-                      !task.isCompletionTransitioning && [
-                        "h-0",
-                        "opacity-0",
-                        "overflow-hidden",
-                        "transform-gpu",
-                        "-translate-y-full",
-                      ]
-                  )}
-                >
-                  <TaskListItem task={task} />
-                </div>
+                <TaskListItem key={task.id} task={task} />
               ))}
             </div>
           </ScrollArea>
         ) : (
-          <div className="flex flex-col grow items-center justify-center gap-6 py-4 bg-white animate-in fade-in opacity-100 duration-300">
+          <div className="flex flex-col grow items-center justify-center gap-6 py-4 bg-white">
             <p className="text-zinc-400 text-sm font-medium text-center">
               No tasks to speak of.
             </p>
@@ -181,12 +164,12 @@ export function Quadrant({
       </div>
       <div
         className={cn(
-          "absolute opacity-0 inset-0 z-20 flex flex-col grow items-center justify-center transition-all duration-200 ease-in-out",
+          "absolute inset-0 z-20 flex flex-col grow items-center justify-center",
           backgroundTexture[quadrant - 1],
           bgColor,
           {
-            "animate-in fade-in zoom-in-75 opacity-100": hidden,
-            "animate-out fade-out zoom-out-75 opacity-0": !hidden,
+            "opacity-100": hidden,
+            "opacity-0": !hidden,
             hidden: !hidden && !isAnimating,
           }
         )}
