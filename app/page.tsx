@@ -117,7 +117,7 @@ export default function Home() {
     <div className="grid grid-cols-2 grid-rows-2 gap-6 h-[calc(100svh-184px)]">
       <Quadrant
         quadrant={1}
-        title="Important AND urgent"
+        title="Important AND urgent -> Do first"
         theme="red"
         tasks={sortTasks(
           tasks.filter(
@@ -137,7 +137,7 @@ export default function Home() {
       />
       <Quadrant
         quadrant={2}
-        title="Important but not urgent"
+        title="Important but not urgent -> Schedule"
         theme="amber"
         tasks={sortTasks(
           tasks.filter(
@@ -157,7 +157,7 @@ export default function Home() {
       />
       <Quadrant
         quadrant={3}
-        title="Urgent but not important"
+        title="Urgent but not important -> Delegate"
         theme="sky"
         tasks={sortTasks(
           tasks.filter(
@@ -177,7 +177,7 @@ export default function Home() {
       />
       <Quadrant
         quadrant={4}
-        title="Neither urgent nor important"
+        title="Neither urgent nor important -> Toss"
         theme="purple"
         tasks={sortTasks(
           tasks.filter(
@@ -199,7 +199,7 @@ export default function Home() {
   );
 
   const listView = (quadrants: boolean[], sortBy: string) => (
-    <div className="max-w-4xl mx-auto py-2 flex flex-col h-[calc(100svh-(var(--header-height)+82px))]">
+    <div className="max-w-4xl mx-auto py-2 px-4 flex flex-col h-[calc(100svh-(var(--header-height)+82px))]">
       {!quadrants.some((q) => q) ? (
         <div className="flex flex-col items-center justify-center h-full gap-4">
           <span className="text-sm text-gray-500 text-center">

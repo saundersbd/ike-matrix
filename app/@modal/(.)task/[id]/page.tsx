@@ -18,6 +18,7 @@ import {
   DialogContent,
   DialogTitle,
   DialogFooter,
+  DialogHeader,
 } from "@/components/ui/dialog";
 import {
   DropdownMenu,
@@ -27,6 +28,17 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarGroupContent,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+} from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { QuadrantSelectOption } from "@/components/quadrant-select-option";
@@ -113,84 +125,108 @@ export default function TaskModal({
   return (
     <>
       <Dialog open onOpenChange={handleClose} modal={true}>
-        <DialogContent className="flex flex-col grow p-0 overflow-y-auto min-h-[70vh] max-h-[85vh] max-w-3xl">
-          <DialogTitle className="sr-only">Edit task</DialogTitle>
+        <DialogContent className="flex flex-col p-0 overflow-y-auto max-h-[720px] max-w-4xl">
+          <DialogHeader className="p-6 border-b border-zinc-200">
+            <DialogTitle className="text-lg font-medium leading-tight">
+              Task details
+            </DialogTitle>
+          </DialogHeader>
 
-          <div className="flex grow gap-3.5 p-6 pb-8">
-            <Checkbox
-              className="shrink-0 mt-[4px]"
-              checked={localTask.completed}
-              onCheckedChange={handleCheckboxChange}
-            />
-            <div className="flex flex-col grow gap-8">
-              <div className="flex flex-col gap-3">
-                <h1 className="text-lg font-medium leading-snug">
-                  {localTask.title}
-                </h1>
-                {localTask.description && (
-                  <div>
-                    <p className="text-sm text-zinc-500">
-                      {localTask.description}
-                    </p>
-                  </div>
-                )}
-              </div>
-              <div className="flex gap-2">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="chip"
-                      className="rounded-lg text-xs font-semibold text-zinc-700 hover:ring-zinc-300 transition-all duration-150"
-                    >
-                      <QuadrantSelectOption
-                        label={{
-                          value: quadrantTitles[localTask.quadrant],
-                          theme: quadrantThemes[localTask.quadrant],
+          <SidebarProvider className="overflow-hidden items-start min-h-[100px]">
+            <div className="flex flex-1 gap-3.5 p-6 pb-8 overflow-hidden h-[720px]">
+              <Checkbox
+                className="shrink-0 mt-[2px]"
+                checked={localTask.completed}
+                onCheckedChange={handleCheckboxChange}
+              />
+              <div className="flex flex-col grow gap-8">
+                <div className="flex flex-col gap-3">
+                  <h1 className="text-lg font-medium leading-snug">
+                    {localTask.title}
+                  </h1>
+                  {localTask.description && (
+                    <div>
+                      <p className="text-sm text-zinc-500">
+                        {localTask.description}
+                      </p>
+                    </div>
+                  )}
+                </div>
+                <div className="flex gap-2">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="chip"
+                        className="rounded-lg text-xs font-semibold text-zinc-700 hover:ring-zinc-300 transition-all duration-150"
+                      >
+                        <QuadrantSelectOption
+                          label={{
+                            value: quadrantTitles[localTask.quadrant],
+                            theme: quadrantThemes[localTask.quadrant],
+                          }}
+                          type={
+                            localTask.quadrant === 0 ? "backlog" : "quadrant"
+                          }
+                          padding="dense"
+                        />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-68">
+                      <DropdownMenuLabel>Select a list</DropdownMenuLabel>
+                      <DropdownMenuRadioGroup
+                        value={quadrantTitles[localTask.quadrant]}
+                        onValueChange={(value) => {
+                          handleQuadrantChange(
+                            Number(
+                              Object.keys(quadrantTitles).find(
+                                (key) => quadrantTitles[Number(key)] === value
+                              )
+                            ) || 0
+                          );
                         }}
-                        type={localTask.quadrant === 0 ? "backlog" : "quadrant"}
-                        padding="dense"
-                      />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-68">
-                    <DropdownMenuLabel>Select a list</DropdownMenuLabel>
-                    <DropdownMenuRadioGroup
-                      value={quadrantTitles[localTask.quadrant]}
-                      onValueChange={(value) => {
-                        handleQuadrantChange(
-                          Number(
-                            Object.keys(quadrantTitles).find(
-                              (key) => quadrantTitles[Number(key)] === value
-                            )
-                          ) || 0
-                        );
-                      }}
-                    >
-                      {Object.entries(quadrantTitles).map(([key, title]) => (
-                        <DropdownMenuRadioItem
-                          key={key}
-                          value={title}
-                          className="cursor-pointer"
-                        >
-                          <QuadrantSelectOption
-                            label={{
-                              value: title,
-                              theme:
-                                quadrantThemes[
-                                  Number(key) as keyof typeof quadrantThemes
-                                ],
-                            }}
-                            type={Number(key) === 0 ? "backlog" : "quadrant"}
-                          />
-                        </DropdownMenuRadioItem>
-                      ))}
-                    </DropdownMenuRadioGroup>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                      >
+                        {Object.entries(quadrantTitles).map(([key, title]) => (
+                          <DropdownMenuRadioItem
+                            key={key}
+                            value={title}
+                            className="cursor-pointer"
+                          >
+                            <QuadrantSelectOption
+                              label={{
+                                value: title,
+                                theme:
+                                  quadrantThemes[
+                                    Number(key) as keyof typeof quadrantThemes
+                                  ],
+                              }}
+                              type={Number(key) === 0 ? "backlog" : "quadrant"}
+                            />
+                          </DropdownMenuRadioItem>
+                        ))}
+                      </DropdownMenuRadioGroup>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
               </div>
             </div>
-          </div>
+            <Sidebar
+              side="right"
+              collapsible="none"
+              className="w-[264px] h-[720px] hidden md:flex bg-zinc-50"
+            >
+              <SidebarContent>
+                <SidebarGroup>
+                  <SidebarGroupLabel>Project</SidebarGroupLabel>
+                  <SidebarGroupContent>
+                    <SidebarMenu>
+                      <SidebarMenuButton>Hello</SidebarMenuButton>
+                    </SidebarMenu>
+                  </SidebarGroupContent>
+                </SidebarGroup>
+              </SidebarContent>
+            </Sidebar>
+          </SidebarProvider>
           <DialogFooter className="shrink-0 py-4 px-5 border-t border-zinc-200">
             <Button size="sm" disabled={!hasChanges} onClick={handleSave}>
               Save and close

@@ -21,11 +21,7 @@ export function TaskListItem({ task }: { task: Task }) {
   };
 
   return (
-    <div
-      className={cn(
-        "group/task-list-item flex gap-3 py-2.5 px-3.5 rounded-lg hover:bg-zinc-100/[.5] hover:cursor-pointer"
-      )}
-    >
+    <div className={cn("group/task-list-item flex gap-3.5")}>
       <Checkbox
         checked={task.completed}
         onCheckedChange={handleCheckboxChange}
@@ -34,7 +30,7 @@ export function TaskListItem({ task }: { task: Task }) {
       <div className="flex grow flex-col gap-0.5">
         <Link
           href={`/task/${task.id}`}
-          className="grow peer-data-[state=checked]:line-through peer-data-[state=checked]:text-zinc-400 text-base leading-snug font-medium"
+          className="grow peer-data-[state=checked]:line-through peer-data-[state=checked]:text-zinc-400 text-base leading-snug font-medium hover:underline"
         >
           {task.title}
         </Link>
@@ -55,7 +51,7 @@ export function TaskListItem({ task }: { task: Task }) {
       {task.dueDate && (
         <div
           className={cn(
-            "shrink-0 flex gap-1.5 text-sm font-medium text-zinc-400 group-hover/task-list-item:text-zinc-500",
+            "shrink-0 flex gap-1.5 text-sm font-medium text-zinc-400",
             (task.tags ?? []).length > 0 ? "items-start" : "items-center"
           )}
         >

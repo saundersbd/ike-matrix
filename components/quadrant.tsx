@@ -17,7 +17,7 @@ import { NewTaskDialog } from "@/components/new-task-dialog";
 import { Ellipsis, EyeClosed, Archive } from "lucide-react";
 import { THEME_COLORS, ThemeName } from "@/app/types/Theme";
 import { TaskListItem } from "./task-list-item";
-
+import { TaskList } from "./task-list";
 interface QuadrantProps {
   quadrant: number;
   title: string;
@@ -85,11 +85,16 @@ export function Quadrant({
       )}
     >
       <header
-        className={`shrink-0 py-3 pl-5 pr-4 flex items-center justify-between ${
+        className={`shrink-0 py-3 px-4 flex items-center justify-between ${
           hidden ? "bg-white/[.35]" : bgColor
         }`}
       >
-        <div className="flex items-center gap-2 min-h-8">
+        <div className="flex items-center gap-2.5 min-h-8">
+          <Pill
+            count={taskCount}
+            theme={theme}
+            className={hidden ? "bg-zinc-200 text-zinc-800" : ""}
+          />
           <h2
             className={cn(
               hidden ? "text-zinc-600" : textColor,
@@ -98,11 +103,6 @@ export function Quadrant({
           >
             {title}
           </h2>
-          <Pill
-            count={taskCount}
-            theme={theme}
-            className={hidden ? "bg-zinc-200 text-zinc-800" : ""}
-          />
         </div>
         <div className="flex items-center">
           {hidden ? null : (
@@ -147,12 +147,12 @@ export function Quadrant({
       </header>
       <div className="flex flex-col grow bg-white">
         {tasksToDisplay.length > 0 ? (
-          <ScrollArea className="grow px-3 bg-white">
-            <div className="grid grid-cols-1 auto-rows-max gap-0 py-4">
+          <ScrollArea className="grow bg-white">
+            <TaskList className="p-5">
               {tasks.map((task) => (
                 <TaskListItem key={task.id} task={task} />
               ))}
-            </div>
+            </TaskList>
           </ScrollArea>
         ) : (
           <div className="flex flex-col grow items-center justify-center gap-6 py-4 bg-white">
