@@ -50,7 +50,7 @@ export function TaskListItem({ task }: { task: Task }) {
       {task.dueDate && (
         <div
           className={cn(
-            "shrink-0 flex gap-1.5 text-xs font-semibold font-mono text-zinc-400 group-hover/task-list-item:text-zinc-500",
+            "shrink-0 flex gap-1.5 text-sm font-medium text-zinc-400 group-hover/task-list-item:text-zinc-500",
             (task.tags ?? []).length > 0 ? "items-start" : "items-center"
           )}
         >

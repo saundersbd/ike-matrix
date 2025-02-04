@@ -1,6 +1,7 @@
 "use client";
 
 import { useTasks } from "@/app/contexts/TaskContext";
+import Link from "next/link";
 
 import { Checkbox } from "@/components/ui/checkbox";
 import { Task } from "@/app/types/Task";
@@ -13,18 +14,22 @@ export function TaskListTableRow({ task }: { task: Task }) {
   };
 
   return (
-    <div className="group flex items-center gap-3 py-3 px-1 transition-all duration-150 border-b border-zinc-200 last:border-b-0">
+    <div className="group flex items-center gap-3 transition-all duration-150">
       <Checkbox
         checked={task.completed}
         onCheckedChange={handleCheckboxChange}
         className="border-zinc-300 group-hover:border-zinc-400"
       />
-      <p className="grow peer-data-[state=checked]:line-through peer-data-[state=checked]:text-zinc-400 text-base leading-snug font-medium">
-        {task.title}
-      </p>
-      <div className="flex">
+      <div className="flex grow gap-2 peer-data-[state=checked]:line-through peer-data-[state=checked]:text-zinc-400 border-b border-zinc-200 group-last:border-b-0 py-3 px-0.5">
+        <Link
+          href={`/task/${task.id}`}
+          className="grow text-base leading-snug font-medium"
+        >
+          {task.title}
+        </Link>
+
         {task.dueDate && (
-          <div className="flex items-center gap-1.5 text-xs font-semibold font-mono text-zinc-400 group-hover/task-list-item:text-zinc-500">
+          <div className="shrink-0 flex items-center gap-1.5 text-sm font-medium text-zinc-400 group-hover/task-list-item:text-zinc-500">
             {task.dueDate}
           </div>
         )}

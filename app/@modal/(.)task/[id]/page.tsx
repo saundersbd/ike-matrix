@@ -107,21 +107,23 @@ export default function TaskModal({
       <Dialog open onOpenChange={handleClose} modal={true}>
         <DialogContent className="p-0 overflow-y-auto max-h-[90vh]">
           <DialogClose onClick={handleClose} />
-          <DialogTitle className="sr-only">Task details</DialogTitle>
+          <DialogTitle className="sr-only">Edit task</DialogTitle>
 
-          <div className="flex gap-3.5 p-6">
+          <div className="flex gap-3.5 p-6 pb-8">
             <Checkbox className="shrink-0 mt-[4px]" />
-            <div className="flex flex-col grow gap-2.5">
-              <h1 className="text-lg font-medium leading-snug">
-                {localTask.title}
-              </h1>
-              {localTask.description && (
-                <div>
-                  <p className="text-sm text-zinc-500">
-                    {localTask.description}
-                  </p>
-                </div>
-              )}
+            <div className="flex flex-col grow gap-8">
+              <div className="flex flex-col gap-3">
+                <h1 className="text-lg font-medium leading-snug">
+                  {localTask.title}
+                </h1>
+                {localTask.description && (
+                  <div>
+                    <p className="text-sm text-zinc-500">
+                      {localTask.description}
+                    </p>
+                  </div>
+                )}
+              </div>
               <div className="flex gap-2">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -178,7 +180,7 @@ export default function TaskModal({
               </div>
             </div>
           </div>
-          <DialogFooter className="">
+          <DialogFooter className="py-4 px-5 border-t border-zinc-200">
             <Button size="sm" disabled={!hasChanges} onClick={handleSave}>
               Save and close
             </Button>

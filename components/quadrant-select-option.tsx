@@ -4,7 +4,7 @@ import { THEME_COLORS, ThemeName } from "@/app/types/Theme";
 
 interface QuadrantSelectOptionProps {
   label: {
-    value: string;
+    value: string | null;
     theme: ThemeName;
   };
   type: "quadrant" | "backlog";

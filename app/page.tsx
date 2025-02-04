@@ -29,14 +29,19 @@ import { ArrowUpDown, Circle, Filter, Grid2X2, List } from "lucide-react";
 import { THEME_COLORS, ThemeName } from "@/app/types/Theme";
 import { useState } from "react";
 import { Task } from "@/app/types/Task";
+import { QuadrantSelectOption } from "@/components/quadrant-select-option";
 
 export default function Home() {
   const [view, setView] = useState<"grid" | "list">("grid");
   const [sortBy, setSortBy] = useState("created");
   const [quadrants, setQuadrants] = useState([true, true, true, true]);
   const [open, setOpen] = useState(true);
-
+  const [focusedQuadrant, setFocusedQuadrant] = useState("All tasks");
   const { tasks } = useTasks();
+  const [isQuadrant1Hidden, setIsQuadrant1Hidden] = useState(false);
+  const [isQuadrant2Hidden, setIsQuadrant2Hidden] = useState(false);
+  const [isQuadrant3Hidden, setIsQuadrant3Hidden] = useState(false);
+  const [isQuadrant4Hidden, setIsQuadrant4Hidden] = useState(false);
 
   const sortTasks = (tasks: Task[], sortBy: string) => {
     return [...tasks].sort((a, b) => {
@@ -59,6 +64,20 @@ export default function Home() {
     });
   };
 
+  const quadrantTitles: Record<number, string> = {
+    1: "Important and urgent",
+    2: "Important but not urgent",
+    3: "Urgent but not important",
+    4: "Neither urgent nor important",
+  };
+
+  const quadrantThemes: Record<number, ThemeName> = {
+    1: "red",
+    2: "amber",
+    3: "sky",
+    4: "purple",
+  };
+
   const gridView = (sortBy: string) => (
     <div className="grid grid-cols-2 grid-rows-2 gap-6 h-[calc(100svh-184px)]">
       <Quadrant
@@ -66,6 +85,13 @@ export default function Home() {
         title="Important AND urgent"
         theme="red"
         taskCount={tasks.filter((task) => task.quadrant === 1).length}
+        hidden={
+          focusedQuadrant === "All tasks"
+            ? isQuadrant1Hidden
+            : focusedQuadrant !== "All tasks" &&
+              focusedQuadrant !== quadrantTitles[1]
+        }
+        onHideChange={setIsQuadrant1Hidden}
       >
         {sortTasks(
           tasks.filter((task) => task.quadrant === 1),
@@ -79,6 +105,13 @@ export default function Home() {
         title="Important but not urgent"
         theme="amber"
         taskCount={tasks.filter((task) => task.quadrant === 2).length}
+        hidden={
+          focusedQuadrant === "All tasks"
+            ? isQuadrant2Hidden
+            : focusedQuadrant !== "All tasks" &&
+              focusedQuadrant !== quadrantTitles[2]
+        }
+        onHideChange={setIsQuadrant2Hidden}
       >
         {tasks
           .filter((task) => task.quadrant === 2)
@@ -91,6 +124,13 @@ export default function Home() {
         title="Urgent but not important"
         theme="sky"
         taskCount={tasks.filter((task) => task.quadrant === 3).length}
+        hidden={
+          focusedQuadrant === "All tasks"
+            ? isQuadrant3Hidden
+            : focusedQuadrant !== "All tasks" &&
+              focusedQuadrant !== quadrantTitles[3]
+        }
+        onHideChange={setIsQuadrant3Hidden}
       >
         {tasks
           .filter((task) => task.quadrant === 3)
@@ -103,6 +143,13 @@ export default function Home() {
         title="Neither urgent nor important"
         theme="purple"
         taskCount={tasks.filter((task) => task.quadrant === 4).length}
+        hidden={
+          focusedQuadrant === "All tasks"
+            ? isQuadrant4Hidden
+            : focusedQuadrant !== "All tasks" &&
+              focusedQuadrant !== quadrantTitles[4]
+        }
+        onHideChange={setIsQuadrant4Hidden}
       >
         {tasks
           .filter((task) => task.quadrant === 4)
@@ -114,67 +161,91 @@ export default function Home() {
   );
 
   const listView = (quadrants: boolean[], sortBy: string) => (
-    <div className="max-w-5xl mx-auto px-5 flex flex-col h-[calc(100svh-(var(--header-height)+82px))]">
-      {[1, 3, 2, 4].map((quadrantNumber) => {
-        if (!quadrants[quadrantNumber - 1]) return null;
-        const quadrantTasks = sortTasks(
-          tasks.filter((task) => task.quadrant === quadrantNumber),
-          sortBy
-        );
-        const quadrantTitles: Record<number, string> = {
-          1: "Important and urgent",
-          2: "Important but not urgent",
-          3: "Urgent but not important",
-          4: "Not urgent nor important",
-        };
-        const quadrantThemes: Record<number, ThemeName> = {
-          1: "red",
-          2: "amber",
-          3: "sky",
-          4: "gray",
-        };
+    <div className="max-w-5xl mx-auto px-5 py-2 flex flex-col h-[calc(100svh-(var(--header-height)+82px))]">
+      {!quadrants.some((q) => q) ? (
+        <div className="flex flex-col items-center justify-center h-full gap-4">
+          <span className="text-sm text-gray-500 text-center">
+            All quadrants are hidden. Use the "Show" filter to display tasks.
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            className="rounded-lg"
+            onClick={() => setQuadrants([true, true, true, true])}
+          >
+            Bring 'em back
+          </Button>
+        </div>
+      ) : (
+        [1, 3, 2, 4].map((quadrantNumber) => {
+          if (!quadrants[quadrantNumber - 1]) return null;
 
-        return quadrantTasks.length > 0 ? (
-          <div key={quadrantNumber} className="mb-6 last:mb-0">
-            <div className="flex items-center gap-2.5 mb-4 ml-3">
-              <Circle
-                className={`w-[8px] h-[8px] ${
-                  THEME_COLORS[quadrantThemes[quadrantNumber]].accentColor
-                }`}
-              />
-              <h3 className="text-sm font-semibold text-gray-500">
-                {quadrantTitles[quadrantNumber]}
-              </h3>
-            </div>
+          const quadrantTasks = sortTasks(
+            tasks.filter((task) => task.quadrant === quadrantNumber),
+            sortBy
+          );
 
-            <div className="px-5 py-3 ring-1 ring-black/[.08] rounded-2xl bg-white shadow-sm">
-              {quadrantTasks.map((task) => (
-                <TaskListTableRow key={task.id} task={task} />
-              ))}
+          return quadrantTasks.length > 0 ? (
+            <div key={quadrantNumber} className="mb-6 last:mb-0">
+              <div className="flex items-center gap-2.5 mb-4 ml-3">
+                <Circle
+                  className={`w-[8px] h-[8px] ${
+                    THEME_COLORS[quadrantThemes[quadrantNumber]].accentColor
+                  }`}
+                />
+                <h3 className="text-sm font-semibold text-gray-500">
+                  {quadrantTitles[quadrantNumber]}
+                </h3>
+              </div>
+
+              <div className="px-5 py-4 ring-1 ring-black/[.08] rounded-2xl bg-white shadow-sm">
+                {quadrantTasks.map((task) => (
+                  <TaskListTableRow key={task.id} task={task} />
+                ))}
+              </div>
             </div>
-          </div>
-        ) : (
-          <div key={quadrantNumber} className="mb-6 last:mb-0">
-            <div className="flex items-center gap-2.5 mb-4 ml-3">
-              <Circle
-                className={`w-[8px] h-[8px] ${
-                  THEME_COLORS[quadrantThemes[quadrantNumber]].accentColor
-                }`}
-              />
-              <h3 className="text-sm font-medium text-gray-500">
-                {quadrantTitles[quadrantNumber]}
-              </h3>
+          ) : (
+            <div key={quadrantNumber} className="mb-6 last:mb-0">
+              <div className="flex items-center gap-2.5 mb-4 ml-3">
+                <Circle
+                  className={`w-[8px] h-[8px] ${
+                    THEME_COLORS[quadrantThemes[quadrantNumber]].accentColor
+                  }`}
+                />
+                <h3 className="text-sm font-medium text-gray-500">
+                  {quadrantTitles[quadrantNumber]}
+                </h3>
+              </div>
+              <div className="flex items-center justify-center p-7 ring-1 ring-black/[.08] rounded-xl bg-white/50">
+                <span className="text-sm text-gray-500 text-center">
+                  No tasks
+                </span>
+              </div>
             </div>
-            <div className="flex items-center justify-center p-7 ring-1 ring-black/[.08] rounded-xl bg-white/50">
-              <span className="text-sm text-gray-500 text-center">
-                No tasks
-              </span>
-            </div>
-          </div>
-        );
-      })}
+          );
+        })
+      )}
     </div>
   );
+
+  const focusedQuadrantLabel = (quadrant: string) => {
+    // Get the quadrant number by finding the matching title
+    const quadrantNumber = Object.entries(quadrantTitles).find(
+      ([_, title]) => title === quadrant
+    )?.[0];
+
+    // Use the corresponding theme color, or default to gray for "All tasks"
+    const themeColor = quadrantNumber
+      ? THEME_COLORS[quadrantThemes[parseInt(quadrantNumber)]]
+      : THEME_COLORS.gray;
+
+    return (
+      <div className="flex items-center gap-1.5">
+        <Circle className={`!w-[8px] !h-[8px] ${themeColor.accentColor}`} />
+        {quadrant}
+      </div>
+    );
+  };
 
   return (
     <Tabs
@@ -192,70 +263,61 @@ export default function Home() {
           <div className="flex items-center gap-3">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="rounded-lg"
-                  disabled={view !== "list"}
-                >
+                <Button variant="outline" size="sm" className="rounded-lg">
                   <Filter className="h-4 w-4" />
-                  Show
+                  {focusedQuadrant === "All tasks"
+                    ? "All tasks"
+                    : focusedQuadrantLabel(focusedQuadrant)}
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56">
-                <DropdownMenuLabel>Show sections</DropdownMenuLabel>
-                <DropdownMenuCheckboxItem
-                  checked={quadrants[0]}
-                  onCheckedChange={() => {
-                    setQuadrants([
-                      !quadrants[0],
-                      quadrants[1],
-                      quadrants[2],
-                      quadrants[3],
-                    ]);
+              <DropdownMenuContent className="w-66">
+                <DropdownMenuRadioGroup
+                  value={focusedQuadrant}
+                  onValueChange={(value) => {
+                    setFocusedQuadrant(value);
+                    setQuadrants(
+                      value === "All tasks"
+                        ? [true, true, true, true]
+                        : [
+                            value === quadrantTitles[1],
+                            value === quadrantTitles[2],
+                            value === quadrantTitles[3],
+                            value === quadrantTitles[4],
+                          ]
+                    );
                   }}
                 >
-                  Important and urgent
-                </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem
-                  checked={quadrants[1]}
-                  onCheckedChange={() => {
-                    setQuadrants([
-                      quadrants[0],
-                      !quadrants[1],
-                      quadrants[2],
-                      quadrants[3],
-                    ]);
-                  }}
-                >
-                  Important but not urgent
-                </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem
-                  checked={quadrants[2]}
-                  onCheckedChange={() => {
-                    setQuadrants([
-                      quadrants[0],
-                      quadrants[1],
-                      !quadrants[2],
-                      quadrants[3],
-                    ]);
-                  }}
-                >
-                  Urgent but not important
-                </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem
-                  checked={quadrants[3]}
-                  onCheckedChange={() => {
-                    setQuadrants([
-                      quadrants[0],
-                      quadrants[1],
-                      quadrants[2],
-                      !quadrants[3],
-                    ]);
-                  }}
-                >
-                  Not urgent or important
-                </DropdownMenuCheckboxItem>
+                  <DropdownMenuRadioItem value="All tasks">
+                    <QuadrantSelectOption
+                      label={{ value: "All tasks", theme: "gray" }}
+                      type="backlog"
+                    />
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value={quadrantTitles[1]}>
+                    <QuadrantSelectOption
+                      label={{ value: quadrantTitles[1], theme: "red" }}
+                      type="quadrant"
+                    />
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value={quadrantTitles[3]}>
+                    <QuadrantSelectOption
+                      label={{ value: quadrantTitles[3], theme: "sky" }}
+                      type="quadrant"
+                    />
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value={quadrantTitles[2]}>
+                    <QuadrantSelectOption
+                      label={{ value: quadrantTitles[2], theme: "amber" }}
+                      type="quadrant"
+                    />
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value={quadrantTitles[4]}>
+                    <QuadrantSelectOption
+                      label={{ value: quadrantTitles[4], theme: "purple" }}
+                      type="quadrant"
+                    />
+                  </DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
               </DropdownMenuContent>
             </DropdownMenu>
 

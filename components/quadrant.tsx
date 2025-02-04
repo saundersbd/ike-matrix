@@ -22,7 +22,8 @@ interface QuadrantProps {
   taskCount: number;
   children?: React.ReactNode;
   theme: ThemeName;
-  onMaximize?: () => void;
+  hidden?: boolean;
+  onHideChange?: (hidden: boolean) => void;
 }
 
 const backgroundTexture = [
@@ -38,6 +39,8 @@ export function Quadrant({
   children,
   theme,
   quadrant,
+  hidden,
+  onHideChange,
 }: QuadrantProps) {
   const themeColors = THEME_COLORS[theme] || THEME_COLORS.sky;
   const {
@@ -49,43 +52,40 @@ export function Quadrant({
     ringColor,
   } = themeColors;
 
-  const [isHidden, setIsHidden] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
 
   const handleToggleHidden = () => {
-    if (!isHidden) {
+    onHideChange?.(!hidden);
+    if (!hidden) {
       setIsAnimating(true);
-      setIsHidden(true);
     } else {
-      setIsHidden(false);
-      // Add a delay that matches your animation duration
       setTimeout(() => {
         setIsAnimating(false);
-      }, 1000); // 1000ms = duration-1000
+      }, 1000);
     }
   };
 
   return (
     <div
-      data-hidden={isHidden}
+      data-hidden={hidden}
       className={cn(
         "group relative flex flex-col rounded-2xl overflow-hidden ring-1 transition-all duration-300",
         "data-[hidden=true]:shadow-none data-[hidden=false]:shadow-sm",
         {
-          [ringColor]: isHidden,
-          "ring-black/[.08]": !isHidden,
+          [ringColor]: hidden,
+          "ring-black/[.08]": !hidden,
         }
       )}
     >
       <header
         className={`shrink-0 py-3 pl-5 pr-4 flex items-center justify-between ${
-          isHidden ? "bg-white/[.35]" : bgColor
+          hidden ? "bg-white/[.35]" : bgColor
         }`}
       >
         <div className="flex items-center gap-2 min-h-8">
           <h2
             className={cn(
-              isHidden ? "text-zinc-600" : textColor,
+              hidden ? "text-zinc-600" : textColor,
               "text-sm font-semibold inline-flex"
             )}
           >
@@ -94,11 +94,11 @@ export function Quadrant({
           <Pill
             count={taskCount}
             theme={theme}
-            className={isHidden ? "bg-zinc-200 text-zinc-800" : ""}
+            className={hidden ? "bg-zinc-200 text-zinc-800" : ""}
           />
         </div>
         <div className="flex items-center">
-          {isHidden ? null : (
+          {hidden ? null : (
             <>
               <NewTaskDialog
                 theme={theme}
@@ -119,16 +119,14 @@ export function Quadrant({
                 className={cn(
                   "h-8 w-8",
                   hoverColor,
-                  isHidden ? "hover:data-[state=on]:bg-zinc-100" : ""
+                  hidden ? "hover:data-[state=on]:bg-zinc-100" : ""
                 )}
                 onClick={handleToggleHidden}
               >
-                {isHidden ? (
-                  <EyeClosed
-                    className={isHidden ? "text-zinc-500" : iconColor}
-                  />
+                {hidden ? (
+                  <EyeClosed className={hidden ? "text-zinc-500" : iconColor} />
                 ) : (
-                  <Eye className={isHidden ? "text-zinc-500" : iconColor} />
+                  <Eye className={hidden ? "text-zinc-500" : iconColor} />
                 )}
               </Toggle>
               <DropdownMenu>
@@ -184,9 +182,9 @@ export function Quadrant({
           backgroundTexture[quadrant - 1],
           bgColor,
           {
-            "animate-in fade-in zoom-in-75 opacity-100": isHidden,
-            "animate-out fade-out zoom-out-75 opacity-0": !isHidden,
-            hidden: !isHidden && !isAnimating,
+            "animate-in fade-in zoom-in-75 opacity-100": hidden,
+            "animate-out fade-out zoom-out-75 opacity-0": !hidden,
+            hidden: !hidden && !isAnimating,
           }
         )}
       >
@@ -194,7 +192,7 @@ export function Quadrant({
           variant="ghost"
           className={`group h-auto w-auto rounded-2xl px-6 py-4 ${washHoverColor}`}
           onClick={handleToggleHidden}
-          aria-label={isHidden ? "Show tasks" : "Hide tasks"}
+          aria-label={hidden ? "Show tasks" : "Hide tasks"}
         >
           <EyeClosed
             className="!h-14 !w-14 text-zinc-500 group-hover:text-zinc-600 transition-colors duration-200"
