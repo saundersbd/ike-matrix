@@ -1,16 +1,13 @@
 "use client";
 
 import { useTasks } from "@/app/contexts/TaskContext";
-import { motion } from "motion/react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuLabel,
   DropdownMenuTrigger,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
-  DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
@@ -22,7 +19,6 @@ import {
 
 import { AppSidebar } from "@/components/app-sidebar";
 import { Quadrant } from "@/components/quadrant";
-import { TaskListItem } from "@/components/task-list-item";
 import { TaskListTableRow } from "@/components/task-list-table-row";
 import { NewTaskDialog } from "@/components/new-task-dialog";
 import { ArrowUpDown, Circle, Filter, Grid2X2, List } from "lucide-react";
@@ -32,6 +28,7 @@ import { Task } from "@/app/types/Task";
 import { QuadrantSelectOption } from "@/components/quadrant-select-option";
 
 export default function Home() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [view, setView] = useState<"grid" | "list">("grid");
   const [sortBy, setSortBy] = useState("created");
   const [quadrants, setQuadrants] = useState([true, true, true, true]);
@@ -79,16 +76,19 @@ export default function Home() {
   };
 
   const gridView = (sortBy: string) => (
-    <motion.div
-      layout
-      className="grid grid-cols-2 grid-rows-2 gap-6 h-[calc(100svh-184px)]"
-    >
+    <div className="grid grid-cols-2 grid-rows-2 gap-6 h-[calc(100svh-184px)]">
       <Quadrant
         quadrant={1}
         title="Important AND urgent"
         theme="red"
-        taskCount={tasks.filter((task) => task.quadrant === 1).length}
-        tasks={tasks.filter((task) => task.quadrant === 1)}
+        tasks={sortTasks(
+          tasks.filter(
+            (task) =>
+              task.quadrant === 1 &&
+              (!task.completed || task.isCompletionTransitioning)
+          ),
+          sortBy
+        )}
         hidden={
           focusedQuadrant === "All tasks"
             ? isQuadrant1Hidden
@@ -101,8 +101,14 @@ export default function Home() {
         quadrant={2}
         title="Important but not urgent"
         theme="amber"
-        taskCount={tasks.filter((task) => task.quadrant === 2).length}
-        tasks={tasks.filter((task) => task.quadrant === 2)}
+        tasks={sortTasks(
+          tasks.filter(
+            (task) =>
+              task.quadrant === 2 &&
+              (!task.completed || task.isCompletionTransitioning)
+          ),
+          sortBy
+        )}
         hidden={
           focusedQuadrant === "All tasks"
             ? isQuadrant2Hidden
@@ -115,8 +121,14 @@ export default function Home() {
         quadrant={3}
         title="Urgent but not important"
         theme="sky"
-        taskCount={tasks.filter((task) => task.quadrant === 3).length}
-        tasks={tasks.filter((task) => task.quadrant === 3)}
+        tasks={sortTasks(
+          tasks.filter(
+            (task) =>
+              task.quadrant === 3 &&
+              (!task.completed || task.isCompletionTransitioning)
+          ),
+          sortBy
+        )}
         hidden={
           focusedQuadrant === "All tasks"
             ? isQuadrant3Hidden
@@ -129,8 +141,14 @@ export default function Home() {
         quadrant={4}
         title="Neither urgent nor important"
         theme="purple"
-        taskCount={tasks.filter((task) => task.quadrant === 4).length}
-        tasks={tasks.filter((task) => task.quadrant === 4)}
+        tasks={sortTasks(
+          tasks.filter(
+            (task) =>
+              task.quadrant === 4 &&
+              (!task.completed || task.isCompletionTransitioning)
+          ),
+          sortBy
+        )}
         hidden={
           focusedQuadrant === "All tasks"
             ? isQuadrant4Hidden
@@ -139,7 +157,7 @@ export default function Home() {
         }
         onHideChange={setIsQuadrant4Hidden}
       />
-    </motion.div>
+    </div>
   );
 
   const listView = (quadrants: boolean[], sortBy: string) => (
@@ -147,7 +165,8 @@ export default function Home() {
       {!quadrants.some((q) => q) ? (
         <div className="flex flex-col items-center justify-center h-full gap-4">
           <span className="text-sm text-gray-500 text-center">
-            All quadrants are hidden. Use the "Show" filter to display tasks.
+            All quadrants are hidden. Use the &ldquo;Show&rdquo; filter to
+            display tasks.
           </span>
           <Button
             variant="outline"
@@ -155,7 +174,7 @@ export default function Home() {
             className="rounded-lg"
             onClick={() => setQuadrants([true, true, true, true])}
           >
-            Bring 'em back
+            Bring &apos;em back
           </Button>
         </div>
       ) : (
@@ -163,7 +182,9 @@ export default function Home() {
           if (!quadrants[quadrantNumber - 1]) return null;
 
           const quadrantTasks = sortTasks(
-            tasks.filter((task) => task.quadrant === quadrantNumber),
+            tasks.filter(
+              (task) => task.quadrant === quadrantNumber && !task.completed
+            ),
             sortBy
           );
 
@@ -213,7 +234,8 @@ export default function Home() {
   const focusedQuadrantLabel = (quadrant: string) => {
     // Get the quadrant number by finding the matching title
     const quadrantNumber = Object.entries(quadrantTitles).find(
-      ([_, title]) => title === quadrant
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      ([num, title]) => title === quadrant
     )?.[0];
 
     // Use the corresponding theme color, or default to gray for "All tasks"
@@ -334,10 +356,18 @@ export default function Home() {
             </DropdownMenu>
 
             <TabsList className="bg-zinc-200/[.75] rounded-lg">
-              <TabsTrigger value="grid" className="rounded-md">
+              <TabsTrigger
+                value="grid"
+                className="rounded-md"
+                onClick={() => setView("grid")}
+              >
                 <Grid2X2 className="w-4 h-4" />
               </TabsTrigger>
-              <TabsTrigger value="list" className="rounded-md">
+              <TabsTrigger
+                value="list"
+                className="rounded-md"
+                onClick={() => setView("list")}
+              >
                 <List className="w-4 h-4" />
               </TabsTrigger>
             </TabsList>

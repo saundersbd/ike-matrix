@@ -13,4 +13,5 @@ export interface Task {
   context?: string;
   tags?: string[];
   theme?: ThemeName;
+  isCompletionTransitioning?: boolean;
 }

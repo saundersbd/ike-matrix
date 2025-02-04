@@ -1,6 +1,7 @@
 "use client";
 
 import { useTasks } from "@/app/contexts/TaskContext";
+import { useToast } from "@/hooks/use-toast";
 
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -10,12 +11,11 @@ import {
   Calendar as CalendarIcon,
   Clock,
   X,
-  CircleAlert,
   ChevronDown,
+  OctagonAlert,
 } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   AlertDialog,
@@ -31,7 +31,6 @@ import {
   Dialog,
   DialogContent,
   DialogFooter,
-  DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
@@ -67,6 +66,8 @@ export function NewTaskDialog({
   theme?: ThemeName;
   buttonVariant?: "default" | "outline";
 }) {
+  const { toast } = useToast();
+
   const { createTask } = useTasks();
   const [open, setOpen] = useState(false);
   const [error, setError] = useState("");
@@ -74,7 +75,7 @@ export function NewTaskDialog({
   const handleCreateTask = () => {
     // Validate title
     if (!taskText.trim()) {
-      setError("You need to add a task title.");
+      setError("How are you supposed to complete a task with no title?");
       return;
     }
 
@@ -114,6 +115,9 @@ export function NewTaskDialog({
     setDueDate(undefined);
     setDueTime(undefined);
     setError("");
+    toast({
+      description: "Your task has been created.",
+    });
   };
 
   const quadrantTitles: Record<number, string> = {
@@ -182,6 +186,7 @@ export function NewTaskDialog({
       setShowUnsavedChangesAlert(true);
     } else {
       setOpen(isOpen);
+      setError("");
     }
   };
 
@@ -191,6 +196,7 @@ export function NewTaskDialog({
     setTaskDescriptionText("");
     setDueDate(undefined);
     setDueTime(undefined);
+    setError("");
     setValue({
       value: defaultDestination,
       theme:
@@ -243,17 +249,20 @@ export function NewTaskDialog({
             </Button>
           )}
         </DialogTrigger>
-        <DialogContent className="max-w-3xl">
+        <DialogContent className="max-w-3xl" hideCloseButton>
           <DialogTitle className="sr-only">Add a new task</DialogTitle>
 
-          <div className="flex flex-col gap-8 p-7">
-            {error && (
+          {error && (
+            <div className="pt-7 px-5">
               <Alert variant="destructive">
-                <CircleAlert className="h-4 w-4" />
+                <OctagonAlert className="h-4 w-4" />
                 <AlertTitle className="sr-only">Error</AlertTitle>
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
-            )}
+            </div>
+          )}
+
+          <div className="flex flex-col gap-8 p-7">
             <div className="flex flex-col gap-2">
               <Label htmlFor="task" className="sr-only">
                 Type your task
@@ -321,7 +330,7 @@ export function NewTaskDialog({
                           </span>
                         </span>
                       ) : (
-                        <span className="text-zinc-500">Due date</span>
+                        <span className="text-zinc-500">Add date</span>
                       )}
                     </Button>
                   </PopoverTrigger>

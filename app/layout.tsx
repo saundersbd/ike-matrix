@@ -4,7 +4,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { TaskProvider } from "@/app/contexts/TaskContext";
-
+import { Toaster } from "@/components/ui/toaster";
 import { InfoSheet } from "@/components/info-sheet";
 
 const geistMono = Geist_Mono({
@@ -60,6 +60,7 @@ export default function RootLayout({
             </header>
             {children}
             {modal}
+            <Toaster />
           </div>
         </TaskProvider>
       </body>

@@ -1,50 +1,35 @@
 "use client";
 
 import { useTasks } from "@/app/contexts/TaskContext";
-import { useState } from "react";
 
 import { cn } from "@/lib/utils";
-import { motion } from "motion/react";
 import Link from "next/link";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Task } from "@/app/types/Task";
 import { CUSTOM_THEME_COLORS, ThemeName } from "@/app/types/CustomTheme";
+import { handleTaskCompletion } from "@/app/utils/taskHandlers";
 
-export function TaskListItem({
-  task,
-  onComplete,
-}: {
-  task: Task;
-  onComplete?: (taskId: string) => void;
-}) {
+export function TaskListItem({ task }: { task: Task }) {
   const { updateTask } = useTasks();
-  const [isExiting, setIsExiting] = useState(false);
 
   const themeColors =
     CUSTOM_THEME_COLORS[task.theme as ThemeName] || CUSTOM_THEME_COLORS.teal;
   const { borderColor, textColor } = themeColors;
 
   const handleCheckboxChange = (checked: boolean) => {
-    if (checked) {
-      setIsExiting(true);
-      updateTask(task.id, { completed: checked });
-
-      // Notify parent after animation starts
-      onComplete?.(task.id);
-    }
+    handleTaskCompletion(checked, task, updateTask);
   };
 
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 1 }}
-      animate={{
-        opacity: isExiting ? 0 : 1,
-        transition: {
-          opacity: { duration: 0.2 },
-        },
+    <div
+      className={cn(
+        "group/task-list-item flex gap-3 py-2.5 px-3.5 rounded-lg hover:bg-zinc-100/[.5] hover:cursor-pointer",
+        "transform-gpu transition-all duration-300 ease-in-out will-change-transform",
+        task.isCompletionTransitioning && "opacity-0 -translate-x-4"
+      )}
+      style={{
+        transformOrigin: "top center",
       }}
-      className="group/task-list-item flex gap-3 py-2.5 px-3.5 rounded-lg hover:bg-zinc-100/[.5] hover:cursor-pointer transition-all duration-150"
     >
       <Checkbox
         checked={task.completed}
@@ -82,6 +67,6 @@ export function TaskListItem({
           {task.dueDate}
         </div>
       )}
-    </motion.div>
+    </div>
   );
 }

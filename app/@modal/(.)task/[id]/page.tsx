@@ -18,7 +18,6 @@ import {
   DialogContent,
   DialogTitle,
   DialogFooter,
-  DialogClose,
 } from "@/components/ui/dialog";
 import {
   DropdownMenu,
@@ -114,11 +113,10 @@ export default function TaskModal({
   return (
     <>
       <Dialog open onOpenChange={handleClose} modal={true}>
-        <DialogContent className="p-0 overflow-y-auto max-h-[90vh]">
-          <DialogClose onClick={handleClose} />
+        <DialogContent className="flex flex-col grow p-0 overflow-y-auto min-h-[70vh] max-h-[85vh] max-w-3xl">
           <DialogTitle className="sr-only">Edit task</DialogTitle>
 
-          <div className="flex gap-3.5 p-6 pb-8">
+          <div className="flex grow gap-3.5 p-6 pb-8">
             <Checkbox
               className="shrink-0 mt-[4px]"
               checked={localTask.completed}
@@ -193,7 +191,7 @@ export default function TaskModal({
               </div>
             </div>
           </div>
-          <DialogFooter className="py-4 px-5 border-t border-zinc-200">
+          <DialogFooter className="shrink-0 py-4 px-5 border-t border-zinc-200">
             <Button size="sm" disabled={!hasChanges} onClick={handleSave}>
               Save and close
             </Button>

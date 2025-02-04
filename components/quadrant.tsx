@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { motion, AnimatePresence } from "motion/react";
 import { Pill } from "@/components/pill";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -22,7 +21,6 @@ import { TaskListItem } from "./task-list-item";
 interface QuadrantProps {
   quadrant: number;
   title: string;
-  taskCount: number;
   children?: React.ReactNode;
   theme: ThemeName;
   hidden?: boolean;
@@ -39,7 +37,6 @@ const backgroundTexture = [
 
 export function Quadrant({
   title,
-  taskCount,
   theme,
   quadrant,
   hidden,
@@ -58,13 +55,6 @@ export function Quadrant({
   } = themeColors;
 
   const [isAnimating, setIsAnimating] = useState(false);
-  const [exitingTaskIds, setExitingTaskIds] = useState<Set<string>>(new Set());
-
-  const visibleTasks = useMemo(() => {
-    return tasks.filter(
-      (task) => !task.completed && !exitingTaskIds.has(task.id)
-    );
-  }, [tasks, exitingTaskIds]);
 
   const handleToggleHidden = () => {
     onHideChange?.(!hidden);
@@ -77,17 +67,10 @@ export function Quadrant({
     }
   };
 
-  const handleTaskComplete = (taskId: string) => {
-    setExitingTaskIds((prev) => new Set(prev).add(taskId));
-
-    setTimeout(() => {
-      setExitingTaskIds((prev) => {
-        const next = new Set(prev);
-        next.delete(taskId);
-        return next;
-      });
-    }, 500);
-  };
+  const taskCount = tasks.length;
+  const tasksToDisplay = tasks.filter(
+    (task) => !task.completed || task.isCompletionTransitioning
+  );
 
   return (
     <div
@@ -162,23 +145,34 @@ export function Quadrant({
           )}
         </div>
       </header>
-      <div className={`flex flex-col grow transition-all duration-300`}>
-        {taskCount > 0 ? (
+      <div
+        className={`flex flex-col grow transition-all duration-300 bg-white`}
+      >
+        {tasksToDisplay.length > 0 ? (
           <ScrollArea className="grow px-3 bg-white">
-            <div className="flex flex-col gap-0 py-4">
-              <AnimatePresence initial={false}>
-                {visibleTasks.map((task) => (
-                  <TaskListItem
-                    key={task.id}
-                    task={task}
-                    onComplete={handleTaskComplete}
-                  />
-                ))}
-              </AnimatePresence>
+            <div className="grid grid-cols-1 auto-rows-max gap-0 py-4">
+              {tasks.map((task) => (
+                <div
+                  key={task.id}
+                  className={cn(
+                    "transition-all duration-300 ease-in-out",
+                    task.completed &&
+                      !task.isCompletionTransitioning && [
+                        "h-0",
+                        "opacity-0",
+                        "overflow-hidden",
+                        "transform-gpu",
+                        "-translate-y-full",
+                      ]
+                  )}
+                >
+                  <TaskListItem task={task} />
+                </div>
+              ))}
             </div>
           </ScrollArea>
         ) : (
-          <div className="flex flex-col grow items-center justify-center gap-6 py-4 bg-white/50">
+          <div className="flex flex-col grow items-center justify-center gap-6 py-4 bg-white animate-in fade-in opacity-100 duration-300">
             <p className="text-zinc-400 text-sm font-medium text-center">
               No tasks to speak of.
             </p>
