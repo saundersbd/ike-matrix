@@ -22,13 +22,11 @@ export function BacklogListItem({ task }: { task: Task }) {
         "transform-gpu transition-all duration-300 ease-in-out will-change-transform"
       )}
     >
-      <div className="peer flex justify-center pt-0.75">
-        <Checkbox
-          checked={task.completed}
-          onCheckedChange={handleCheckboxChange}
-          className="border-zinc-300 group-hover/task-list-item:border-zinc-400"
-        />
-      </div>
+      <Checkbox
+        checked={task.completed}
+        onCheckedChange={handleCheckboxChange}
+        className="shrink-0 border-zinc-300 group-hover/task-list-item:border-zinc-400 mt-[1px]"
+      />
       <div className="flex flex-col gap-1 peer-has-[data-state=checked]:line-through peer-has-[data-state=checked]:text-zinc-400">
         <Link
           href={`/task/${task.id}`}

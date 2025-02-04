@@ -29,7 +29,7 @@ export function TaskListItem({ task }: { task: Task }) {
       <Checkbox
         checked={task.completed}
         onCheckedChange={handleCheckboxChange}
-        className="border-zinc-300 group-hover/task-list-item:border-zinc-400 mt-0.75"
+        className="border-zinc-300 group-hover/task-list-item:border-zinc-400 mt-[1px]"
       />
       <div className="flex grow flex-col gap-0.5">
         <Link

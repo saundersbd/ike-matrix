@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useLayoutEffect, useState } from "react";
 import { useTasks } from "@/app/contexts/TaskContext";
 import { useHotkeys } from "react-hotkeys-hook";
 import { Button } from "@/components/ui/button";
@@ -24,13 +25,16 @@ import { TaskListTableRow } from "@/components/task-list-table-row";
 import { NewTaskDialog } from "@/components/new-task-dialog";
 import { ArrowUpDown, Circle, Filter, Grid2X2, List } from "lucide-react";
 import { THEME_COLORS, ThemeName } from "@/app/types/Theme";
-import { useState } from "react";
 import { Task } from "@/app/types/Task";
 import { QuadrantSelectOption } from "@/components/quadrant-select-option";
 
+// Create a safe useLayoutEffect that falls back to useEffect on server
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
 export default function Home() {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [view, setView] = useState<"grid" | "list">("grid");
+  const [isLoading, setIsLoading] = useState(true);
   const [sortBy, setSortBy] = useState("created");
   const [quadrants, setQuadrants] = useState([true, true, true, true]);
   const [open, setOpen] = useState(true);
@@ -41,6 +45,14 @@ export default function Home() {
   const [isQuadrant3Hidden, setIsQuadrant3Hidden] = useState(false);
   const [isQuadrant4Hidden, setIsQuadrant4Hidden] = useState(false);
   const [isNewTaskDialogOpen, setIsNewTaskDialogOpen] = useState(false);
+
+  useIsomorphicLayoutEffect(() => {
+    const savedView = localStorage.getItem("preferredView") as "grid" | "list";
+    if (savedView) {
+      setView(savedView);
+    }
+    setIsLoading(false);
+  }, []);
 
   useHotkeys(
     "mod+k",
@@ -55,6 +67,16 @@ export default function Home() {
     },
     [isNewTaskDialogOpen]
   );
+
+  const handleViewChange = (newView: "grid" | "list") => {
+    setView(newView);
+    localStorage.setItem("preferredView", newView);
+  };
+
+  // Don't render content until we've checked localStorage
+  if (isLoading) {
+    return null; // or a loading spinner if you prefer
+  }
 
   const sortTasks = (tasks: Task[], sortBy: string) => {
     return [...tasks].sort((a, b) => {
@@ -177,7 +199,7 @@ export default function Home() {
   );
 
   const listView = (quadrants: boolean[], sortBy: string) => (
-    <div className="max-w-5xl mx-auto px-5 py-2 flex flex-col h-[calc(100svh-(var(--header-height)+82px))]">
+    <div className="max-w-4xl mx-auto py-2 flex flex-col h-[calc(100svh-(var(--header-height)+82px))]">
       {!quadrants.some((q) => q) ? (
         <div className="flex flex-col items-center justify-center h-full gap-4">
           <span className="text-sm text-gray-500 text-center">
@@ -208,15 +230,30 @@ export default function Home() {
 
           return quadrantTasks.length > 0 ? (
             <div key={quadrantNumber} className="mb-6 last:mb-0">
-              <div className="flex items-center gap-2.5 mb-4 ml-3">
-                <Circle
-                  className={`w-[8px] h-[8px] ${
-                    THEME_COLORS[quadrantThemes[quadrantNumber]].accentColor
-                  }`}
+              <div className="flex items-center justify-between mb-2.5 mx-4">
+                <div className="flex items-center gap-2.5">
+                  <Circle
+                    className={`w-[8px] h-[8px] ${
+                      THEME_COLORS[quadrantThemes[quadrantNumber]].accentColor
+                    }`}
+                  />
+                  <h3 className="text-sm font-medium text-gray-500">
+                    {quadrantTitles[quadrantNumber]}
+                  </h3>
+                </div>
+                <NewTaskDialog
+                  theme="subtleGray"
+                  defaultDestination={
+                    quadrantNumber === 1
+                      ? "Important and urgent"
+                      : quadrantNumber === 2
+                      ? "Important but not urgent"
+                      : quadrantNumber === 3
+                      ? "Urgent but not important"
+                      : "Neither urgent nor important"
+                  }
+                  inlineTrigger
                 />
-                <h3 className="text-sm font-semibold text-gray-500">
-                  {quadrantTitles[quadrantNumber]}
-                </h3>
               </div>
 
               <div className="px-5 py-4 ring-1 ring-black/[.08] rounded-2xl bg-white shadow-sm">
@@ -227,15 +264,30 @@ export default function Home() {
             </div>
           ) : (
             <div key={quadrantNumber} className="mb-6 last:mb-0">
-              <div className="flex items-center gap-2.5 mb-4 ml-3">
-                <Circle
-                  className={`w-[8px] h-[8px] ${
-                    THEME_COLORS[quadrantThemes[quadrantNumber]].accentColor
-                  }`}
+              <div className="flex items-center justify-between mb-2.5 mx-4">
+                <div className="flex items-center gap-2.5">
+                  <Circle
+                    className={`w-[8px] h-[8px] ${
+                      THEME_COLORS[quadrantThemes[quadrantNumber]].accentColor
+                    }`}
+                  />
+                  <h3 className="text-sm font-medium text-gray-500">
+                    {quadrantTitles[quadrantNumber]}
+                  </h3>
+                </div>
+                <NewTaskDialog
+                  theme="gray"
+                  defaultDestination={
+                    quadrantNumber === 1
+                      ? "Important and urgent"
+                      : quadrantNumber === 2
+                      ? "Important but not urgent"
+                      : quadrantNumber === 3
+                      ? "Urgent but not important"
+                      : "Neither urgent nor important"
+                  }
+                  inlineTrigger
                 />
-                <h3 className="text-sm font-medium text-gray-500">
-                  {quadrantTitles[quadrantNumber]}
-                </h3>
               </div>
               <div className="flex items-center justify-center p-7 ring-1 ring-black/[.08] rounded-xl bg-white/50">
                 <span className="text-sm text-gray-500 text-center">
@@ -271,8 +323,8 @@ export default function Home() {
 
   return (
     <Tabs
-      defaultValue="grid"
-      onValueChange={(value) => setView(value as "grid" | "list")}
+      value={view}
+      onValueChange={(value) => handleViewChange(value as "grid" | "list")}
     >
       <SidebarProvider
         open={open}

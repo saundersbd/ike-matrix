@@ -5,7 +5,7 @@ import {
   SidebarHeader,
 } from "@/components/ui/sidebar";
 import { Task } from "@/app/types/Task";
-
+import { Pill } from "@/components/pill";
 import { NewTaskDialog } from "@/components/new-task-dialog";
 import { BacklogListItem } from "@/components/backlog-list-item";
 import { cn } from "@/lib/utils";
@@ -21,9 +21,12 @@ export function AppSidebar({ tasks }: { tasks: Task[] }) {
       variant="floating"
     >
       <SidebarHeader className="flex flex-row items-center justify-between pl-5 pr-4 py-3 gap-3 bg-zinc-100">
-        <h2 className="w-max text-sm font-semibold inline-flex text-zinc-800">
-          Backlog
-        </h2>
+        <div className="flex items-center gap-2 min-h-8">
+          <h2 className={cn("text-sm font-semibold inline-flex text-zinc-800")}>
+            Backlog
+          </h2>
+          <Pill count={tasksToDisplay.length} theme="gray" />
+        </div>
         <NewTaskDialog
           defaultDestination="Backlog"
           theme="gray"
