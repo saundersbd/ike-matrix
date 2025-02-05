@@ -4,8 +4,8 @@ export interface Task {
   id: string;
   title: string;
   description?: string;
-  dueDate?: string;
-  dueTime?: string;
+  dueDate?: Date;
+  dueTime?: Date;
   quadrant: number;
   createdAt: Date;
   updatedAt?: Date;

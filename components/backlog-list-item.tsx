@@ -2,6 +2,7 @@
 
 import { useWorkspace } from "@/app/contexts/WorkspaceContext";
 import Link from "next/link";
+import { format } from "date-fns";
 
 import { Checkbox } from "@/components/ui/checkbox";
 import { Task } from "@/app/types/Task";
@@ -37,7 +38,7 @@ export function BacklogListItem({ task }: { task: Task }) {
 
         {task.dueDate && (
           <div className="flex items-center gap-1.5 text-sm font-medium text-zinc-400 ">
-            {task.dueDate}
+            {format(task.dueDate, "MMM d, yyyy")}
           </div>
         )}
       </div>

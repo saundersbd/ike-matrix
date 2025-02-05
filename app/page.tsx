@@ -189,7 +189,7 @@ export default function Home() {
       />
       <Quadrant
         quadrant={4}
-        title="Neither urgent nor important -> Toss"
+        title="Neither urgent nor important -> Defer"
         theme="purple"
         tasks={sortTasks(
           tasks.filter(

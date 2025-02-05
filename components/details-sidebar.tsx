@@ -1,13 +1,11 @@
 import { useState, useEffect } from "react";
-import { format, isToday } from "date-fns";
+import { format, isToday, formatDistance, addDays } from "date-fns";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Sidebar,
@@ -16,7 +14,6 @@ import {
   SidebarGroupLabel,
   SidebarGroupContent,
   SidebarMenuButton,
-  SidebarProvider,
 } from "@/components/ui/sidebar";
 import {
   Popover,
@@ -28,8 +25,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -71,7 +66,7 @@ export function DetailsSidebar({ task }: { task: Task }) {
   const [searchValue, setSearchValue] = useState("");
   const [editingName, setEditingName] = useState("");
   const [dueDate, setDueDate] = useState<Date | undefined>(
-    task.dueDate ? new Date(task.dueDate) : undefined
+    task.dueDate || undefined
   );
   const [dueTime, setDueTime] = useState<Date | undefined>(
     task.dueTime ? new Date(new Date().setHours(12, 0, 0, 0)) : undefined
@@ -148,7 +143,7 @@ export function DetailsSidebar({ task }: { task: Task }) {
                           }}
                         >
                           <Plus className="w-4 h-4 mr-2" />
-                          Create "{searchValue}"
+                          Create &ldquo;{searchValue}&rdquo;
                         </CommandItem>
                       </CommandEmpty>
                       <CommandList className="gap-1">
@@ -189,7 +184,7 @@ export function DetailsSidebar({ task }: { task: Task }) {
                                 }}
                               >
                                 <Plus className="w-4 h-4 mr-2" />
-                                Create "{searchValue}"
+                                Create &ldquo;{searchValue}&rdquo;
                               </CommandItem>
                             </CommandGroup>
                           )}
@@ -219,7 +214,15 @@ export function DetailsSidebar({ task }: { task: Task }) {
                         <Pencil className="w-3.5 h-3.5 mr-2" />
                         Edit
                       </DropdownMenuItem>
-                      <DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => {
+                          updateTask(task.id, {
+                            ...task,
+                            projectId: undefined,
+                          });
+                          setSelectedProject(undefined);
+                        }}
+                      >
                         <Trash className="w-3.5 h-3.5 mr-2" />
                         Delete
                       </DropdownMenuItem>
@@ -235,31 +238,98 @@ export function DetailsSidebar({ task }: { task: Task }) {
               Due date
             </SidebarGroupLabel>
             <SidebarGroupContent>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <SidebarMenuButton
-                    className={`group font-medium cursor-pointer transition-all duration-200 hover:text-zinc-800 hover:bg-zinc-200/40 text-xs ${
-                      dueDate ? "text-zinc-800" : "text-zinc-500"
-                    }`}
-                  >
-                    <CalendarIcon className="!w-3.5 !h-3.5 mr-2" />
-                    <span className="text-ellipsis overflow-hidden whitespace-nowrap">
-                      {dueDate
-                        ? isToday(dueDate)
-                          ? "Today"
-                          : format(dueDate, "MMM d, yyyy")
-                        : "Add due date"}
-                    </span>
-                  </SidebarMenuButton>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={dueDate}
-                    onSelect={setDueDate}
-                  />
-                </PopoverContent>
-              </Popover>
+              <div className="flex items-center gap-1.5">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <SidebarMenuButton
+                      className={`group font-medium cursor-pointer transition-all duration-200 hover:text-zinc-800 hover:bg-zinc-200/40 text-xs ${
+                        dueDate ? "text-zinc-800" : "text-zinc-500"
+                      }`}
+                    >
+                      <CalendarIcon className="!w-3.5 !h-3.5 mr-2" />
+                      <span className="text-ellipsis overflow-hidden whitespace-nowrap">
+                        {dueDate ? (
+                          isToday(dueDate) ? (
+                            "Today"
+                          ) : dueDate < new Date() ? (
+                            <span className="text-red-500">
+                              {`Due ${formatDistance(dueDate, new Date(), {
+                                addSuffix: true,
+                              }).replace(/^about /, "")}`}
+                            </span>
+                          ) : (
+                            format(
+                              dueDate,
+                              dueDate.getFullYear() === new Date().getFullYear()
+                                ? "MMM d"
+                                : "MMM d, yyyy"
+                            )
+                          )
+                        ) : (
+                          "Add due date"
+                        )}
+                      </span>
+                    </SidebarMenuButton>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={dueDate}
+                      onSelect={(date) => {
+                        setDueDate(date);
+                        if (date) {
+                          updateTask(task.id, {
+                            ...task,
+                            dueDate: date,
+                          });
+                        }
+                      }}
+                    />
+                  </PopoverContent>
+                </Popover>
+                {dueDate && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <div
+                        role="button"
+                        className="shrink-0 cursor-pointer w-7 h-7 rounded-md transition-colors duration-200 flex items-center justify-center text-zinc-500 hover:text-zinc-800"
+                        onClick={() => {
+                          setEditProjectNamePopoverOpen(true);
+                        }}
+                      >
+                        <Ellipsis className="w-3.5 h-3.5" />
+                      </div>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem
+                        onClick={() => {
+                          const newDate = addDays(dueDate, 7);
+                          setDueDate(newDate);
+                          updateTask(task.id, {
+                            ...task,
+                            dueDate: newDate,
+                          });
+                        }}
+                      >
+                        <Plus className="w-3.5 h-3.5 mr-2" />
+                        Extend a week
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => {
+                          setDueDate(undefined);
+                          updateTask(task.id, {
+                            ...task,
+                            dueDate: undefined,
+                          });
+                        }}
+                      >
+                        <Trash className="w-3.5 h-3.5 mr-2" />
+                        Clear due date
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
+              </div>
               {task.dueDate && (
                 <Popover>
                   <PopoverTrigger asChild>

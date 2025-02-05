@@ -99,14 +99,12 @@ export function NewTaskDialog({
       title: taskText.trim(),
       description: taskDescriptionText.trim(),
       dueDate: dueDate
-        ? format(
-            dueTime
-              ? new Date(
-                  dueDate.setHours(dueTime.getHours(), dueTime.getMinutes())
-                )
-              : dueDate,
-            "MMM dd, yyyy" + (dueTime ? " h:mm a" : "")
-          )
+        ? dueTime
+          ? new Date(dueDate.setHours(dueTime.getHours(), dueTime.getMinutes()))
+          : dueDate
+        : undefined,
+      dueTime: dueTime
+        ? new Date(dueTime.setHours(dueTime.getHours(), dueTime.getMinutes()))
         : undefined,
       quadrant: Number(
         Object.keys(quadrantTitles).find(
@@ -197,7 +195,7 @@ export function NewTaskDialog({
     if (!isOpen && hasUnsavedChanges()) {
       setShowUnsavedChangesAlert(true);
     } else {
-      setOpen(isOpen);
+      setIsDialogOpen(isOpen);
       setError("");
     }
   };

@@ -6,15 +6,10 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Task } from "@/app/types/Task";
-import { CUSTOM_THEME_COLORS, ThemeName } from "@/app/types/CustomTheme";
 import { handleTaskCompletion } from "@/app/utils/taskHandlers";
-
+import { format, formatDistance, isToday } from "date-fns";
 export function TaskListItem({ task }: { task: Task }) {
   const { updateTask, projects } = useWorkspace();
-
-  const themeColors =
-    CUSTOM_THEME_COLORS[task.theme as ThemeName] || CUSTOM_THEME_COLORS.teal;
-  const { borderColor, textColor } = themeColors;
 
   const handleCheckboxChange = (checked: boolean) => {
     handleTaskCompletion(checked, task, updateTask);
@@ -52,11 +47,30 @@ export function TaskListItem({ task }: { task: Task }) {
       {task.dueDate && (
         <div
           className={cn(
-            "shrink-0 flex gap-1.5 text-sm font-medium text-zinc-400",
-            (task.tags ?? []).length > 0 ? "items-start" : "items-center"
+            "shrink-0 flex gap-1.5 text-xs font-semibold text-zinc-400",
+            { "items-start": task.projectId, "items-center": !task.projectId }
           )}
         >
-          {task.dueDate}
+          {isToday(task.dueDate) ? (
+            "Today"
+          ) : task.dueDate < new Date() ? (
+            <span className="text-red-500 text-xs font-semibold">
+              {isToday(task.dueDate)
+                ? "Due today"
+                : task.dueDate > new Date()
+                ? formatDistance(task.dueDate, new Date(), { addSuffix: true })
+                : `Due ${formatDistance(task.dueDate, new Date(), {
+                    addSuffix: true,
+                  }).replace(/^about /, "")}`}
+            </span>
+          ) : (
+            format(
+              task.dueDate,
+              task.dueDate.getFullYear() === new Date().getFullYear()
+                ? "MMM d"
+                : "MMM d, yyyy"
+            )
+          )}
         </div>
       )}
     </div>
