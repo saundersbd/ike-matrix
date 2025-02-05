@@ -44,6 +44,7 @@ export const tasks: Task[] = [
     createdAt: new Date("2025-02-02"),
     completed: false,
     status: "todo",
+    projectId: "1",
   },
   {
     id: "5",
@@ -62,6 +63,7 @@ export const tasks: Task[] = [
     createdAt: new Date("2025-02-05"),
     completed: false,
     status: "doing",
+    projectId: "1",
   },
   {
     id: "7",

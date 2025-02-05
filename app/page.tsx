@@ -2,7 +2,7 @@
 
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useLayoutEffect, useState } from "react";
-import { useTasks } from "@/app/contexts/TaskContext";
+import { useWorkspace } from "@/app/contexts/WorkspaceContext";
 import { useHotkeys } from "react-hotkeys-hook";
 import { Button } from "@/components/ui/button";
 import {
@@ -44,7 +44,7 @@ export default function Home() {
   const [quadrants, setQuadrants] = useState([true, true, true, true]);
   const [open, setOpen] = useState(true);
   const [focusedQuadrant, setFocusedQuadrant] = useState("All tasks");
-  const { tasks } = useTasks();
+  const { tasks } = useWorkspace();
   const [isQuadrant1Hidden, setIsQuadrant1Hidden] = useState(false);
   const [isQuadrant2Hidden, setIsQuadrant2Hidden] = useState(false);
   const [isQuadrant3Hidden, setIsQuadrant3Hidden] = useState(false);

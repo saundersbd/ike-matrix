@@ -3,7 +3,7 @@ import { Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import { cn } from "@/lib/utils";
-import { TaskProvider } from "@/app/contexts/TaskContext";
+import { WorkspaceProvider } from "@/app/contexts/WorkspaceContext";
 import { Toaster } from "@/components/ui/toaster";
 import { InfoSheet } from "@/components/info-sheet";
 
@@ -50,7 +50,7 @@ export default function RootLayout({
         )}
         style={{ "--header-height": HEADER_HEIGHT } as React.CSSProperties}
       >
-        <TaskProvider>
+        <WorkspaceProvider>
           <div className="relative">
             <header className="sticky top-0 flex h-[var(--header-height)] items-center justify-between bg-zinc-900 px-8 z-20 text-zinc-100 gap-2">
               <h1 className="inline-flex text-xl font-medium">
@@ -62,7 +62,7 @@ export default function RootLayout({
             {modal}
             <Toaster />
           </div>
-        </TaskProvider>
+        </WorkspaceProvider>
       </body>
     </html>
   );

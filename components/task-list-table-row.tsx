@@ -1,6 +1,6 @@
 "use client";
 
-import { useTasks } from "@/app/contexts/TaskContext";
+import { useWorkspace } from "@/app/contexts/WorkspaceContext";
 import Link from "next/link";
 
 import { Checkbox } from "@/components/ui/checkbox";
@@ -9,7 +9,7 @@ import { Task } from "@/app/types/Task";
 import { handleTaskCompletion } from "@/app/utils/taskHandlers";
 
 export function TaskListTableRow({ task }: { task: Task }) {
-  const { updateTask } = useTasks();
+  const { updateTask } = useWorkspace();
 
   const handleCheckboxChange = (checked: boolean) => {
     handleTaskCompletion(checked, task, updateTask);

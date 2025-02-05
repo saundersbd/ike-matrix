@@ -1,6 +1,6 @@
 "use client";
 
-import { useTasks } from "@/app/contexts/TaskContext";
+import { useWorkspace } from "@/app/contexts/WorkspaceContext";
 
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -10,7 +10,7 @@ import { CUSTOM_THEME_COLORS, ThemeName } from "@/app/types/CustomTheme";
 import { handleTaskCompletion } from "@/app/utils/taskHandlers";
 
 export function TaskListItem({ task }: { task: Task }) {
-  const { updateTask } = useTasks();
+  const { updateTask, projects } = useWorkspace();
 
   const themeColors =
     CUSTOM_THEME_COLORS[task.theme as ThemeName] || CUSTOM_THEME_COLORS.teal;
@@ -34,16 +34,17 @@ export function TaskListItem({ task }: { task: Task }) {
         >
           {task.title}
         </Link>
-        {(task.tags ?? []).length > 0 && (
+        {task.projectId && (
           <div className="flex items-center gap-1.5 mt-1">
-            {task.tags?.map((tag) => (
-              <div
-                key={tag}
-                className={`w-max h-[22px] flex items-center gap-1.5 text-[.8rem] font-semibold px-[6px] rounded-md ${textColor} ${borderColor}`}
-              >
-                {tag}
-              </div>
-            ))}
+            <div
+              className={`w-max h-[22px] flex items-center gap-1.5 text-[.8rem] font-semibold px-[6px] rounded-md bg-zinc-100 text-zinc-700`}
+            >
+              {task.projectId && (
+                <span>
+                  {projects.find((p) => p.id === task.projectId)?.name}
+                </span>
+              )}
+            </div>
           </div>
         )}
       </div>

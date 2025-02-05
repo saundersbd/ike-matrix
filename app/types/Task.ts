@@ -5,6 +5,7 @@ export interface Task {
   title: string;
   description?: string;
   dueDate?: string;
+  dueTime?: string;
   quadrant: number;
   createdAt: Date;
   updatedAt?: Date;
@@ -14,4 +15,5 @@ export interface Task {
   tags?: string[];
   theme?: ThemeName;
   isCompletionTransitioning?: boolean;
+  projectId?: string;
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useTasks } from "@/app/contexts/TaskContext";
+import { useWorkspace } from "@/app/contexts/WorkspaceContext";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useToast } from "@/hooks/use-toast";
 
@@ -73,7 +73,7 @@ export function NewTaskDialog({
 }) {
   const { toast } = useToast();
 
-  const { createTask } = useTasks();
+  const { createTask } = useWorkspace();
   const [open, setOpen] = useState(false);
   const handleOpenChange = (newOpen: boolean) => {
     setOpen(newOpen);

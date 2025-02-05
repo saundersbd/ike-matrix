@@ -1,3 +1,4 @@
+import { ThemeName } from "@/app/types/CustomTheme";
 import { LucideIcon } from "lucide-react";
 
 export interface Project {
@@ -6,4 +7,5 @@ export interface Project {
   description: string;
   icon?: LucideIcon;
   value: string;
+  theme?: ThemeName;
 }
