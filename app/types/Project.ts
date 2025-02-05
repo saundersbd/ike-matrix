@@ -5,4 +5,5 @@ export interface Project {
   name: string;
   description: string;
   icon?: LucideIcon;
+  value: string;
 }

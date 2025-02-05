@@ -17,13 +17,11 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
-  DialogFooter,
   DialogHeader,
 } from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
@@ -35,12 +33,8 @@ import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarGroupContent,
-  SidebarMenu,
   SidebarMenuButton,
-  SidebarMenuItem,
   SidebarProvider,
-  SidebarMenuAction,
-  SidebarGroupAction,
 } from "@/components/ui/sidebar";
 import {
   Command,
@@ -49,6 +43,7 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
+  CommandSeparator,
 } from "@/components/ui/command";
 import {
   Popover,
@@ -69,18 +64,21 @@ import { Separator } from "@/components/ui/separator";
 const projects: Project[] = [
   {
     id: "1",
+    value: "Project 1",
     name: "Project 1",
     description: "Project 1 description",
     icon: Home,
   },
   {
     id: "2",
+    value: "Project 2",
     name: "Project 2",
     description: "Project 2 description",
     icon: Home,
   },
   {
     id: "3",
+    value: "Project 3",
     name: "Project 3",
     description: "Project 3 description",
     icon: Home,
@@ -101,10 +99,11 @@ export default function TaskModal({
     undefined
   );
   const [commandValue, setCommandValue] = useState("");
-
+  const [searchValue, setSearchValue] = useState("");
   const [localTask, setLocalTask] = useState<Task | undefined>(
     tasks.find((t) => t.id === id)
   );
+  const [open, setOpen] = useState(true);
 
   const originalTask = tasks.find((t) => t.id === id);
 
@@ -126,21 +125,24 @@ export default function TaskModal({
       quadrant: localTask.quadrant,
       completed: localTask.completed,
     });
-    router.back();
+    setOpen(false);
+    router.replace("/", { scroll: false });
   };
 
   const handleClose = () => {
     if (hasChanges) {
       setShowUnsavedChangesAlert(true);
     } else {
-      router.back();
+      setOpen(false);
+      router.replace("/", { scroll: false });
     }
   };
 
   const handleConfirmClose = () => {
     setLocalTask(originalTask);
     setShowUnsavedChangesAlert(false);
-    router.back();
+    setOpen(false);
+    router.replace("/", { scroll: false });
   };
 
   const handleCancelClose = () => {
@@ -169,7 +171,7 @@ export default function TaskModal({
 
   return (
     <>
-      <Dialog open onOpenChange={handleClose} modal={true}>
+      <Dialog open={open} onOpenChange={handleClose} modal={true}>
         <DialogContent className="flex flex-col p-0 overflow-y-auto max-h-[720px] max-w-4xl">
           <DialogHeader className="px-6 py-5 border-b border-zinc-200">
             <DialogTitle className="text-lg font-medium leading-tight">
@@ -294,17 +296,32 @@ export default function TaskModal({
                           value={commandValue}
                           onValueChange={setCommandValue}
                         >
-                          <CommandInput placeholder="Search projects..." />
+                          <CommandInput
+                            placeholder="Search projects..."
+                            value={searchValue}
+                            onValueChange={(value) => {
+                              setSearchValue(value);
+                            }}
+                          />
                           <CommandEmpty>
-                            No projects found.
-                            <Button variant="secondary">Create new</Button>
+                            <CommandItem
+                              onSelect={() => {
+                                // TODO: Implement project creation logic
+                                console.log(
+                                  `Creating new project: ${searchValue}`
+                                );
+                              }}
+                            >
+                              <Plus className="w-4 h-4 mr-2" />
+                              Create "{searchValue}"
+                            </CommandItem>
                           </CommandEmpty>
-                          <CommandList>
+                          <CommandList className="gap-1">
                             <CommandGroup>
                               {projects.map((project) => (
                                 <CommandItem
                                   key={project.id}
-                                  value={project.id}
+                                  value={project.name}
                                   onSelect={() => {
                                     setSelectedProject(project);
                                     setProjectPopoverOpen(false);
@@ -317,6 +334,30 @@ export default function TaskModal({
                                 </CommandItem>
                               ))}
                             </CommandGroup>
+                            <CommandSeparator />
+                            {searchValue &&
+                              !projects.some(
+                                (p) =>
+                                  p.name.toLowerCase() ===
+                                  searchValue.toLowerCase()
+                              ) && (
+                                <CommandGroup
+                                  heading="Create New"
+                                  className="pt-0"
+                                >
+                                  <CommandItem
+                                    onSelect={() => {
+                                      // TODO: Implement project creation logic
+                                      console.log(
+                                        `Creating new project: ${searchValue}`
+                                      );
+                                    }}
+                                  >
+                                    <Plus className="w-4 h-4 mr-2" />
+                                    Create "{searchValue}"
+                                  </CommandItem>
+                                </CommandGroup>
+                              )}
                           </CommandList>
                         </Command>
                       </PopoverContent>
