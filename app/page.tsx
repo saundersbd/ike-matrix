@@ -1,5 +1,6 @@
 "use client";
 
+import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { useTasks } from "@/app/contexts/TaskContext";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -33,6 +34,10 @@ const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 export default function Home() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const taskId = searchParams.get("task");
+
   const [view, setView] = useState<"grid" | "list">("grid");
   const [isLoading, setIsLoading] = useState(true);
   const [sortBy, setSortBy] = useState("created");
@@ -45,6 +50,13 @@ export default function Home() {
   const [isQuadrant3Hidden, setIsQuadrant3Hidden] = useState(false);
   const [isQuadrant4Hidden, setIsQuadrant4Hidden] = useState(false);
   const [isNewTaskDialogOpen, setIsNewTaskDialogOpen] = useState(false);
+
+  useEffect(() => {
+    if (taskId) {
+      // This will trigger the intercepted route in @modal
+      router.push(`/task/${taskId}`, { scroll: false });
+    }
+  }, [taskId, router]);
 
   useIsomorphicLayoutEffect(() => {
     const savedView = localStorage.getItem("preferredView") as "grid" | "list";

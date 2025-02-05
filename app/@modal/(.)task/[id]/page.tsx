@@ -23,6 +23,7 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
@@ -38,14 +39,53 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarProvider,
+  SidebarMenuAction,
+  SidebarGroupAction,
 } from "@/components/ui/sidebar";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { QuadrantSelectOption } from "@/components/quadrant-select-option";
 import { Task } from "@/app/types/Task";
 import { useRouter } from "next/navigation";
+import { ChevronDown, Home, Plus } from "lucide-react";
 import { use } from "react";
 import { ThemeName } from "@/app/types/Theme";
+import { Project } from "@/app/types/Project";
+import { Separator } from "@/components/ui/separator";
+
+const projects: Project[] = [
+  {
+    id: "1",
+    name: "Project 1",
+    description: "Project 1 description",
+    icon: Home,
+  },
+  {
+    id: "2",
+    name: "Project 2",
+    description: "Project 2 description",
+    icon: Home,
+  },
+  {
+    id: "3",
+    name: "Project 3",
+    description: "Project 3 description",
+    icon: Home,
+  },
+];
 
 export default function TaskModal({
   params,
@@ -56,6 +96,11 @@ export default function TaskModal({
   const router = useRouter();
   const { id } = use(params);
   const [showUnsavedChangesAlert, setShowUnsavedChangesAlert] = useState(false);
+  const [projectPopoverOpen, setProjectPopoverOpen] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<Project | undefined>(
+    undefined
+  );
+  const [commandValue, setCommandValue] = useState("");
 
   const [localTask, setLocalTask] = useState<Task | undefined>(
     tasks.find((t) => t.id === id)
@@ -126,7 +171,7 @@ export default function TaskModal({
     <>
       <Dialog open onOpenChange={handleClose} modal={true}>
         <DialogContent className="flex flex-col p-0 overflow-y-auto max-h-[720px] max-w-4xl">
-          <DialogHeader className="p-6 border-b border-zinc-200">
+          <DialogHeader className="px-6 py-5 border-b border-zinc-200">
             <DialogTitle className="text-lg font-medium leading-tight">
               Task details
             </DialogTitle>
@@ -215,23 +260,78 @@ export default function TaskModal({
               collapsible="none"
               className="w-[264px] h-[720px] hidden md:flex bg-zinc-50"
             >
-              <SidebarContent>
-                <SidebarGroup>
-                  <SidebarGroupLabel>Project</SidebarGroupLabel>
+              <SidebarContent className="gap-0">
+                <SidebarGroup className="p-3 pt-5 gap-3">
+                  <SidebarGroupLabel className="p-0 px-2 h-auto font-semibold">
+                    Project
+                  </SidebarGroupLabel>
                   <SidebarGroupContent>
-                    <SidebarMenu>
-                      <SidebarMenuButton>Hello</SidebarMenuButton>
-                    </SidebarMenu>
+                    <Popover
+                      open={projectPopoverOpen}
+                      onOpenChange={setProjectPopoverOpen}
+                    >
+                      <PopoverTrigger asChild>
+                        <SidebarMenuButton className="group font-medium cursor-pointer transition-all duration-200 text-zinc-500 hover:text-zinc-800 hover:bg-zinc-200/40 text-xs">
+                          {selectedProject ? (
+                            <>
+                              {selectedProject.icon && (
+                                <selectedProject.icon className="w-4 h-4 mr-2" />
+                              )}
+                              {selectedProject.name}
+                            </>
+                          ) : (
+                            <>
+                              <span>Assign to project</span>
+                              <ChevronDown className="opacity-0 group-hover:opacity-100 w-4 h-4 ml-auto text-zinc-600 transition-opacity duration-200" />
+                            </>
+                          )}
+                        </SidebarMenuButton>
+                      </PopoverTrigger>
+                      <PopoverContent className="p-0 rounded-xl overflow-hidden">
+                        <Command
+                          shouldFilter={true}
+                          loop={true}
+                          value={commandValue}
+                          onValueChange={setCommandValue}
+                        >
+                          <CommandInput placeholder="Search projects..." />
+                          <CommandEmpty>
+                            No projects found.
+                            <Button variant="secondary">Create new</Button>
+                          </CommandEmpty>
+                          <CommandList>
+                            <CommandGroup>
+                              {projects.map((project) => (
+                                <CommandItem
+                                  key={project.id}
+                                  value={project.id}
+                                  onSelect={() => {
+                                    setSelectedProject(project);
+                                    setProjectPopoverOpen(false);
+                                  }}
+                                >
+                                  {project.icon && (
+                                    <project.icon className="w-4 h-4 mr-2" />
+                                  )}
+                                  {project.name}
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
                   </SidebarGroupContent>
                 </SidebarGroup>
+                <Separator className="bg-zinc-200/60" />
               </SidebarContent>
             </Sidebar>
           </SidebarProvider>
-          <DialogFooter className="shrink-0 py-4 px-5 border-t border-zinc-200">
+          {/* <DialogFooter className="shrink-0 py-4 px-5 border-t border-zinc-200">
             <Button size="sm" disabled={!hasChanges} onClick={handleSave}>
               Save and close
             </Button>
-          </DialogFooter>
+          </DialogFooter> */}
         </DialogContent>
       </Dialog>
       <AlertDialog
