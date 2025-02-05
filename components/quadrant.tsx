@@ -4,7 +4,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Pill } from "@/components/pill";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Task } from "@/app/types/Task";
 import {
   DropdownMenu,
@@ -76,7 +76,7 @@ export function Quadrant({
     <div
       data-hidden={hidden}
       className={cn(
-        "group relative flex flex-col rounded-2xl overflow-hidden ring-1",
+        "group relative flex flex-col rounded-2xl overflow-hidden ring-1 h-full",
         "data-[hidden=true]:shadow-none data-[hidden=false]:shadow-sm",
         {
           [ringColor]: hidden,
@@ -145,14 +145,15 @@ export function Quadrant({
           )}
         </div>
       </header>
-      <div className="flex flex-col grow bg-white">
+      <div className="flex flex-col min-h-0 grow bg-white">
         {tasksToDisplay.length > 0 ? (
-          <ScrollArea className="grow bg-white">
+          <ScrollArea className="h-full">
             <TaskList className="p-5">
               {tasks.map((task) => (
                 <TaskListItem key={task.id} task={task} />
               ))}
             </TaskList>
+            <ScrollBar orientation="vertical" />
           </ScrollArea>
         ) : (
           <div className="flex flex-col grow items-center justify-center gap-6 py-4 bg-white">

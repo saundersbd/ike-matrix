@@ -19,6 +19,8 @@ import {
   SidebarTrigger,
   SidebarInset,
 } from "@/components/ui/sidebar";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 import { AppSidebar } from "@/components/app-sidebar";
 import { Quadrant } from "@/components/quadrant";
@@ -344,7 +346,13 @@ export default function Home() {
         className="flex flex-col"
       >
         <header className="sticky top-0 mb-0 flex shrink-0 items-center justify-between gap-4 h-[calc(var(--header-height))] bg-white px-8 border-b border-zinc-200/70">
-          <SidebarTrigger />
+          <div className="flex items-center gap-2">
+            <Switch
+              checked={open}
+              onCheckedChange={(checked) => setOpen(checked)}
+            />
+            <Label>{open ? "Hide" : "Show"} backlog</Label>
+          </div>
 
           <div className="flex items-center gap-3">
             <DropdownMenu>

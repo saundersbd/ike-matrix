@@ -25,7 +25,7 @@ export function AppSidebar({ tasks }: { tasks: Task[] }) {
         <div className="flex items-center gap-2.5 min-h-8">
           <Pill count={tasksToDisplay.length} theme="gray" />
           <h2 className={cn("text-sm font-semibold inline-flex text-zinc-800")}>
-            Backlog
+            Staging area
           </h2>
         </div>
         <NewTaskDialog
@@ -35,19 +35,30 @@ export function AppSidebar({ tasks }: { tasks: Task[] }) {
         />
       </SidebarHeader>
       <SidebarContent>
-        <ScrollArea className="grow">
-          {tasksToDisplay.length > 0 ? (
+        {tasksToDisplay.length > 0 ? (
+          <ScrollArea className="grow">
             <TaskList className="p-5">
               {tasksToDisplay.map((task) => (
                 <BacklogListItem key={task.id} task={task} />
               ))}
             </TaskList>
-          ) : (
-            <div className="flex flex-col items-center justify-center h-full">
-              <span className="text-sm text-zinc-500">Empty state</span>
-            </div>
-          )}
-        </ScrollArea>
+          </ScrollArea>
+        ) : (
+          <div className="flex bg-white/80 flex-col grow items-center justify-center p-10">
+            <h3 className="mb-2 font-semibold text-base">
+              Start with the backlog
+            </h3>
+            <p className="mb-5 text-sm text-zinc-500 text-center">
+              Get all of your to-dos out of your brain and into the staging
+              area, so you can prioritize them later.
+            </p>
+            <NewTaskDialog
+              defaultDestination="Backlog"
+              theme="gray"
+              buttonVariant="outline"
+            />
+          </div>
+        )}
       </SidebarContent>
     </Sidebar>
   );
