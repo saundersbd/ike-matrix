@@ -14,6 +14,7 @@ import {
   SidebarGroupLabel,
   SidebarGroupContent,
   SidebarMenuButton,
+  SidebarGroupAction,
 } from "@/components/ui/sidebar";
 import {
   Popover,
@@ -25,6 +26,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -47,6 +49,7 @@ import {
   Trash,
   Calendar as CalendarIcon,
   Tag,
+  RotateCcw,
 } from "lucide-react";
 import { useWorkspace } from "@/app/contexts/WorkspaceContext";
 import { Task } from "@/app/types/Task";
@@ -239,6 +242,21 @@ export function DetailsSidebar({ task }: { task: Task }) {
             <SidebarGroupLabel className="p-0 px-2 h-auto font-semibold">
               Due date
             </SidebarGroupLabel>
+            {dueDate && (
+              <SidebarGroupAction
+                onClick={() => {
+                  setDueDate(undefined);
+                  setDueTime(undefined);
+                  updateTask(task.id, {
+                    ...task,
+                    dueDate: undefined,
+                    dueTime: undefined,
+                  });
+                }}
+              >
+                <RotateCcw />
+              </SidebarGroupAction>
+            )}
             <SidebarGroupContent>
               <div className="flex items-center gap-1.5">
                 <Popover>
@@ -333,8 +351,8 @@ export function DetailsSidebar({ task }: { task: Task }) {
                 )}
               </div>
               {task.dueDate && (
-                <Popover>
-                  <PopoverTrigger asChild>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
                     <SidebarMenuButton
                       className={`group font-medium cursor-pointer transition-all duration-200 hover:text-zinc-800 hover:bg-zinc-200/40 text-xs ${
                         dueTime ? "text-zinc-800" : "text-zinc-500"
@@ -345,11 +363,73 @@ export function DetailsSidebar({ task }: { task: Task }) {
                         {dueTime ? format(dueTime, "h:mm a") : "Add time"}
                       </span>
                     </SidebarMenuButton>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    Select time
-                  </PopoverContent>
-                </Popover>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-68 rounded-xl p-2">
+                    <DropdownMenuLabel>Suggestions</DropdownMenuLabel>
+                    <DropdownMenuItem className="gap-1 items-start rounded-lg py-2 px-3">
+                      <Clock className="w-4 h-4 mr-2 mt-[.2rem]" />
+                      <div
+                        className="flex flex-col gap-0"
+                        onClick={() => {
+                          setDueTime(new Date(new Date().setHours(9, 0, 0, 0)));
+                        }}
+                      >
+                        <span>9:00 AM</span>
+                        <span className="text-zinc-500 text-xs">Morning</span>
+                      </div>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className="gap-1 items-start rounded-lg py-2 px-3">
+                      <Clock className="w-4 h-4 mr-2 mt-[.2rem]" />
+                      <div
+                        className="flex flex-col gap-0"
+                        onClick={() => {
+                          setDueTime(
+                            new Date(new Date().setHours(12, 0, 0, 0))
+                          );
+                        }}
+                      >
+                        <span>12:00 PM</span>
+                        <span className="text-zinc-500 text-xs">Noon</span>
+                      </div>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="gap-1 items-start rounded-lg py-2 px-3"
+                      onClick={() => {
+                        setDueTime(new Date(new Date().setHours(15, 0, 0, 0)));
+                      }}
+                    >
+                      <Clock className="w-4 h-4 mr-2 mt-[.2rem]" />
+                      <div className="flex flex-col gap-0">
+                        <span>3:00 PM</span>
+                        <span className="text-zinc-500 text-xs">Afternoon</span>
+                      </div>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="gap-1 items-start rounded-lg py-2 px-3"
+                      onClick={() => {
+                        setDueTime(new Date(new Date().setHours(18, 0, 0, 0)));
+                      }}
+                    >
+                      <Clock className="w-4 h-4 mr-2 mt-[.2rem]" />
+                      <div className="flex flex-col gap-0">
+                        <span>6:00 PM</span>
+                        <span className="text-zinc-500 text-xs">Evening</span>
+                      </div>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="gap-1 items-start rounded-lg py-2 px-3"
+                      onClick={() => {
+                        setDueTime(new Date(new Date().setHours(21, 0, 0, 0)));
+                      }}
+                    >
+                      <Clock className="w-4 h-4 mr-2 mt-[.2rem]" />
+                      <div className="flex flex-col gap-0">
+                        <span>9:00 PM</span>
+                        <span className="text-zinc-500 text-xs">Night</span>
+                      </div>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               )}
             </SidebarGroupContent>
           </SidebarGroup>

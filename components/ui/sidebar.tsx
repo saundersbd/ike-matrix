@@ -460,7 +460,7 @@ const SidebarGroupAction = React.forwardRef<
       ref={ref}
       data-sidebar="group-action"
       className={cn(
-        "absolute right-3 top-3.5 flex aspect-square w-5 items-center justify-center rounded-md p-0 text-sidebar-foreground outline-hidden ring-sidebar-ring transition-transform hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 [&>svg]:size-5 [&>svg]:shrink-0",
+        "absolute right-4 top-4.5 flex aspect-square w-5 items-center justify-center rounded-md p-0 cursor-pointer outline-hidden ring-sidebar-ring transition-transform hover:bg-zinc-200/40 hover:text-zinc-800 focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0 text-zinc-600",
         // Increases the hit area of the button on mobile.
         "after:absolute after:-inset-2 md:after:hidden",
         "group-data-[collapsible=icon]:hidden",
