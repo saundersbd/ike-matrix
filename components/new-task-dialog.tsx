@@ -270,7 +270,7 @@ export function NewTaskDialog({
             <Button
               variant="outline"
               size="fab"
-              className="absolute bottom-4 right-4"
+              className="absolute bottom-5 right-5"
             >
               <Plus className="w-4 h-4" />
             </Button>

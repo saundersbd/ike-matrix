@@ -75,7 +75,7 @@ export function Quadrant({
   const taskCount = tasks.length;
 
   return (
-    <div className="flex flex-col min-h-0 grow gap-3">
+    <div className="flex flex-col min-h-0 grow gap-2.5">
       <header
         className={`shrink-0 pl-3.5 pr-3 flex items-center justify-between
         `}
@@ -191,29 +191,19 @@ export function Quadrant({
             />
           </Button>
         </div>
-        <Popover>
-          <PopoverTrigger asChild>
-            <NewTaskDialog
-              theme={theme}
-              defaultDestination={
-                quadrant === 1
-                  ? "Important and urgent"
-                  : quadrant === 2
-                  ? "Important but not urgent"
-                  : quadrant === 3
-                  ? "Urgent but not important"
-                  : "Neither urgent nor important"
-              }
-              variant="fab"
-            />
-          </PopoverTrigger>
-          <PopoverContent side="top" align="end" className="w-76 text-sm" dark>
-            <p>
-              This is a help text. It will be used to explain the quadrant and
-              its purpose.
-            </p>
-          </PopoverContent>
-        </Popover>
+        <NewTaskDialog
+          theme={theme}
+          defaultDestination={
+            quadrant === 1
+              ? "Important and urgent"
+              : quadrant === 2
+              ? "Important but not urgent"
+              : quadrant === 3
+              ? "Urgent but not important"
+              : "Neither urgent nor important"
+          }
+          variant="fab"
+        />
       </div>
     </div>
   );

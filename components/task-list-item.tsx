@@ -8,8 +8,15 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Task } from "@/app/types/Task";
 import { handleTaskCompletion } from "@/app/utils/taskHandlers";
 import { format, formatDistance, isToday, isTomorrow } from "date-fns";
+import { CUSTOM_THEME_COLORS } from "@/app/types/CustomTheme";
 
-export function TaskListItem({ task }: { task: Task }) {
+export function TaskListItem({
+  task,
+  parent = "quadrant",
+}: {
+  task: Task;
+  parent?: "sidebar" | "quadrant";
+}) {
   const { updateTask, projects } = useWorkspace();
 
   const handleCheckboxChange = (checked: boolean) => {
@@ -19,13 +26,17 @@ export function TaskListItem({ task }: { task: Task }) {
   return (
     <div
       className={cn(
-        "flex gap-3.5 bg-zinc-50/90 shadow-xs ring-1 ring-black/2 rounded-xl p-3"
+        { "items-start": task.dueDate },
+        { "items-center": !task.dueDate },
+        parent === "sidebar" && "bg-white",
+        parent === "quadrant" && "bg-zinc-50/90",
+        "group/drag-handle flex gap-3.5 shadow-xs ring-1 ring-black/6 rounded-xl pl-4 pr-3 py-3"
       )}
     >
       <Checkbox
         checked={task.completed}
         onCheckedChange={handleCheckboxChange}
-        className="border-zinc-300 hover:border-zinc-400 mt-[1px]"
+        className="border-zinc-300 hover:border-zinc-400 mt-[1.5px]"
       />
       <Link
         href={`/task/${task.id}`}
@@ -36,50 +47,72 @@ export function TaskListItem({ task }: { task: Task }) {
         </p>
         {(task.projectId || task.dueDate) && (
           <div className="flex items-center gap-2 font-medium text-xs">
-            <span className="text-zinc-500">
-              {task.dueDate && isToday(task.dueDate) ? (
-                "Today"
-              ) : task.dueDate && task.dueDate < new Date() ? (
-                <span className="text-red-600">
-                  {task.dueDate && isToday(task.dueDate)
-                    ? "Due today"
-                    : task.dueDate > new Date()
-                    ? formatDistance(task.dueDate, new Date(), {
-                        addSuffix: true,
-                      })
-                    : `Due ${formatDistance(task.dueDate, new Date(), {
-                        addSuffix: true,
-                      }).replace(/^about /, "")}`}
-                </span>
-              ) : task.dueDate && isTomorrow(new Date(task.dueDate)) ? (
-                "Tomorrow"
-              ) : (
-                task.dueDate &&
-                format(
-                  task.dueDate,
-                  task.dueDate.getFullYear() === new Date().getFullYear()
-                    ? "MMM d"
-                    : "MMM d, yyyy"
-                )
-              )}
-
-              {task.dueTime && (
-                <>
-                  ,{" "}
-                  <span className="text-xs text-zinc-500">
-                    {format(task.dueTime, "h:mm a")}
+            {task.dueDate && (
+              <span className="text-zinc-500">
+                {task.dueDate && isToday(task.dueDate) ? (
+                  "Today"
+                ) : task.dueDate && task.dueDate < new Date() ? (
+                  <span className="text-red-600">
+                    {task.dueDate && isToday(task.dueDate)
+                      ? "Due today"
+                      : task.dueDate > new Date()
+                      ? formatDistance(task.dueDate, new Date(), {
+                          addSuffix: true,
+                        })
+                      : `Due ${formatDistance(task.dueDate, new Date(), {
+                          addSuffix: true,
+                        }).replace(/^about /, "")}`}
                   </span>
-                </>
-              )}
-            </span>
+                ) : task.dueDate && isTomorrow(new Date(task.dueDate)) ? (
+                  "Tomorrow"
+                ) : (
+                  task.dueDate &&
+                  format(
+                    task.dueDate,
+                    task.dueDate.getFullYear() === new Date().getFullYear()
+                      ? "MMM d"
+                      : "MMM d, yyyy"
+                  )
+                )}
+
+                {task.dueTime && (
+                  <>
+                    ,{" "}
+                    <span className="text-xs text-zinc-500">
+                      {format(task.dueTime, "h:mm a")}
+                    </span>
+                  </>
+                )}
+              </span>
+            )}
             {task.projectId && (
-              <span className="text-xs text-zinc-500">
+              <span
+                className={`text-xs
+                ${
+                  CUSTOM_THEME_COLORS[
+                    projects.find((p) => p.id === task.projectId)?.theme ??
+                      "default"
+                  ].textColor
+                }`}
+              >
                 #{projects.find((p) => p.id === task.projectId)?.name}
               </span>
             )}
           </div>
         )}
       </Link>
+      <div className="h-full flex items-center opacity-0 group-hover/drag-handle:opacity-100 transition-opacity cursor-grab active:cursor-grabbing duration-200">
+        <div className="flex items-center justify-center px-1 py-2 rounded-md hover:bg-zinc-200/60">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-5 h-5"
+            fill="currentColor"
+            viewBox="0 0 256 256"
+          >
+            <path d="M108,60A16,16,0,1,1,92,44,16,16,0,0,1,108,60Zm56,16a16,16,0,1,0-16-16A16,16,0,0,0,164,76ZM92,112a16,16,0,1,0,16,16A16,16,0,0,0,92,112Zm72,0a16,16,0,1,0,16,16A16,16,0,0,0,164,112ZM92,180a16,16,0,1,0,16,16A16,16,0,0,0,92,180Zm72,0a16,16,0,1,0,16,16A16,16,0,0,0,164,180Z"></path>
+          </svg>
+        </div>
+      </div>
     </div>
   );
 }

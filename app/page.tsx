@@ -15,7 +15,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import {
+  SidebarProvider,
+  SidebarInset,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 
@@ -130,7 +134,11 @@ export default function Home() {
   };
 
   const gridView = (sortBy: string) => (
-    <div className="grid grid-cols-2 grid-rows-2 gap-6 h-[calc(100svh-184px)]">
+    <div
+      className={`grid grid-cols-2 grid-rows-2 gap-6 h-[calc(100svh-184px)] ${
+        open ? "md:px-4" : "md:px-0"
+      } transition-all duration-200`}
+    >
       <Quadrant
         quadrant={1}
         title="Important and urgent"
@@ -253,7 +261,7 @@ export default function Home() {
                       ? "Urgent but not important"
                       : "Neither urgent nor important"
                   }
-                  inlineTrigger
+                  variant="inline"
                 />
               </div>
 
@@ -289,7 +297,7 @@ export default function Home() {
                       ? "Urgent but not important"
                       : "Neither urgent nor important"
                   }
-                  inlineTrigger
+                  variant="inline"
                 />
               </div>
               <div className="flex items-center justify-center p-7 ring-1 ring-black/[.08] rounded-xl bg-white/50">
@@ -335,13 +343,13 @@ export default function Home() {
         className="flex flex-col"
       >
         <header className="sticky top-0 mb-0 flex shrink-0 items-center justify-between gap-4 h-[calc(var(--header-height))] bg-white px-8 border-b border-zinc-200/70">
-          <div className="flex items-center gap-2">
+          <SidebarTrigger className="flex items-center gap-2">
             <Switch
               checked={open}
               onCheckedChange={(checked) => setOpen(checked)}
             />
             <Label>{open ? "Hide" : "Show"} backlog</Label>
-          </div>
+          </SidebarTrigger>
 
           <div className="flex items-center gap-3">
             {(activeProject || focusedQuadrant !== "All quadrants") && (

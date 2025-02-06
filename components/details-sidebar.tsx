@@ -6,6 +6,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Sidebar,
@@ -27,6 +28,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -50,12 +52,15 @@ import {
   Calendar as CalendarIcon,
   Tag,
   RotateCcw,
+  PaintRoller,
+  SwatchBook,
 } from "lucide-react";
 import { useWorkspace } from "@/app/contexts/WorkspaceContext";
 import { Task } from "@/app/types/Task";
-import { CUSTOM_THEME_COLORS } from "@/app/types/CustomTheme";
+import { CUSTOM_THEME_COLORS, ThemeName } from "@/app/types/CustomTheme";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import { ColorPicker } from "./color-picker";
 
 export function DetailsSidebar({ task }: { task: Task }) {
   const { projects, updateProject, updateTask } = useWorkspace();
@@ -74,6 +79,11 @@ export function DetailsSidebar({ task }: { task: Task }) {
   );
   const [dueTime, setDueTime] = useState<Date | undefined>(
     task.dueTime ? new Date(new Date().setHours(12, 0, 0, 0)) : undefined
+  );
+  const [customizeProjectDialogOpen, setCustomizeProjectDialogOpen] =
+    useState(false);
+  const [theme, setTheme] = useState<ThemeName>(
+    selectedProject?.theme ?? "default"
   );
 
   useEffect(() => {
@@ -211,6 +221,15 @@ export function DetailsSidebar({ task }: { task: Task }) {
                       </div>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
+                      <DropdownMenuItem
+                        onClick={() => {
+                          setCustomizeProjectDialogOpen(true);
+                        }}
+                      >
+                        <SwatchBook className="w-3.5 h-3.5 mr-2" />
+                        Customize
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
                       <DropdownMenuItem
                         onClick={() => {
                           setEditProjectNamePopoverOpen(true);
@@ -476,6 +495,51 @@ export function DetailsSidebar({ task }: { task: Task }) {
               }}
             >
               Save
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <Dialog
+        open={customizeProjectDialogOpen}
+        onOpenChange={setCustomizeProjectDialogOpen}
+      >
+        <DialogContent className="p-0 max-w-[348px]">
+          <DialogHeader className="px-5 pt-6 pb-0">
+            <DialogTitle>Customize project</DialogTitle>
+          </DialogHeader>
+          <div className="flex flex-col gap-3 p-5">
+            <div>
+              <ColorPicker
+                theme={selectedProject?.theme}
+                onValueChange={(value) => {
+                  setTheme(value);
+                }}
+              />
+            </div>
+          </div>
+          <DialogFooter className="p-5 pt-0">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setCustomizeProjectDialogOpen(false);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                if (selectedProject) {
+                  const updatedProject = {
+                    ...selectedProject,
+                    theme: theme,
+                  };
+                  updateProject(selectedProject.id, updatedProject);
+                  setSelectedProject(updatedProject);
+                }
+                setCustomizeProjectDialogOpen(false);
+              }}
+            >
+              Update
             </Button>
           </DialogFooter>
         </DialogContent>
