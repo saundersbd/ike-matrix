@@ -11,7 +11,7 @@ export function TaskList({ children, className, gap = true }: TaskListProps) {
     <div
       className={cn(
         "grid grid-cols-1 auto-rows-max",
-        gap ? "gap-[0.8rem]" : "gap-0",
+        gap ? "gap-[10px]" : "gap-0",
         className
       )}
     >

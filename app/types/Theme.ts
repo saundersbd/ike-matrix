@@ -35,9 +35,9 @@ export const THEME_COLORS = {
   },
   subtleGray: {
     bgColor: "bg-zinc-100",
-    textColor: "text-zinc-600",
+    textColor: "text-zinc-700",
     iconColor: "text-zinc-600",
-    fillColor: "bg-zinc-300/[.8]",
+    fillColor: "bg-zinc-200/[.8]",
     hoverColor: "hover:bg-zinc-200/60 hover:data-[state=on]:bg-zinc-200/60",
     accentColor: "fill-zinc-500 text-zinc-500",
     washHoverColor: "hover:bg-zinc-200/70",

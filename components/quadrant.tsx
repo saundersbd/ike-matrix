@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import { NewTaskDialog } from "@/components/new-task-dialog";
-import { Ellipsis, EyeClosed, Archive, HelpCircle } from "lucide-react";
+import { Ellipsis, EyeClosed, Archive, HelpCircle, Circle } from "lucide-react";
 import { THEME_COLORS, ThemeName } from "@/app/types/Theme";
 import { TaskListItem } from "./task-list-item";
 import { TaskList } from "./task-list";
@@ -56,7 +56,7 @@ export function Quadrant({
     hoverColor,
     washHoverColor,
     ringColor,
-    separatorColor,
+    accentColor,
   } = themeColors;
 
   const [isAnimating, setIsAnimating] = useState(false);
@@ -75,36 +75,19 @@ export function Quadrant({
   const taskCount = tasks.length;
 
   return (
-    <div
-      data-hidden={hidden}
-      className={cn(
-        "group relative flex flex-col rounded-2xl overflow-hidden ring-1 h-full shadow-sm",
-        "data-[hidden=true]:shadow-none",
-        {
-          [ringColor]: hidden,
-          "ring-black/[.08]": !hidden,
-        }
-      )}
-    >
+    <div className="flex flex-col min-h-0 grow gap-3">
       <header
-        className={`shrink-0 py-3 px-4 flex items-center justify-between ${
-          hidden ? "bg-white/[.35]" : bgColor
-        }`}
+        className={`shrink-0 pl-3.5 pr-3 flex items-center justify-between
+        `}
       >
         <div className="flex items-center gap-2.5 min-h-8">
-          <Pill
-            count={taskCount}
-            theme={theme}
-            className={hidden ? "bg-zinc-200 text-zinc-800" : ""}
-          />
+          <Circle className={`w-2 h-2 ${accentColor}`} />
           <h2
-            className={cn(
-              hidden ? "text-zinc-600" : textColor,
-              "text-sm font-semibold inline-flex"
-            )}
+            className={cn("text-zinc-800", "text-sm font-semibold inline-flex")}
           >
             {title}
           </h2>
+          <Pill count={taskCount} theme="subtleGray" />
         </div>
         <div className="flex items-center">
           {hidden ? null : (
@@ -114,9 +97,11 @@ export function Quadrant({
                   <Button
                     variant="ghost"
                     size="icon"
-                    className={cn("h-8 w-8", hoverColor)}
+                    className={cn(
+                      "h-8 w-8 hover:bg-zinc-200/40 text-zinc-600 hover:text-zinc-800"
+                    )}
                   >
-                    <HelpCircle className={`w-4 h-4 ${iconColor}`} />
+                    <HelpCircle className={`w-4 h-4`} />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-76 text-sm" dark>
@@ -134,9 +119,11 @@ export function Quadrant({
                   <Button
                     variant="ghost"
                     size="icon"
-                    className={cn("h-8 w-8", hoverColor)}
+                    className={cn(
+                      "h-8 w-8 hover:bg-zinc-200/40 text-zinc-600 hover:text-zinc-800"
+                    )}
                   >
-                    <Ellipsis className={`w-4 h-4 ${iconColor}`} />
+                    <Ellipsis className={`w-4 h-4`} />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56">
@@ -150,72 +137,84 @@ export function Quadrant({
           )}
         </div>
       </header>
-
-      <div className="flex flex-col min-h-0 grow bg-white">
-        {taskCount > 0 ? (
-          <ScrollArea className="h-full">
-            <TaskList className="p-5">
-              {tasks.map((task) => (
-                <TaskListItem key={task.id} task={task} />
-              ))}
-            </TaskList>
-            <ScrollBar orientation="vertical" />
-          </ScrollArea>
-        ) : (
-          <div className="flex flex-col grow items-center justify-center gap-3 py-4 bg-white">
-            <p className="text-zinc-400 text-sm font-medium text-center">
-              No tasks to speak of.
-            </p>
-          </div>
-        )}
-      </div>
       <div
+        data-hidden={hidden}
         className={cn(
-          "absolute inset-0 z-20 flex flex-col grow items-center justify-center",
-          backgroundTexture[quadrant - 1],
-          bgColor,
-          {
-            "opacity-100": hidden,
-            "opacity-0": !hidden,
-            hidden: !hidden && !isAnimating,
-          }
+          "group relative flex flex-col rounded-2xl overflow-hidden h-full bg-zinc-200/50 ring-1 ring-zinc-200/50"
         )}
       >
-        <Button
-          variant="ghost"
-          className={`group h-auto w-auto rounded-2xl px-6 py-4 ${washHoverColor}`}
-          onClick={handleToggleHidden}
-          aria-label={hidden ? "Show tasks" : "Hide tasks"}
-        >
-          <EyeClosed
-            className="!h-14 !w-14 text-zinc-500 group-hover:text-zinc-600 transition-colors duration-200"
-            aria-hidden
-          />
-        </Button>
-      </div>
-      <Popover>
-        <PopoverTrigger asChild>
-          <NewTaskDialog
-            theme={theme}
-            defaultDestination={
-              quadrant === 1
-                ? "Important and urgent"
-                : quadrant === 2
-                ? "Important but not urgent"
-                : quadrant === 3
-                ? "Urgent but not important"
-                : "Neither urgent nor important"
+        <div className="relative flex flex-col min-h-0 grow">
+          {taskCount > 0 ? (
+            <>
+              <ScrollArea
+                type="auto"
+                className="has-data-[state=visible]:pr-2 relative h-full"
+              >
+                <TaskList className="p-4 peer/task-list">
+                  {tasks.map((task) => (
+                    <TaskListItem key={task.id} task={task} />
+                  ))}
+                </TaskList>
+                <ScrollBar orientation="vertical" className="scroll-bar peer" />
+                <div className="absolute bottom-0 left-0 right-0 hidden peer-[.scroll-bar]:block h-8 bg-linear-to-t from-black/[.05] to-transparent"></div>
+              </ScrollArea>
+            </>
+          ) : (
+            <div className="flex flex-col grow items-center justify-center gap-3 py-4 bg-white">
+              <p className="text-zinc-400 text-sm font-medium text-center">
+                No tasks to speak of.
+              </p>
+            </div>
+          )}
+        </div>
+        <div
+          className={cn(
+            "absolute inset-0 z-20 flex flex-col grow items-center justify-center",
+            backgroundTexture[quadrant - 1],
+            bgColor,
+            {
+              "opacity-100": hidden,
+              "opacity-0": !hidden,
+              hidden: !hidden && !isAnimating,
             }
-            variant="fab"
-          />
-        </PopoverTrigger>
-        <PopoverContent side="top" align="end" className="w-76 text-sm" dark>
-          <p>
-            This is a help text. It will be used to explain the quadrant and its
-            purpose.
-          </p>
-        </PopoverContent>
-      </Popover>
+          )}
+        >
+          <Button
+            variant="ghost"
+            className={`group h-auto w-auto rounded-2xl px-6 py-4 ${washHoverColor}`}
+            onClick={handleToggleHidden}
+            aria-label={hidden ? "Show tasks" : "Hide tasks"}
+          >
+            <EyeClosed
+              className="!h-14 !w-14 text-zinc-500 group-hover:text-zinc-600 transition-colors duration-200"
+              aria-hidden
+            />
+          </Button>
+        </div>
+        <Popover>
+          <PopoverTrigger asChild>
+            <NewTaskDialog
+              theme={theme}
+              defaultDestination={
+                quadrant === 1
+                  ? "Important and urgent"
+                  : quadrant === 2
+                  ? "Important but not urgent"
+                  : quadrant === 3
+                  ? "Urgent but not important"
+                  : "Neither urgent nor important"
+              }
+              variant="fab"
+            />
+          </PopoverTrigger>
+          <PopoverContent side="top" align="end" className="w-76 text-sm" dark>
+            <p>
+              This is a help text. It will be used to explain the quadrant and
+              its purpose.
+            </p>
+          </PopoverContent>
+        </Popover>
+      </div>
     </div>
   );
 }

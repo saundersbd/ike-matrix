@@ -17,7 +17,11 @@ export function TaskListItem({ task }: { task: Task }) {
   };
 
   return (
-    <div className={cn("flex gap-3.5")}>
+    <div
+      className={cn(
+        "flex gap-3.5 bg-zinc-50/90 shadow-xs ring-1 ring-black/2 rounded-xl p-3"
+      )}
+    >
       <Checkbox
         checked={task.completed}
         onCheckedChange={handleCheckboxChange}

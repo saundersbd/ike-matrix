@@ -13,7 +13,7 @@ export function Pill({
 
   return (
     <span
-      className={`inline-flex items-center justify-center px-2 py-0.5 min-w-7 text-xs font-semibold rounded-full ${fillColor} ${textColor} ${className}`}
+      className={`inline-flex items-center justify-center px-2 py-0.5 min-w-7 text-xs font-bold rounded-full ${fillColor} ${textColor} ${className}`}
     >
       {count}
     </span>
