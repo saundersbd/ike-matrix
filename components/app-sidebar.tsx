@@ -78,8 +78,8 @@ export function AppSidebar({ tasks }: { tasks: Task[] }) {
               Start here, sort later
             </h3>
             <p className="mb-5 text-sm text-zinc-500 text-center">
-              Get all of your to-dos out of your brain and into this box, so you
-              can choose which ones to prioritize later.
+              Get all of your to-dos out of your brain and into this box, to be
+              prioritized later.
             </p>
             <NewTaskDialog
               defaultDestination="Backlog"

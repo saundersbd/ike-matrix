@@ -9,6 +9,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Task } from "@/app/types/Task";
 
 import { handleTaskCompletion } from "@/app/utils/taskHandlers";
+import { CUSTOM_THEME_COLORS } from "@/app/types/CustomTheme";
+import { CircleAlert } from "lucide-react";
 
 export function TaskListTableRow({ task }: { task: Task }) {
   const { updateTask, projects } = useWorkspace();
@@ -36,7 +38,7 @@ export function TaskListTableRow({ task }: { task: Task }) {
           {task.dueDate && (
             <div
               className={cn(
-                "shrink-0 flex gap-1.5 text-xs font-semibold text-zinc-400",
+                "shrink-0 flex gap-1.5 text-xs font-medium text-zinc-400",
                 {
                   "items-start": task.projectId,
                   "items-center": !task.projectId,
@@ -47,7 +49,8 @@ export function TaskListTableRow({ task }: { task: Task }) {
               {isToday(task.dueDate) ? (
                 "Today"
               ) : task.dueDate < new Date() ? (
-                <span className="text-red-600 text-xs font-semibold">
+                <span className="inline-flex items-center gap-1.5 text-red-600">
+                  <CircleAlert className="w-4 h-4" />
                   {isToday(task.dueDate)
                     ? "Due today"
                     : task.dueDate > new Date()
@@ -72,7 +75,15 @@ export function TaskListTableRow({ task }: { task: Task }) {
         {task.projectId && (
           <div className="flex items-baseline gap-2 font-medium text-xs">
             {task.projectId && (
-              <span className="text-xs text-zinc-500">
+              <span
+                className={`text-xs
+              ${
+                CUSTOM_THEME_COLORS[
+                  projects.find((p) => p.id === task.projectId)?.theme ??
+                    "default"
+                ].textColor
+              }`}
+              >
                 #{projects.find((p) => p.id === task.projectId)?.name}
               </span>
             )}

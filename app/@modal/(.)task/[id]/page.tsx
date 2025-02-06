@@ -24,7 +24,7 @@ import { QuadrantSelectOption } from "@/components/quadrant-select-option";
 import { useRouter } from "next/navigation";
 import { use } from "react";
 import { ThemeName } from "@/app/types/Theme";
-import { DetailsSidebar } from "@/components/details-sidebar";
+import { DetailsSidebar } from "@/components/layout/detail_sidebar/DetailsSidebar";
 import { ChevronDown } from "lucide-react";
 
 export default function TaskModal({

@@ -9,6 +9,7 @@ import { Task } from "@/app/types/Task";
 import { handleTaskCompletion } from "@/app/utils/taskHandlers";
 import { format, formatDistance, isToday, isTomorrow } from "date-fns";
 import { CUSTOM_THEME_COLORS } from "@/app/types/CustomTheme";
+import { Circle, CircleAlert } from "lucide-react";
 
 export function TaskListItem({
   task,
@@ -29,20 +30,23 @@ export function TaskListItem({
         { "items-start": task.dueDate },
         { "items-center": !task.dueDate },
         parent === "sidebar" && "bg-white",
-        parent === "quadrant" && "bg-zinc-50/90",
-        "group/drag-handle flex gap-3.5 shadow-xs ring-1 ring-black/6 rounded-xl pl-4 pr-3 py-3"
+        parent === "quadrant" &&
+          "bg-zinc-50/90 hover:bg-zinc-50/[.99] transition-all duration-200",
+        "group/drag-handle flex gap-2.5 shadow-xs ring-1 ring-black/6 rounded-xl pl-3.5 pr-3.5 py-2.5"
       )}
     >
       <Checkbox
         checked={task.completed}
         onCheckedChange={handleCheckboxChange}
-        className="border-zinc-300 hover:border-zinc-400 mt-[1.5px]"
+        className={cn("border-zinc-300 hover:border-zinc-400 mt-px", {
+          "mt-0": !task.dueDate,
+        })}
       />
       <Link
         href={`/task/${task.id}`}
         className="group/task-list-item flex grow flex-col gap-1"
       >
-        <p className="grow peer-data-[state=checked]:line-through peer-data-[state=checked]:text-zinc-400 text-base leading-snug font-medium group-hover/task-list-item:underline">
+        <p className="grow peer-data-[state=checked]:line-through peer-data-[state=checked]:text-zinc-400 text-base leading-snug font-medium">
           {task.title}
         </p>
         {(task.projectId || task.dueDate) && (
@@ -52,7 +56,7 @@ export function TaskListItem({
                 {task.dueDate && isToday(task.dueDate) ? (
                   "Today"
                 ) : task.dueDate && task.dueDate < new Date() ? (
-                  <span className="text-red-600">
+                  <span className="inline-flex items-center gap-1.5 text-red-600">
                     {task.dueDate && isToday(task.dueDate)
                       ? "Due today"
                       : task.dueDate > new Date()
@@ -84,6 +88,9 @@ export function TaskListItem({
                   </>
                 )}
               </span>
+            )}
+            {task.projectId && task.dueDate && (
+              <Circle className="w-1 h-1 mx-0.5 text-zinc-400/60 fill-zinc-400/60" />
             )}
             {task.projectId && (
               <span

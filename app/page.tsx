@@ -37,6 +37,10 @@ import {
   Tag,
 } from "lucide-react";
 import { THEME_COLORS, ThemeName } from "@/app/types/Theme";
+import {
+  CUSTOM_THEME_COLORS,
+  ThemeName as CustomThemeName,
+} from "@/app/types/CustomTheme";
 import { Task } from "@/app/types/Task";
 import { Project } from "@/app/types/Project";
 import { QuadrantSelectOption } from "@/components/quadrant-select-option";
@@ -356,7 +360,7 @@ export default function Home() {
               <Button
                 variant="link"
                 size="sm"
-                className="mr-2"
+                className="mr-2 underline decoration-dotted decoration-1 decoration-zinc-700 underline-offset-3 hover:decoration-solid"
                 onClick={handleFilterReset}
               >
                 Clear filters
@@ -365,7 +369,19 @@ export default function Home() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="rounded-lg">
-                  <Tag className="h-4 w-4" />
+                  {activeProject === undefined ? (
+                    <Tag className="h-4 w-4" />
+                  ) : activeProject.icon ? (
+                    <activeProject.icon
+                      className={`w-4 h-4 ${
+                        CUSTOM_THEME_COLORS[
+                          (activeProject.theme as CustomThemeName) ?? "default"
+                        ].iconColor
+                      }`}
+                    />
+                  ) : (
+                    <Tag className="h-4 w-4" />
+                  )}
                   {activeProject === undefined
                     ? "All projects"
                     : activeProject.name}
@@ -383,6 +399,15 @@ export default function Home() {
                 >
                   {projects.map((project) => (
                     <DropdownMenuRadioItem key={project.id} value={project.id}>
+                      {project.icon && (
+                        <project.icon
+                          className={`w-4 h-4 mr-2 ${
+                            CUSTOM_THEME_COLORS[
+                              (project.theme as CustomThemeName) ?? "default"
+                            ].iconColor
+                          }`}
+                        />
+                      )}
                       {project.name}
                     </DropdownMenuRadioItem>
                   ))}

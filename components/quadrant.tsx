@@ -49,15 +49,7 @@ export function Quadrant({
   tasks,
 }: QuadrantProps) {
   const themeColors = THEME_COLORS[theme] || THEME_COLORS.sky;
-  const {
-    bgColor,
-    textColor,
-    iconColor,
-    hoverColor,
-    washHoverColor,
-    ringColor,
-    accentColor,
-  } = themeColors;
+  const { bgColor, washHoverColor, accentColor } = themeColors;
 
   const [isAnimating, setIsAnimating] = useState(false);
 
@@ -77,7 +69,7 @@ export function Quadrant({
   return (
     <div className="flex flex-col min-h-0 grow gap-2.5">
       <header
-        className={`shrink-0 pl-3.5 pr-3 flex items-center justify-between
+        className={`shrink-0 pl-4.5 pr-3 flex items-center justify-between
         `}
       >
         <div className="flex items-center gap-2.5 min-h-8">
@@ -140,12 +132,12 @@ export function Quadrant({
       <div
         data-hidden={hidden}
         className={cn(
-          "group relative flex flex-col rounded-2xl overflow-hidden h-full bg-zinc-200/50 ring-1 ring-zinc-200/50"
+          "group relative flex flex-col rounded-2xl overflow-hidden h-full"
         )}
       >
         <div className="relative flex flex-col min-h-0 grow">
           {taskCount > 0 ? (
-            <>
+            <div className="h-full bg-zinc-200/50">
               <ScrollArea
                 type="auto"
                 className="has-data-[state=visible]:pr-2 relative h-full"
@@ -158,9 +150,9 @@ export function Quadrant({
                 <ScrollBar orientation="vertical" className="scroll-bar peer" />
                 <div className="absolute bottom-0 left-0 right-0 hidden peer-[.scroll-bar]:block h-8 bg-linear-to-t from-black/[.05] to-transparent"></div>
               </ScrollArea>
-            </>
+            </div>
           ) : (
-            <div className="flex flex-col grow items-center justify-center gap-3 py-4 bg-white">
+            <div className="flex flex-col grow items-center justify-center gap-3 py-4 bg-zinc-100/60 border border-dashed border-zinc-300/60 rounded-2xl">
               <p className="text-zinc-400 text-sm font-medium text-center">
                 No tasks to speak of.
               </p>

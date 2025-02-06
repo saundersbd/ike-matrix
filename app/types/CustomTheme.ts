@@ -32,6 +32,22 @@ export const CUSTOM_THEME_COLORS = {
     accentColor: "fill-fuchsia-500 text-fuchsia-500 bg-fuchsia-400",
     borderColor: "border border-fuchsia-500/40",
   },
+  lime: {
+    bgColor: "bg-lime-100/40",
+    textColor: "text-lime-600",
+    iconColor: "text-lime-600",
+    hoverColor: "hover:bg-lime-100 hover:data-[state=on]:bg-lime-100",
+    accentColor: "fill-lime-500 text-lime-500 bg-lime-400",
+    borderColor: "border border-lime-500/40",
+  },
+  orange: {
+    bgColor: "bg-orange-100/40",
+    textColor: "text-orange-600",
+    iconColor: "text-orange-600",
+    hoverColor: "hover:bg-orange-100 hover:data-[state=on]:bg-orange-100",
+    accentColor: "fill-orange-500 text-orange-500 bg-orange-400",
+    borderColor: "border border-orange-500/40",
+  },
   default: {
     bgColor: "bg-zinc-100/40",
     textColor: "text-zinc-600",
