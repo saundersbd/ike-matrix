@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
+  DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
@@ -41,10 +42,12 @@ import {
   CUSTOM_THEME_COLORS,
   ThemeName as CustomThemeName,
 } from "@/app/types/CustomTheme";
-import { Task } from "@/app/types/Task";
+
 import { Project } from "@/app/types/Project";
 import { QuadrantSelectOption } from "@/components/quadrant-select-option";
 import { TaskList } from "@/components/task-list";
+import { cn } from "@/lib/utils";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 // Create a safe useLayoutEffect that falls back to useEffect on server
 const useIsomorphicLayoutEffect =
@@ -58,25 +61,23 @@ export default function Home() {
   const [view, setView] = useState<"grid" | "list">("grid");
   const [isLoading, setIsLoading] = useState(true);
   const [sortBy, setSortBy] = useState("created");
-  const [quadrants, setQuadrants] = useState([true, true, true, true]);
+  const [visibilityControls, setVisibilityControls] = useState([
+    false,
+    false,
+    false,
+    false,
+  ]);
   const [open, setOpen] = useState(true);
-  const [focusedQuadrant, setFocusedQuadrant] = useState("All quadrants");
   const [activeProject, setActiveProject] = useState<Project | undefined>(
     undefined
   );
   const { tasks, projects } = useWorkspace();
-  const sortedAndFilteredTasks = useTasks(
-    tasks,
-    quadrants,
-    sortBy,
-    activeProject
-  );
-
-  const [isQuadrant1Hidden, setIsQuadrant1Hidden] = useState(false);
-  const [isQuadrant2Hidden, setIsQuadrant2Hidden] = useState(false);
-  const [isQuadrant3Hidden, setIsQuadrant3Hidden] = useState(false);
-  const [isQuadrant4Hidden, setIsQuadrant4Hidden] = useState(false);
+  const sortedAndFilteredTasks = useTasks(tasks, sortBy, activeProject);
   const [isNewTaskDialogOpen, setIsNewTaskDialogOpen] = useState(false);
+
+  const visibleQuadrantCount = visibilityControls.filter(
+    (quadrant) => !quadrant
+  ).length;
 
   useEffect(() => {
     if (taskId) {
@@ -119,8 +120,7 @@ export default function Home() {
 
   const handleFilterReset = () => {
     setActiveProject(undefined);
-    setFocusedQuadrant("All quadrants");
-    setQuadrants([true, true, true, true]);
+    setVisibilityControls([false, false, false, false]);
   };
 
   const quadrantTitles: Record<number, string> = {
@@ -139,9 +139,14 @@ export default function Home() {
 
   const gridView = (sortBy: string) => (
     <div
-      className={`grid grid-cols-2 grid-rows-2 gap-6 h-[calc(100svh-184px)] ${
-        open ? "md:px-4" : "md:px-0"
-      } transition-all duration-200`}
+      className={cn(
+        `grid grid-cols-2 grid-rows-2 gap-6 h-[calc(100svh-184px)] ${
+          open ? "md:px-4" : "md:px-0"
+        }`,
+        "h-[calc(100svh-200px)]",
+        (visibleQuadrantCount === 2 || visibleQuadrantCount === 1) &&
+          "grid-rows-1"
+      )}
     >
       <Quadrant
         quadrant={1}
@@ -152,13 +157,11 @@ export default function Home() {
             task.quadrant === 1 &&
             (!task.completed || task.isCompletionTransitioning)
         )}
-        hidden={
-          focusedQuadrant === "All quadrants"
-            ? isQuadrant1Hidden
-            : focusedQuadrant !== "All quadrants" &&
-              focusedQuadrant !== quadrantTitles[1]
-        }
-        onHideChange={setIsQuadrant1Hidden}
+        hidden={visibilityControls[0]}
+        className={cn(
+          visibleQuadrantCount === 3 && "row-span-2",
+          visibleQuadrantCount === 2 && "row-span-1"
+        )}
       />
       <Quadrant
         quadrant={2}
@@ -169,13 +172,14 @@ export default function Home() {
             task.quadrant === 2 &&
             (!task.completed || task.isCompletionTransitioning)
         )}
-        hidden={
-          focusedQuadrant === "All quadrants"
-            ? isQuadrant2Hidden
-            : focusedQuadrant !== "All quadrants" &&
-              focusedQuadrant !== quadrantTitles[2]
-        }
-        onHideChange={setIsQuadrant2Hidden}
+        hidden={visibilityControls[1]}
+        className={cn(
+          visibilityControls[0] &&
+            !visibilityControls[1] &&
+            !visibilityControls[2] &&
+            !visibilityControls[3] &&
+            "row-span-2"
+        )}
       />
       <Quadrant
         quadrant={3}
@@ -186,13 +190,7 @@ export default function Home() {
             task.quadrant === 3 &&
             (!task.completed || task.isCompletionTransitioning)
         )}
-        hidden={
-          focusedQuadrant === "All quadrants"
-            ? isQuadrant3Hidden
-            : focusedQuadrant !== "All quadrants" &&
-              focusedQuadrant !== quadrantTitles[3]
-        }
-        onHideChange={setIsQuadrant3Hidden}
+        hidden={visibilityControls[2]}
       />
       <Quadrant
         quadrant={4}
@@ -203,13 +201,7 @@ export default function Home() {
             task.quadrant === 4 &&
             (!task.completed || task.isCompletionTransitioning)
         )}
-        hidden={
-          focusedQuadrant === "All quadrants"
-            ? isQuadrant4Hidden
-            : focusedQuadrant !== "All quadrants" &&
-              focusedQuadrant !== quadrantTitles[4]
-        }
-        onHideChange={setIsQuadrant4Hidden}
+        hidden={visibilityControls[3]}
       />
     </div>
   );
@@ -226,7 +218,7 @@ export default function Home() {
             variant="outline"
             size="sm"
             className="rounded-lg"
-            onClick={() => setQuadrants([true, true, true, true])}
+            onClick={() => setVisibilityControls([false, false, false, false])}
           >
             Bring &apos;em back
           </Button>
@@ -356,7 +348,7 @@ export default function Home() {
           </SidebarTrigger>
 
           <div className="flex items-center gap-3">
-            {(activeProject || focusedQuadrant !== "All quadrants") && (
+            {activeProject && (
               <Button
                 variant="link"
                 size="sm"
@@ -366,6 +358,53 @@ export default function Home() {
                 Clear filters
               </Button>
             )}
+
+            <ToggleGroup
+              type="multiple"
+              className="h-9 ring-1 ring-zinc-200 bg-white rounded-lg gap-0"
+              value={visibilityControls
+                .map((control, index) => (control ? index.toString() : null))
+                .filter((value): value is string => value !== null)}
+              onValueChange={(value) =>
+                setVisibilityControls(
+                  [0, 1, 2, 3].map((i) => value.includes(i.toString()))
+                )
+              }
+            >
+              <ToggleGroupItem value="0" size="sm">
+                <Circle
+                  className={cn(
+                    "!w-[12px] !h-[12px] fill-red-500 text-red-500",
+                    visibilityControls[0] && "fill-white"
+                  )}
+                />
+              </ToggleGroupItem>
+              <ToggleGroupItem value="1" size="sm">
+                <Circle
+                  className={cn(
+                    "!w-[12px] !h-[12px] fill-amber-400 text-amber-400",
+                    visibilityControls[1] && "fill-white"
+                  )}
+                />
+              </ToggleGroupItem>
+              <ToggleGroupItem value="2" size="sm">
+                <Circle
+                  className={cn(
+                    "!w-[12px] !h-[12px] fill-sky-500 text-sky-500",
+                    visibilityControls[2] && "fill-white"
+                  )}
+                />
+              </ToggleGroupItem>
+              <ToggleGroupItem value="3" size="sm">
+                <Circle
+                  className={cn(
+                    "!w-[12px] !h-[12px] fill-purple-500 text-purple-500",
+                    visibilityControls[3] && "fill-white"
+                  )}
+                />
+              </ToggleGroupItem>
+            </ToggleGroup>
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="rounded-lg">
@@ -411,66 +450,6 @@ export default function Home() {
                       {project.name}
                     </DropdownMenuRadioItem>
                   ))}
-                </DropdownMenuRadioGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="rounded-lg">
-                  <Grid2X2 className="h-4 w-4" />
-                  {focusedQuadrant === "All quadrants"
-                    ? "All quadrants"
-                    : focusedQuadrantLabel(focusedQuadrant)}
-                  <ChevronDown className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-66">
-                <DropdownMenuRadioGroup
-                  value={focusedQuadrant}
-                  onValueChange={(value) => {
-                    setFocusedQuadrant(value);
-                    setQuadrants(
-                      value === "All quadrants"
-                        ? [true, true, true, true]
-                        : [
-                            value === quadrantTitles[1],
-                            value === quadrantTitles[2],
-                            value === quadrantTitles[3],
-                            value === quadrantTitles[4],
-                          ]
-                    );
-                  }}
-                >
-                  <DropdownMenuRadioItem value="All quadrants">
-                    <QuadrantSelectOption
-                      label={{ value: "All quadrants", theme: "gray" }}
-                      type="backlog"
-                    />
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value={quadrantTitles[1]}>
-                    <QuadrantSelectOption
-                      label={{ value: quadrantTitles[1], theme: "red" }}
-                      type="quadrant"
-                    />
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value={quadrantTitles[3]}>
-                    <QuadrantSelectOption
-                      label={{ value: quadrantTitles[3], theme: "sky" }}
-                      type="quadrant"
-                    />
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value={quadrantTitles[2]}>
-                    <QuadrantSelectOption
-                      label={{ value: quadrantTitles[2], theme: "amber" }}
-                      type="quadrant"
-                    />
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value={quadrantTitles[4]}>
-                    <QuadrantSelectOption
-                      label={{ value: quadrantTitles[4], theme: "purple" }}
-                      type="quadrant"
-                    />
-                  </DropdownMenuRadioItem>
                 </DropdownMenuRadioGroup>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -548,7 +527,7 @@ export default function Home() {
               <div className="h-[calc(100svh-(var(--header-height)+120px))]">
                 <TabsContent value="grid">{gridView(sortBy)}</TabsContent>
                 <TabsContent value="list">
-                  {listView(quadrants, sortBy)}
+                  {listView(visibilityControls, sortBy)}
                 </TabsContent>
               </div>
             </div>

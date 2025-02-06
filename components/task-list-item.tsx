@@ -44,7 +44,7 @@ export function TaskListItem({
       />
       <Link
         href={`/task/${task.id}`}
-        className="group/task-list-item flex grow flex-col gap-1"
+        className="group/task-list-item flex grow flex-col gap-1 pointer-events-auto"
       >
         <p className="grow peer-data-[state=checked]:line-through peer-data-[state=checked]:text-zinc-400 text-base leading-snug font-medium">
           {task.title}

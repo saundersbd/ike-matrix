@@ -4,7 +4,6 @@ import { Project } from "@/app/types/Project";
 
 export function useTasks(
   tasks: Task[],
-  quadrants: boolean[],
   sortBy: string,
   activeProject?: Project
 ) {
@@ -13,9 +12,8 @@ export function useTasks(
     const filteredTasks = tasks.filter((task) => {
       const matchesProject =
         !activeProject || task.projectId === activeProject.id;
-      const matchesQuadrant =
-        task.quadrant === 0 || quadrants[task.quadrant - 1];
-      return matchesProject && matchesQuadrant;
+
+      return matchesProject;
     });
 
     // Sort tasks
@@ -37,5 +35,5 @@ export function useTasks(
           return 0;
       }
     });
-  }, [tasks, activeProject, quadrants, sortBy]);
+  }, [tasks, activeProject, sortBy]);
 }

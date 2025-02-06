@@ -31,6 +31,7 @@ interface QuadrantProps {
   hidden?: boolean;
   tasks: Task[];
   onHideChange?: (hidden: boolean) => void;
+  className?: string;
 }
 
 const backgroundTexture = [
@@ -47,6 +48,7 @@ export function Quadrant({
   hidden,
   onHideChange,
   tasks,
+  className,
 }: QuadrantProps) {
   const themeColors = THEME_COLORS[theme] || THEME_COLORS.sky;
   const { bgColor, washHoverColor, accentColor } = themeColors;
@@ -67,7 +69,13 @@ export function Quadrant({
   const taskCount = tasks.length;
 
   return (
-    <div className="flex flex-col min-h-0 grow gap-2.5">
+    <div
+      className={cn(
+        "flex flex-col min-h-0 grow gap-2.5 transition-all duration-300",
+        hidden && "hidden",
+        className
+      )}
+    >
       <header
         className={`shrink-0 pl-4.5 pr-3 flex items-center justify-between
         `}
@@ -148,7 +156,7 @@ export function Quadrant({
                   ))}
                 </TaskList>
                 <ScrollBar orientation="vertical" className="scroll-bar peer" />
-                <div className="absolute bottom-0 left-0 right-0 hidden peer-[.scroll-bar]:block h-8 bg-linear-to-t from-black/[.05] to-transparent"></div>
+                <div className="absolute bottom-0 left-0 right-0 hidden peer-[.scroll-bar]:block h-8 bg-linear-to-t from-black/[.05] to-transparent pointer-events-none"></div>
               </ScrollArea>
             </div>
           ) : (
