@@ -16,4 +16,5 @@ export interface Task {
   theme?: ThemeName;
   isCompletionTransitioning?: boolean;
   projectId?: string;
+  isArchived?: boolean;
 }

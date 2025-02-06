@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useCallback, useContext, useState } from "react";
 import { Task } from "@/app/types/Task";
 import { Project } from "@/app/types/Project";
 import { tasks as initialTasks } from "@/app/data/tasks";
@@ -15,6 +15,9 @@ interface WorkspaceContextType {
   updateProject: (projectId: string, updates: Partial<Project>) => void;
   createProject: (project: Omit<Project, "id">) => void;
   deleteProject: (projectId: string) => void;
+
+  getTasksByQuadrant: (quadrant: number) => Task[];
+  getTasksByProject: (projectId: string) => Task[];
 }
 
 const WorkspaceContext = createContext<WorkspaceContextType | undefined>(
@@ -28,7 +31,9 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
   const updateTask = (taskId: string, updates: Partial<Task>) => {
     setTasks((prevTasks) =>
       prevTasks.map((task) =>
-        task.id === taskId ? { ...task, ...updates } : task
+        task.id === taskId
+          ? { ...task, ...updates, updatedAt: new Date() }
+          : task
       )
     );
   };
@@ -71,6 +76,20 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
     );
   };
 
+  const getTasksByQuadrant = useCallback(
+    (quadrant: number) => {
+      return tasks.filter((task) => task.quadrant === quadrant);
+    },
+    [tasks]
+  );
+
+  const getTasksByProject = useCallback(
+    (projectId: string) => {
+      return tasks.filter((task) => task.projectId === projectId);
+    },
+    [tasks]
+  );
+
   return (
     <WorkspaceContext.Provider
       value={{
@@ -82,6 +101,8 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
         updateProject,
         createProject,
         deleteProject,
+        getTasksByQuadrant,
+        getTasksByProject,
       }}
     >
       {children}

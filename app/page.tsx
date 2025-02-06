@@ -4,6 +4,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { useWorkspace } from "@/app/contexts/WorkspaceContext";
 import { useHotkeys } from "react-hotkeys-hook";
+import { useTasks } from "@/hooks/use-tasks";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -14,11 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import {
-  SidebarProvider,
-  SidebarTrigger,
-  SidebarInset,
-} from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 
@@ -26,10 +23,20 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { Quadrant } from "@/components/quadrant";
 import { TaskListTableRow } from "@/components/task-list-table-row";
 import { NewTaskDialog } from "@/components/new-task-dialog";
-import { ArrowUpDown, Circle, Filter, Grid2X2, List } from "lucide-react";
+import {
+  ArrowUpDown,
+  ChevronDown,
+  Circle,
+  Filter,
+  Grid2X2,
+  List,
+  Tag,
+} from "lucide-react";
 import { THEME_COLORS, ThemeName } from "@/app/types/Theme";
 import { Task } from "@/app/types/Task";
+import { Project } from "@/app/types/Project";
 import { QuadrantSelectOption } from "@/components/quadrant-select-option";
+import { TaskList } from "@/components/task-list";
 
 // Create a safe useLayoutEffect that falls back to useEffect on server
 const useIsomorphicLayoutEffect =
@@ -45,8 +52,18 @@ export default function Home() {
   const [sortBy, setSortBy] = useState("created");
   const [quadrants, setQuadrants] = useState([true, true, true, true]);
   const [open, setOpen] = useState(true);
-  const [focusedQuadrant, setFocusedQuadrant] = useState("All tasks");
-  const { tasks } = useWorkspace();
+  const [focusedQuadrant, setFocusedQuadrant] = useState("All quadrants");
+  const [activeProject, setActiveProject] = useState<Project | undefined>(
+    undefined
+  );
+  const { tasks, projects } = useWorkspace();
+  const sortedAndFilteredTasks = useTasks(
+    tasks,
+    quadrants,
+    sortBy,
+    activeProject
+  );
+
   const [isQuadrant1Hidden, setIsQuadrant1Hidden] = useState(false);
   const [isQuadrant2Hidden, setIsQuadrant2Hidden] = useState(false);
   const [isQuadrant3Hidden, setIsQuadrant3Hidden] = useState(false);
@@ -92,25 +109,10 @@ export default function Home() {
     return null; // or a loading spinner if you prefer
   }
 
-  const sortTasks = (tasks: Task[], sortBy: string) => {
-    return [...tasks].sort((a, b) => {
-      switch (sortBy) {
-        case "created":
-          return (
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-          );
-        case "updated":
-          if (!a.updatedAt) return 1;
-          if (!b.updatedAt) return -1;
-          return b.updatedAt.getTime() - a.updatedAt.getTime();
-        case "dueDate":
-          if (!a.dueDate) return 1;
-          if (!b.dueDate) return -1;
-          return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
-        default:
-          return 0;
-      }
-    });
+  const handleFilterReset = () => {
+    setActiveProject(undefined);
+    setFocusedQuadrant("All quadrants");
+    setQuadrants([true, true, true, true]);
   };
 
   const quadrantTitles: Record<number, string> = {
@@ -131,80 +133,68 @@ export default function Home() {
     <div className="grid grid-cols-2 grid-rows-2 gap-6 h-[calc(100svh-184px)]">
       <Quadrant
         quadrant={1}
-        title="Important AND urgent -> Do first"
+        title="Important and urgent"
         theme="red"
-        tasks={sortTasks(
-          tasks.filter(
-            (task) =>
-              task.quadrant === 1 &&
-              (!task.completed || task.isCompletionTransitioning)
-          ),
-          sortBy
+        tasks={sortedAndFilteredTasks.filter(
+          (task) =>
+            task.quadrant === 1 &&
+            (!task.completed || task.isCompletionTransitioning)
         )}
         hidden={
-          focusedQuadrant === "All tasks"
+          focusedQuadrant === "All quadrants"
             ? isQuadrant1Hidden
-            : focusedQuadrant !== "All tasks" &&
+            : focusedQuadrant !== "All quadrants" &&
               focusedQuadrant !== quadrantTitles[1]
         }
         onHideChange={setIsQuadrant1Hidden}
       />
       <Quadrant
         quadrant={2}
-        title="Important but not urgent -> Schedule"
+        title="Important but not urgent"
         theme="amber"
-        tasks={sortTasks(
-          tasks.filter(
-            (task) =>
-              task.quadrant === 2 &&
-              (!task.completed || task.isCompletionTransitioning)
-          ),
-          sortBy
+        tasks={sortedAndFilteredTasks.filter(
+          (task) =>
+            task.quadrant === 2 &&
+            (!task.completed || task.isCompletionTransitioning)
         )}
         hidden={
-          focusedQuadrant === "All tasks"
+          focusedQuadrant === "All quadrants"
             ? isQuadrant2Hidden
-            : focusedQuadrant !== "All tasks" &&
+            : focusedQuadrant !== "All quadrants" &&
               focusedQuadrant !== quadrantTitles[2]
         }
         onHideChange={setIsQuadrant2Hidden}
       />
       <Quadrant
         quadrant={3}
-        title="Urgent but not important -> Delegate"
+        title="Urgent but not important"
         theme="sky"
-        tasks={sortTasks(
-          tasks.filter(
-            (task) =>
-              task.quadrant === 3 &&
-              (!task.completed || task.isCompletionTransitioning)
-          ),
-          sortBy
+        tasks={sortedAndFilteredTasks.filter(
+          (task) =>
+            task.quadrant === 3 &&
+            (!task.completed || task.isCompletionTransitioning)
         )}
         hidden={
-          focusedQuadrant === "All tasks"
+          focusedQuadrant === "All quadrants"
             ? isQuadrant3Hidden
-            : focusedQuadrant !== "All tasks" &&
+            : focusedQuadrant !== "All quadrants" &&
               focusedQuadrant !== quadrantTitles[3]
         }
         onHideChange={setIsQuadrant3Hidden}
       />
       <Quadrant
         quadrant={4}
-        title="Neither urgent nor important -> Defer"
+        title="Neither urgent nor important"
         theme="purple"
-        tasks={sortTasks(
-          tasks.filter(
-            (task) =>
-              task.quadrant === 4 &&
-              (!task.completed || task.isCompletionTransitioning)
-          ),
-          sortBy
+        tasks={sortedAndFilteredTasks.filter(
+          (task) =>
+            task.quadrant === 4 &&
+            (!task.completed || task.isCompletionTransitioning)
         )}
         hidden={
-          focusedQuadrant === "All tasks"
+          focusedQuadrant === "All quadrants"
             ? isQuadrant4Hidden
-            : focusedQuadrant !== "All tasks" &&
+            : focusedQuadrant !== "All quadrants" &&
               focusedQuadrant !== quadrantTitles[4]
         }
         onHideChange={setIsQuadrant4Hidden}
@@ -233,13 +223,10 @@ export default function Home() {
         [1, 3, 2, 4].map((quadrantNumber) => {
           if (!quadrants[quadrantNumber - 1]) return null;
 
-          const quadrantTasks = sortTasks(
-            tasks.filter(
-              (task) =>
-                task.quadrant === quadrantNumber &&
-                (!task.completed || task.isCompletionTransitioning)
-            ),
-            sortBy
+          const quadrantTasks = sortedAndFilteredTasks.filter(
+            (task) =>
+              task.quadrant === quadrantNumber &&
+              (!task.completed || task.isCompletionTransitioning)
           );
 
           return quadrantTasks.length > 0 ? (
@@ -270,10 +257,12 @@ export default function Home() {
                 />
               </div>
 
-              <div className="px-5 py-4 ring-1 ring-black/[.08] rounded-2xl bg-white shadow-sm">
-                {quadrantTasks.map((task) => (
-                  <TaskListTableRow key={task.id} task={task} />
-                ))}
+              <div className="ring-1 ring-black/[.08] rounded-2xl bg-white shadow-xs">
+                <TaskList gap={false} className="px-5 py-4">
+                  {quadrantTasks.map((task) => (
+                    <TaskListTableRow key={task.id} task={task} />
+                  ))}
+                </TaskList>
               </div>
             </div>
           ) : (
@@ -322,7 +311,7 @@ export default function Home() {
       ([num, title]) => title === quadrant
     )?.[0];
 
-    // Use the corresponding theme color, or default to gray for "All tasks"
+    // Use the corresponding theme color, or default to gray for "All quadrants"
     const themeColor = quadrantNumber
       ? THEME_COLORS[quadrantThemes[parseInt(quadrantNumber)]]
       : THEME_COLORS.gray;
@@ -355,13 +344,51 @@ export default function Home() {
           </div>
 
           <div className="flex items-center gap-3">
+            {(activeProject || focusedQuadrant !== "All quadrants") && (
+              <Button
+                variant="link"
+                size="sm"
+                className="mr-2"
+                onClick={handleFilterReset}
+              >
+                Clear filters
+              </Button>
+            )}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="rounded-lg">
-                  <Filter className="h-4 w-4" />
-                  {focusedQuadrant === "All tasks"
-                    ? "All tasks"
+                  <Tag className="h-4 w-4" />
+                  {activeProject === undefined
+                    ? "All projects"
+                    : activeProject.name}
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-66">
+                <DropdownMenuRadioGroup
+                  value={activeProject?.id}
+                  onValueChange={(value) =>
+                    setActiveProject(
+                      projects.find((project) => project.id === value)
+                    )
+                  }
+                >
+                  {projects.map((project) => (
+                    <DropdownMenuRadioItem key={project.id} value={project.id}>
+                      {project.name}
+                    </DropdownMenuRadioItem>
+                  ))}
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="rounded-lg">
+                  <Grid2X2 className="h-4 w-4" />
+                  {focusedQuadrant === "All quadrants"
+                    ? "All quadrants"
                     : focusedQuadrantLabel(focusedQuadrant)}
+                  <ChevronDown className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-66">
@@ -370,7 +397,7 @@ export default function Home() {
                   onValueChange={(value) => {
                     setFocusedQuadrant(value);
                     setQuadrants(
-                      value === "All tasks"
+                      value === "All quadrants"
                         ? [true, true, true, true]
                         : [
                             value === quadrantTitles[1],
@@ -381,9 +408,9 @@ export default function Home() {
                     );
                   }}
                 >
-                  <DropdownMenuRadioItem value="All tasks">
+                  <DropdownMenuRadioItem value="All quadrants">
                     <QuadrantSelectOption
-                      label={{ value: "All tasks", theme: "gray" }}
+                      label={{ value: "All quadrants", theme: "gray" }}
                       type="backlog"
                     />
                   </DropdownMenuRadioItem>
@@ -422,6 +449,7 @@ export default function Home() {
                   <span className="text-sm font-medium">
                     Sort by: {sortBy.charAt(0).toUpperCase() + sortBy.slice(1)}
                   </span>
+                  <ChevronDown className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56">
@@ -474,13 +502,10 @@ export default function Home() {
         </header>
         <div className="flex flex-1">
           <AppSidebar
-            tasks={sortTasks(
-              tasks.filter(
-                (task) =>
-                  task.quadrant === 0 &&
-                  (!task.completed || task.isCompletionTransitioning)
-              ),
-              sortBy
+            tasks={sortedAndFilteredTasks.filter(
+              (task) =>
+                task.quadrant === 0 &&
+                (!task.completed || task.isCompletionTransitioning)
             )}
           />
           <SidebarInset

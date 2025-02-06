@@ -58,16 +58,16 @@ import { THEME_COLORS, ThemeName } from "@/app/types/Theme";
 
 export function NewTaskDialog({
   defaultDestination = "Backlog",
-  inlineTrigger = false,
+  variant = "default",
   theme = "sky",
   buttonVariant = "default",
   isOpen,
   onOpenChange,
 }: {
   defaultDestination: string;
-  inlineTrigger?: boolean;
+  variant?: "default" | "inline" | "fab";
   theme?: ThemeName;
-  buttonVariant?: "default" | "outline";
+  buttonVariant?: "default" | "outline" | "secondary";
   isOpen?: boolean;
   onOpenChange?: (isOpen: boolean) => void;
 }) {
@@ -244,7 +244,7 @@ export function NewTaskDialog({
     <>
       <Dialog open={isDialogOpen} onOpenChange={handleOpenChange}>
         <DialogTrigger asChild onClick={() => setOpen(true)}>
-          {inlineTrigger ? (
+          {variant === "inline" ? (
             <Button
               variant="ghost"
               size="icon"
@@ -265,6 +265,14 @@ export function NewTaskDialog({
               }}
             >
               <Plus className={iconColor} />
+            </Button>
+          ) : variant === "fab" ? (
+            <Button
+              variant="outline"
+              size="fab"
+              className="absolute bottom-4 right-4"
+            >
+              <Plus className="w-4 h-4" />
             </Button>
           ) : (
             <Button size="sm" className="rounded-lg" variant={buttonVariant}>

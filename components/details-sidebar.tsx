@@ -46,6 +46,7 @@ import {
   Plus,
   Trash,
   Calendar as CalendarIcon,
+  Tag,
 } from "lucide-react";
 import { useWorkspace } from "@/app/contexts/WorkspaceContext";
 import { Task } from "@/app/types/Task";
@@ -86,7 +87,7 @@ export function DetailsSidebar({ task }: { task: Task }) {
         className="w-[264px] h-[720px] hidden md:flex bg-zinc-50"
       >
         <SidebarContent className="gap-0">
-          <SidebarGroup className="p-3 pt-5 gap-3">
+          <SidebarGroup className="p-3 pt-5 gap-2.5">
             <SidebarGroupLabel className="p-0 px-2 h-auto font-semibold">
               Project
             </SidebarGroupLabel>
@@ -115,6 +116,7 @@ export function DetailsSidebar({ task }: { task: Task }) {
                         </>
                       ) : (
                         <>
+                          <Tag className="!w-3.5 !h-3.5 mr-2" />
                           <span>Assign to project</span>
                           <ChevronDown className="opacity-0 group-hover:opacity-100 w-4 h-4 ml-auto text-zinc-600 transition-opacity duration-200" />
                         </>
@@ -232,8 +234,8 @@ export function DetailsSidebar({ task }: { task: Task }) {
               </div>
             </SidebarGroupContent>
           </SidebarGroup>
-          <Separator className="bg-zinc-200/60" />
-          <SidebarGroup className="p-3 pt-5 gap-3">
+          <Separator className="bg-zinc-200/70" />
+          <SidebarGroup className="p-3 pt-5 gap-2.5">
             <SidebarGroupLabel className="p-0 px-2 h-auto font-semibold">
               Due date
             </SidebarGroupLabel>
@@ -351,7 +353,7 @@ export function DetailsSidebar({ task }: { task: Task }) {
               )}
             </SidebarGroupContent>
           </SidebarGroup>
-          <Separator className="bg-zinc-200/60" />
+          <Separator className="bg-zinc-200/70" />
         </SidebarContent>
       </Sidebar>
       <Dialog

@@ -1,5 +1,19 @@
 import { Task } from "@/app/types/Task";
 
+export const emptyTasks: Task[] = [];
+export const onboardingTasks: Task[] = [
+  {
+    id: "1",
+    title: "Prioritize this task",
+    description:
+      "This task is a placeholder to help you get started. It will be replaced with your own tasks soon.",
+    quadrant: 1,
+    createdAt: new Date("2025-02-01"),
+    completed: false,
+    status: "todo",
+  },
+];
+
 export const tasks: Task[] = [
   {
     id: "1",
@@ -40,6 +54,7 @@ export const tasks: Task[] = [
     description:
       "Interview 5 potential users to gather feedback on the wireframes.",
     dueDate: new Date("2025-02-08"),
+    dueTime: new Date("2025-02-08T10:00:00"),
     quadrant: 1,
     createdAt: new Date("2025-02-02"),
     completed: false,

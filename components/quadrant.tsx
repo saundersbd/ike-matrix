@@ -12,9 +12,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import { NewTaskDialog } from "@/components/new-task-dialog";
-import { Ellipsis, EyeClosed, Archive } from "lucide-react";
+import { Ellipsis, EyeClosed, Archive, HelpCircle } from "lucide-react";
 import { THEME_COLORS, ThemeName } from "@/app/types/Theme";
 import { TaskListItem } from "./task-list-item";
 import { TaskList } from "./task-list";
@@ -68,16 +73,13 @@ export function Quadrant({
   };
 
   const taskCount = tasks.length;
-  const tasksToDisplay = tasks.filter(
-    (task) => !task.completed || task.isCompletionTransitioning
-  );
 
   return (
     <div
       data-hidden={hidden}
       className={cn(
-        "group relative flex flex-col rounded-2xl overflow-hidden ring-1 h-full",
-        "data-[hidden=true]:shadow-none data-[hidden=false]:shadow-sm",
+        "group relative flex flex-col rounded-2xl overflow-hidden ring-1 h-full shadow-sm",
+        "data-[hidden=true]:shadow-none",
         {
           [ringColor]: hidden,
           "ring-black/[.08]": !hidden,
@@ -107,23 +109,26 @@ export function Quadrant({
         <div className="flex items-center">
           {hidden ? null : (
             <>
-              <NewTaskDialog
-                theme={theme}
-                defaultDestination={
-                  quadrant === 1
-                    ? "Important and urgent"
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={cn("h-8 w-8", hoverColor)}
+                  >
+                    <HelpCircle className={`w-4 h-4 ${iconColor}`} />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-76 text-sm" dark>
+                  {quadrant === 1
+                    ? "Do these before you do anything else."
                     : quadrant === 2
-                    ? "Important but not urgent"
+                    ? "Schedule these for later, since they are likely to become more urgent as time goes on."
                     : quadrant === 3
-                    ? "Urgent but not important"
-                    : "Neither urgent nor important"
-                }
-                inlineTrigger
-              />
-              <Separator
-                orientation="vertical"
-                className={`mx-2 h-4 ${separatorColor}`}
-              />
+                    ? "See if you can delegate these to someone else."
+                    : "You can safely delete these or revisit them in the future."}
+                </PopoverContent>
+              </Popover>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
@@ -145,8 +150,9 @@ export function Quadrant({
           )}
         </div>
       </header>
+
       <div className="flex flex-col min-h-0 grow bg-white">
-        {tasksToDisplay.length > 0 ? (
+        {taskCount > 0 ? (
           <ScrollArea className="h-full">
             <TaskList className="p-5">
               {tasks.map((task) => (
@@ -156,7 +162,7 @@ export function Quadrant({
             <ScrollBar orientation="vertical" />
           </ScrollArea>
         ) : (
-          <div className="flex flex-col grow items-center justify-center gap-6 py-4 bg-white">
+          <div className="flex flex-col grow items-center justify-center gap-3 py-4 bg-white">
             <p className="text-zinc-400 text-sm font-medium text-center">
               No tasks to speak of.
             </p>
@@ -187,6 +193,29 @@ export function Quadrant({
           />
         </Button>
       </div>
+      <Popover>
+        <PopoverTrigger asChild>
+          <NewTaskDialog
+            theme={theme}
+            defaultDestination={
+              quadrant === 1
+                ? "Important and urgent"
+                : quadrant === 2
+                ? "Important but not urgent"
+                : quadrant === 3
+                ? "Urgent but not important"
+                : "Neither urgent nor important"
+            }
+            variant="fab"
+          />
+        </PopoverTrigger>
+        <PopoverContent side="top" align="end" className="w-76 text-sm" dark>
+          <p>
+            This is a help text. It will be used to explain the quadrant and its
+            purpose.
+          </p>
+        </PopoverContent>
+      </Popover>
     </div>
   );
 }

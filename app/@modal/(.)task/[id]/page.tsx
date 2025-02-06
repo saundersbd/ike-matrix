@@ -83,12 +83,12 @@ export default function TaskModal({
   return (
     <Dialog open={open} onOpenChange={handleClose} modal={true}>
       <DialogContent className="flex flex-col p-0 overflow-y-auto max-h-[720px] max-w-4xl">
-        <DialogHeader className="px-6 py-5 border-b border-zinc-200">
+        <DialogHeader className="pl-5 pr-6 py-5 border-b border-zinc-200">
           <DialogTitle className="sr-only">Task details</DialogTitle>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
-                variant="outline"
+                variant="ghost"
                 size="chip"
                 className="w-max rounded-lg text-xs font-semibold text-zinc-700 hover:ring-zinc-300 transition-all duration-150"
               >

@@ -27,6 +27,7 @@ const buttonVariants = cva(
         sm: "h-9 rounded-md px-3",
         lg: "h-11 rounded-md px-8",
         icon: "h-9 w-9 rounded-md",
+        fab: "w-[2.8rem] h-[2.8rem] shadow-sm ring-1 ring-black/[.08] rounded-full bg-white hover:bg-zinc-50 hover:ring-black/[.12] hover:shadow-xs transition-all duration-200",
       },
     },
     defaultVariants: {
