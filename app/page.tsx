@@ -48,6 +48,7 @@ import { cn } from "@/lib/utils";
 import StopLight from "@/components/controls/stop-light";
 import ViewSwitcher from "@/components/controls/view-switcher";
 import { QUADRANTS } from "@/app/types/Quadrant";
+import { FilterChip } from "@/components/controls/filtering/filter-chip";
 // Create a safe useLayoutEffect that falls back to useEffect on server
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -82,7 +83,6 @@ export default function Home() {
   const visibleQuadrantCount = visibilityControls.filter(
     (quadrant) => !quadrant
   ).length;
-  const [defaultDestination, setDefaultDestination] = useState(0);
 
   useEffect(() => {
     if (taskId) {
@@ -357,58 +357,12 @@ export default function Home() {
                 </Button>
               )}
 
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="rounded-lg">
-                    {activeProject === undefined ? (
-                      <Tag className="h-4 w-4" />
-                    ) : activeProject.icon ? (
-                      <activeProject.icon
-                        className={`w-4 h-4 ${
-                          CUSTOM_THEME_COLORS[
-                            (activeProject.theme as CustomThemeName) ??
-                              "default"
-                          ].iconColor
-                        }`}
-                      />
-                    ) : (
-                      <Tag className="h-4 w-4" />
-                    )}
-                    {activeProject === undefined
-                      ? "All projects"
-                      : activeProject.name}
-                    <ChevronDown className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-66">
-                  <DropdownMenuRadioGroup
-                    value={activeProject?.id}
-                    onValueChange={(value) =>
-                      setActiveProject(
-                        projects.find((project) => project.id === value)
-                      )
-                    }
-                  >
-                    {projects.map((project) => (
-                      <DropdownMenuRadioItem
-                        key={project.id}
-                        value={project.id}
-                      >
-                        {project.icon && (
-                          <project.icon
-                            className={`w-4 h-4 mr-2 ${
-                              CUSTOM_THEME_COLORS[
-                                (project.theme as CustomThemeName) ?? "default"
-                              ].iconColor
-                            }`}
-                          />
-                        )}
-                        {project.name}
-                      </DropdownMenuRadioItem>
-                    ))}
-                  </DropdownMenuRadioGroup>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <FilterChip
+                label="All projects"
+                options={projects}
+                onApplyFilter={(project) => setActiveProject(project)}
+                onResetFilter={() => setActiveProject(undefined)}
+              />
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -457,7 +411,11 @@ export default function Home() {
                 size="sm"
                 className="rounded-lg"
                 onClick={() =>
-                  setNewTaskDialog((prev) => ({ ...prev, isOpen: true }))
+                  setNewTaskDialog((prev) => ({
+                    ...prev,
+                    isOpen: true,
+                    destinationQuadrant: 0,
+                  }))
                 }
               >
                 <Plus className="h-4 w-4" />

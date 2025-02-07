@@ -31,7 +31,7 @@ export function AppSidebar({
     >
       <SidebarHeader className="p-0">
         <CardHeader
-          title="To be processed"
+          title="To be prioritized"
           pill={tasksToDisplay.length.toString()}
           popover={{
             icon: HelpCircle,

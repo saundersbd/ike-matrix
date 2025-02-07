@@ -120,8 +120,8 @@ export function Quadrant({
                     <TaskListItem key={task.id} task={task} />
                   ))}
                 </TaskList>
-                <ScrollBar orientation="vertical" className="scroll-bar peer" />
-                <div className="absolute bottom-0 left-0 right-0 hidden peer-[.scroll-bar]:block h-8 bg-linear-to-t from-black/[.05] to-transparent pointer-events-none"></div>
+                <div className="absolute bottom-0 left-0 right-0 hidden group-has-data-[orientation=vertical]:block group-[.scroll-bottom]:hidden h-8 bg-linear-to-t from-black/[.05] to-transparent pointer-events-none"></div>
+                <div className="absolute top-0 left-0 right-0 hidden group-[.scroll-container]:block h-8 bg-linear-to-b from-black/[.05] to-transparent pointer-events-none"></div>
               </ScrollArea>
             </div>
           ) : (

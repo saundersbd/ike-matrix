@@ -47,7 +47,7 @@ export function CardHeader({
               )}
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-76 text-sm">
+          <PopoverContent className="w-76 text-sm" dark>
             {popover.content}
           </PopoverContent>
         </Popover>

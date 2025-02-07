@@ -76,6 +76,16 @@ export function NewTaskDialog({
   const isDialogOpen = isOpen ?? open;
   const setIsDialogOpen = onOpenChange ?? setOpen;
 
+  const [quadrant, setQuadrant] = useState(defaultDestination || QUADRANTS[0]);
+  const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
+  const [dueTime, setDueTime] = useState<Date | undefined>(
+    new Date(new Date().setHours(12, 0, 0, 0))
+  );
+  const [continueAdding, setContinueAdding] = useState(false);
+  const [taskText, setTaskText] = useState("");
+  const [taskDescriptionText, setTaskDescriptionText] = useState("");
+  const [showUnsavedChangesAlert, setShowUnsavedChangesAlert] = useState(false);
+
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -103,7 +113,7 @@ export function NewTaskDialog({
       dueTime: dueTime
         ? new Date(dueTime.setHours(dueTime.getHours(), dueTime.getMinutes()))
         : undefined,
-      quadrant: defaultDestination,
+      quadrant: quadrant,
       createdAt: new Date(),
       completed: false,
       status: "todo",
@@ -122,16 +132,6 @@ export function NewTaskDialog({
       description: "Your task has been created.",
     });
   };
-
-  const [quadrant, setQuadrant] = useState(defaultDestination || QUADRANTS[0]);
-  const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
-  const [dueTime, setDueTime] = useState<Date | undefined>(
-    new Date(new Date().setHours(12, 0, 0, 0))
-  );
-  const [continueAdding, setContinueAdding] = useState(false);
-  const [taskText, setTaskText] = useState("");
-  const [taskDescriptionText, setTaskDescriptionText] = useState("");
-  const [showUnsavedChangesAlert, setShowUnsavedChangesAlert] = useState(false);
 
   const hasUnsavedChanges = () => {
     // Only check for actual changes from empty/initial state
