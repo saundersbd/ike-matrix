@@ -3,12 +3,13 @@
 import { useWorkspace } from "@/app/contexts/WorkspaceContext";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useToast } from "@/hooks/use-toast";
+import { useState, useEffect } from "react";
 
-import { useState } from "react";
+import { QUADRANTS } from "@/app/types/Quadrant";
+import { Quadrant } from "@/app/types/Quadrant";
 import { cn } from "@/lib/utils";
 import TextareaAutosize from "react-textarea-autosize";
 import {
-  Plus,
   Calendar as CalendarIcon,
   Clock,
   X,
@@ -33,7 +34,6 @@ import {
   DialogContent,
   DialogFooter,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -54,20 +54,13 @@ import {
 } from "@/components/ui/popover";
 
 import { QuadrantSelectOption } from "@/components/quadrant-select-option";
-import { THEME_COLORS, ThemeName } from "@/app/types/Theme";
 
 export function NewTaskDialog({
-  defaultDestination = "Backlog",
-  variant = "default",
-  theme = "sky",
-  buttonVariant = "default",
+  defaultDestination,
   isOpen,
   onOpenChange,
 }: {
-  defaultDestination: string;
-  variant?: "default" | "inline" | "fab";
-  theme?: ThemeName;
-  buttonVariant?: "default" | "outline" | "secondary";
+  defaultDestination: Quadrant;
   isOpen?: boolean;
   onOpenChange?: (isOpen: boolean) => void;
 }) {
@@ -84,6 +77,10 @@ export function NewTaskDialog({
   const setIsDialogOpen = onOpenChange ?? setOpen;
 
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    setQuadrant(defaultDestination || QUADRANTS[0]);
+  }, [defaultDestination]);
 
   const handleCreateTask = () => {
     // Validate title
@@ -106,11 +103,7 @@ export function NewTaskDialog({
       dueTime: dueTime
         ? new Date(dueTime.setHours(dueTime.getHours(), dueTime.getMinutes()))
         : undefined,
-      quadrant: Number(
-        Object.keys(quadrantTitles).find(
-          (key) => quadrantTitles[Number(key)] === value.value
-        )
-      ),
+      quadrant: defaultDestination,
       createdAt: new Date(),
       completed: false,
       status: "todo",
@@ -130,35 +123,7 @@ export function NewTaskDialog({
     });
   };
 
-  const quadrantTitles: Record<number, string> = {
-    0: "Backlog",
-    1: "Important and urgent",
-    2: "Important but not urgent",
-    3: "Urgent but not important",
-    4: "Neither urgent nor important",
-  };
-  const quadrantThemes: Record<number, ThemeName> = {
-    0: "gray",
-    1: "red",
-    2: "amber",
-    3: "sky",
-    4: "purple",
-  };
-
-  const [value, setValue] = useState({
-    value: defaultDestination,
-    theme:
-      quadrantThemes[
-        Number(
-          Object.keys(quadrantTitles).find(
-            (key) => quadrantTitles[Number(key)] === defaultDestination
-          )
-        )
-      ],
-  });
-  const [valueType, setValueType] = useState<"quadrant" | "backlog">(() =>
-    defaultDestination === "Backlog" ? "backlog" : "quadrant"
-  );
+  const [quadrant, setQuadrant] = useState(defaultDestination || QUADRANTS[0]);
   const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
   const [dueTime, setDueTime] = useState<Date | undefined>(
     new Date(new Date().setHours(12, 0, 0, 0))
@@ -168,17 +133,14 @@ export function NewTaskDialog({
   const [taskDescriptionText, setTaskDescriptionText] = useState("");
   const [showUnsavedChangesAlert, setShowUnsavedChangesAlert] = useState(false);
 
-  const themeColors = THEME_COLORS[theme] || THEME_COLORS.sky;
-  const { iconColor, hoverColor } = themeColors;
-
   const hasUnsavedChanges = () => {
     // Only check for actual changes from empty/initial state
     const isDefaultTime =
       !dueTime || (dueTime.getHours() === 12 && dueTime.getMinutes() === 0);
 
     const isDefaultDestination =
-      value.value === defaultDestination ||
-      (defaultDestination === "Backlog" && value.value === "Backlog");
+      quadrant === QUADRANTS[defaultDestination.id] ||
+      (defaultDestination.id === 0 && quadrant.id === 0);
 
     return !!(
       (
@@ -207,17 +169,7 @@ export function NewTaskDialog({
     setDueDate(undefined);
     setDueTime(undefined);
     setError("");
-    setValue({
-      value: defaultDestination,
-      theme:
-        quadrantThemes[
-          Number(
-            Object.keys(quadrantTitles).find(
-              (key) => quadrantTitles[Number(key)] === defaultDestination
-            )
-          )
-        ],
-    });
+    setQuadrant(defaultDestination);
     setShowUnsavedChangesAlert(false);
     setOpen(false);
   };
@@ -243,44 +195,6 @@ export function NewTaskDialog({
   return (
     <>
       <Dialog open={isDialogOpen} onOpenChange={handleOpenChange}>
-        <DialogTrigger asChild onClick={() => setOpen(true)}>
-          {variant === "inline" ? (
-            <Button
-              variant="ghost"
-              size="icon"
-              className={cn("h-8 w-8", hoverColor)}
-              onClick={() => {
-                setValue({
-                  value: defaultDestination,
-                  theme:
-                    quadrantThemes[
-                      Number(
-                        Object.keys(quadrantTitles).find(
-                          (key) =>
-                            quadrantTitles[Number(key)] === defaultDestination
-                        )
-                      )
-                    ],
-                });
-              }}
-            >
-              <Plus className={iconColor} />
-            </Button>
-          ) : variant === "fab" ? (
-            <Button
-              variant="outline"
-              size="fab"
-              className="absolute bottom-5 right-5"
-            >
-              <Plus className="w-4 h-4" />
-            </Button>
-          ) : (
-            <Button size="sm" className="rounded-lg" variant={buttonVariant}>
-              <Plus className="w-4 h-4" />
-              New task
-            </Button>
-          )}
-        </DialogTrigger>
         <DialogContent className="max-w-3xl" hideCloseButton>
           <DialogTitle className="sr-only">Add a new task</DialogTitle>
 
@@ -448,8 +362,8 @@ export function NewTaskDialog({
                     className="rounded-lg text-xs font-semibold text-zinc-700 hover:ring-zinc-300 transition-all duration-150 gap-1.5 pl-2.5"
                   >
                     <QuadrantSelectOption
-                      label={value}
-                      type={valueType}
+                      quadrant={quadrant}
+                      isBacklog={quadrant.id === 0}
                       padding="dense"
                     />
                     <ChevronDown className="!w-4 !h-4" />
@@ -458,39 +372,25 @@ export function NewTaskDialog({
                 <DropdownMenuContent className="w-68">
                   <DropdownMenuLabel>Select a list</DropdownMenuLabel>
                   <DropdownMenuRadioGroup
-                    value={value.value}
+                    value={quadrant.title}
                     onValueChange={(value) => {
-                      setValue({
-                        value: value,
-                        theme:
-                          quadrantThemes[
-                            Number(
-                              Object.keys(quadrantTitles).find(
-                                (key) => quadrantTitles[Number(key)] === value
-                              )
-                            )
-                          ],
-                      });
-                      setValueType(
-                        value === "Backlog" ? "backlog" : "quadrant"
+                      const newQuadrant = QUADRANTS.find(
+                        (q) => q.title === value
                       );
+                      if (newQuadrant) {
+                        setQuadrant(newQuadrant);
+                      }
                     }}
                   >
-                    {Object.entries(quadrantTitles).map(([key, title]) => (
+                    {QUADRANTS.map((quadrant) => (
                       <DropdownMenuRadioItem
-                        key={key}
-                        value={title}
+                        key={quadrant.id}
+                        value={quadrant.title}
                         className="cursor-pointer"
                       >
                         <QuadrantSelectOption
-                          label={{
-                            value: title,
-                            theme:
-                              quadrantThemes[
-                                Number(key) as keyof typeof quadrantThemes
-                              ],
-                          }}
-                          type={Number(key) === 0 ? "backlog" : "quadrant"}
+                          quadrant={quadrant}
+                          isBacklog={quadrant.id === 0}
                         />
                       </DropdownMenuRadioItem>
                     ))}

@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useState } from "react";
 import { Task } from "@/app/types/Task";
+import { Quadrant } from "@/app/types/Quadrant";
 import { Project } from "@/app/types/Project";
 import { tasks as initialTasks } from "@/app/data/tasks";
 import { projects as initialProjects } from "@/app/data/projects";
@@ -17,7 +18,7 @@ interface WorkspaceContextType {
   updateProject: (projectId: string, updates: Partial<Project>) => void;
   deleteProject: (projectId: string) => void;
 
-  getTasksByQuadrant: (quadrant: number) => Task[];
+  getTasksByQuadrant: (quadrant: Quadrant) => Task[];
   getTasksByProject: (projectId: string) => Task[];
 }
 
@@ -76,7 +77,7 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
   };
 
   const getTasksByQuadrant = useCallback(
-    (quadrant: number) => {
+    (quadrant: Quadrant) => {
       return tasks.filter((task) => task.quadrant === quadrant);
     },
     [tasks]

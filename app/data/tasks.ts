@@ -1,4 +1,5 @@
 import { Task } from "@/app/types/Task";
+import { QUADRANTS } from "@/app/types/Quadrant";
 
 export const emptyTasks: Task[] = [];
 export const onboardingTasks: Task[] = [
@@ -7,7 +8,7 @@ export const onboardingTasks: Task[] = [
     title: "Prioritize this task",
     description:
       "This task is a placeholder to help you get started. It will be replaced with your own tasks soon.",
-    quadrant: 1,
+    quadrant: QUADRANTS[1],
     createdAt: new Date("2025-02-01"),
     completed: false,
     status: "todo",
@@ -21,7 +22,7 @@ export const tasks: Task[] = [
     description:
       "Design low-fidelity wireframes for the landing page and user dashboard.",
     dueDate: new Date("2025-02-05"),
-    quadrant: 1,
+    quadrant: QUADRANTS[1],
     createdAt: new Date("2025-02-01"),
     completed: false,
     status: "todo",
@@ -30,7 +31,7 @@ export const tasks: Task[] = [
     id: "2",
     title: "Define color palette",
     dueDate: new Date("2025-02-05"),
-    quadrant: 2,
+    quadrant: QUADRANTS[2],
     createdAt: new Date("2025-02-02"),
     completed: false,
     status: "todo",
@@ -42,7 +43,7 @@ export const tasks: Task[] = [
     title: "Develop interactive prototype",
     description: "Create a clickable prototype using Figma for user testing.",
     dueDate: new Date("2025-02-10"),
-    quadrant: 1,
+    quadrant: QUADRANTS[1],
     createdAt: new Date("2025-02-03"),
     updatedAt: new Date("2025-02-04"),
     completed: false,
@@ -55,7 +56,7 @@ export const tasks: Task[] = [
       "Interview 5 potential users to gather feedback on the wireframes.",
     dueDate: new Date("2025-02-08"),
     dueTime: new Date("2025-02-08T10:00:00"),
-    quadrant: 1,
+    quadrant: QUADRANTS[1],
     createdAt: new Date("2025-02-02"),
     completed: false,
     status: "todo",
@@ -64,7 +65,7 @@ export const tasks: Task[] = [
   {
     id: "5",
     title: "Implement design system",
-    quadrant: 3,
+    quadrant: QUADRANTS[3],
     createdAt: new Date("2025-02-01"),
     completed: false,
     status: "todo",
@@ -74,7 +75,7 @@ export const tasks: Task[] = [
     title: "Review accessibility compliance",
     description: "Ensure all UI elements meet WCAG 2.1 guidelines.",
     dueDate: new Date("2025-02-15"),
-    quadrant: 2,
+    quadrant: QUADRANTS[2],
     createdAt: new Date("2025-02-05"),
     completed: false,
     status: "doing",
@@ -83,7 +84,7 @@ export const tasks: Task[] = [
   {
     id: "7",
     title: "Optimize mobile responsiveness",
-    quadrant: 1,
+    quadrant: QUADRANTS[1],
     createdAt: new Date("2025-02-03"),
     updatedAt: new Date("2025-02-06"),
     completed: false,
@@ -95,7 +96,7 @@ export const tasks: Task[] = [
     description:
       "Select heading, body, and button fonts for the design system.",
     dueDate: new Date("2025-02-07"),
-    quadrant: 2,
+    quadrant: QUADRANTS[2],
     createdAt: new Date("2025-02-02"),
     completed: true,
     status: "done",
@@ -106,7 +107,7 @@ export const tasks: Task[] = [
     description:
       "Export assets and document design decisions for the development team.",
     dueDate: new Date("2025-02-12"),
-    quadrant: 1,
+    quadrant: QUADRANTS[1],
     createdAt: new Date("2025-02-04"),
     updatedAt: new Date("2025-02-06"),
     completed: false,
@@ -117,7 +118,7 @@ export const tasks: Task[] = [
     title: "Refine microinteractions",
     description: "Add subtle animations to improve user experience.",
     dueDate: new Date("2025-02-13"),
-    quadrant: 3,
+    quadrant: QUADRANTS[3],
     createdAt: new Date("2025-02-05"),
     completed: false,
     status: "todo",
@@ -127,7 +128,7 @@ export const tasks: Task[] = [
     title: "Set up design feedback sessions",
     description: "Schedule weekly reviews with stakeholders and developers.",
     dueDate: new Date("2025-02-14"),
-    quadrant: 2,
+    quadrant: QUADRANTS[2],
     createdAt: new Date("2025-02-06"),
     updatedAt: new Date("2025-02-07"),
     completed: false,
@@ -137,7 +138,7 @@ export const tasks: Task[] = [
     id: "12",
     title: "Document UI design principles",
     description: "Create a reference guide for consistent design decisions.",
-    quadrant: 4,
+    quadrant: QUADRANTS[4],
     createdAt: new Date("2025-02-07"),
     completed: false,
     status: "todo",
@@ -148,7 +149,7 @@ export const tasks: Task[] = [
     description:
       "Ensure global styles are applied correctly across components.",
     dueDate: new Date("2025-02-10"),
-    quadrant: 1,
+    quadrant: QUADRANTS[1],
     createdAt: new Date("2025-02-06"),
     completed: false,
     status: "doing",
@@ -159,7 +160,7 @@ export const tasks: Task[] = [
     description:
       "Investigate emerging design patterns for modern web applications.",
     dueDate: new Date("2025-02-05"),
-    quadrant: 3,
+    quadrant: QUADRANTS[3],
     createdAt: new Date("2025-02-05"),
     completed: true,
     status: "done",
@@ -169,7 +170,7 @@ export const tasks: Task[] = [
     title: "Prepare stakeholder presentation",
     description: "Summarize key design decisions for the next review meeting.",
     dueDate: new Date("2025-02-18"),
-    quadrant: 2,
+    quadrant: QUADRANTS[2],
     createdAt: new Date("2025-02-08"),
     updatedAt: new Date("2025-02-09"),
     completed: false,

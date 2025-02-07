@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ColorPicker } from "@/components/color-picker";
+import { ColorPicker } from "@/components/controls/color-picker";
 import { Ellipsis, Pencil, SwatchBook, Trash } from "lucide-react";
 
 interface ProjectActionsMenuProps {

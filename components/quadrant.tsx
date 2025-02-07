@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { Pill } from "@/components/pill";
+import { Pill } from "@/components/common/pill";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Task } from "@/app/types/Task";
@@ -17,55 +16,27 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Separator } from "@/components/ui/separator";
-import { NewTaskDialog } from "@/components/new-task-dialog";
-import { Ellipsis, EyeClosed, Archive, HelpCircle, Circle } from "lucide-react";
-import { THEME_COLORS, ThemeName } from "@/app/types/Theme";
-import { TaskListItem } from "./task-list-item";
-import { TaskList } from "./task-list";
+import { Ellipsis, Archive, HelpCircle, Circle, Plus } from "lucide-react";
+import { TaskListItem } from "./lists/task-list-item";
+import { TaskList } from "./lists/task-list";
+import { Quadrant as QuadrantType } from "@/app/types/Quadrant";
+
 interface QuadrantProps {
-  quadrant: number;
-  title: string;
+  quadrant: QuadrantType;
   children?: React.ReactNode;
-  theme: ThemeName;
   hidden?: boolean;
   tasks: Task[];
-  onHideChange?: (hidden: boolean) => void;
+  setIsNewTaskDialogOpen: (isOpen: boolean) => void;
   className?: string;
 }
 
-const backgroundTexture = [
-  "background-tiled-1",
-  "background-tiled-2",
-  "background-tiled-3",
-  "background-tiled-4",
-];
-
 export function Quadrant({
-  title,
-  theme,
   quadrant,
   hidden,
-  onHideChange,
   tasks,
   className,
+  setIsNewTaskDialogOpen,
 }: QuadrantProps) {
-  const themeColors = THEME_COLORS[theme] || THEME_COLORS.sky;
-  const { bgColor, washHoverColor, accentColor } = themeColors;
-
-  const [isAnimating, setIsAnimating] = useState(false);
-
-  const handleToggleHidden = () => {
-    onHideChange?.(!hidden);
-    if (!hidden) {
-      setIsAnimating(true);
-    } else {
-      setTimeout(() => {
-        setIsAnimating(false);
-      }, 1000);
-    }
-  };
-
   const taskCount = tasks.length;
 
   return (
@@ -81,13 +52,13 @@ export function Quadrant({
         `}
       >
         <div className="flex items-center gap-2.5 min-h-8">
-          <Circle className={`w-2 h-2 ${accentColor}`} />
+          <Circle className={`w-2 h-2 ${quadrant.theme.accentColor}`} />
           <h2
             className={cn("text-zinc-800", "text-sm font-semibold inline-flex")}
           >
-            {title}
+            {quadrant.title}
           </h2>
-          <Pill count={taskCount} theme="subtleGray" />
+          <Pill label={taskCount.toString()} theme="subtleGray" />
         </div>
         <div className="flex items-center">
           {hidden ? null : (
@@ -105,13 +76,7 @@ export function Quadrant({
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-76 text-sm" dark>
-                  {quadrant === 1
-                    ? "Do these before you do anything else."
-                    : quadrant === 2
-                    ? "Schedule these for later, since they are likely to become more urgent as time goes on."
-                    : quadrant === 3
-                    ? "See if you can delegate these to someone else."
-                    : "You can safely delete these or revisit them in the future."}
+                  {quadrant.description}
                 </PopoverContent>
               </Popover>
               <DropdownMenu>
@@ -167,43 +132,16 @@ export function Quadrant({
             </div>
           )}
         </div>
-        <div
-          className={cn(
-            "absolute inset-0 z-20 flex flex-col grow items-center justify-center",
-            backgroundTexture[quadrant - 1],
-            bgColor,
-            {
-              "opacity-100": hidden,
-              "opacity-0": !hidden,
-              hidden: !hidden && !isAnimating,
-            }
-          )}
+        <Button
+          size="fab"
+          variant="secondary"
+          className="absolute bottom-5 right-5"
+          onClick={() => {
+            setIsNewTaskDialogOpen(true);
+          }}
         >
-          <Button
-            variant="ghost"
-            className={`group h-auto w-auto rounded-2xl px-6 py-4 ${washHoverColor}`}
-            onClick={handleToggleHidden}
-            aria-label={hidden ? "Show tasks" : "Hide tasks"}
-          >
-            <EyeClosed
-              className="!h-14 !w-14 text-zinc-500 group-hover:text-zinc-600 transition-colors duration-200"
-              aria-hidden
-            />
-          </Button>
-        </div>
-        <NewTaskDialog
-          theme={theme}
-          defaultDestination={
-            quadrant === 1
-              ? "Important and urgent"
-              : quadrant === 2
-              ? "Important but not urgent"
-              : quadrant === 3
-              ? "Urgent but not important"
-              : "Neither urgent nor important"
-          }
-          variant="fab"
-        />
+          <Plus className="w-4 h-4" />
+        </Button>
       </div>
     </div>
   );

@@ -18,7 +18,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu";
-import { InfoSheet } from "@/components/info-sheet";
+import { InfoSheet } from "@/components/layout/info-sheet";
 import { Cog } from "lucide-react";
 
 const geistMono = Geist_Mono({

@@ -1,40 +1,37 @@
 import { Circle, List } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { THEME_COLORS, ThemeName } from "@/app/types/Theme";
+import { QUADRANTS, QUADRANT_THEMES } from "@/app/types/Quadrant";
+import { Quadrant } from "@/app/types/Quadrant";
 
 interface QuadrantSelectOptionProps {
-  label: {
-    value: string | null;
-    theme: ThemeName;
-  };
-  type: "quadrant" | "backlog";
+  quadrant: Quadrant;
+  isBacklog?: boolean;
   padding?: "dense" | "normal";
 }
 
 export function QuadrantSelectOption({
-  label,
-  type,
+  quadrant,
+  isBacklog = false,
   padding = "normal",
 }: QuadrantSelectOptionProps) {
-  const { accentColor } = THEME_COLORS[label.theme];
+  const quadrantTitle = quadrant.title;
+  const theme = quadrant.theme;
 
   return (
     <div
       className={cn(
         "flex flex-row items-center",
-        padding === "dense" && type === "quadrant"
-          ? "!gap-0.25 -ml-1"
-          : "gap-2",
-        padding === "dense" && type === "backlog" ? "!gap-1" : "gap-2"
+        padding === "dense" && !isBacklog ? "!gap-0.25 -ml-1" : "gap-2",
+        padding === "dense" && isBacklog ? "!gap-1" : "gap-2"
       )}
     >
       <div className="flex w-5 h-5 items-center justify-center">
-        {type === "quadrant" && (
-          <Circle className={`!w-[8px] !h-[8px] ${accentColor}`} />
+        {!isBacklog && (
+          <Circle className={`!w-[8px] !h-[8px] ${theme.accentColor}`} />
         )}
-        {type === "backlog" && <List className="!w-4 !h-4" />}
+        {isBacklog && <List className={`!w-4 !h-4 ${theme.iconColor}`} />}
       </div>
-      <span className="leading-snug text-sm">{label.value}</span>
+      <span className={`leading-snug text-sm`}>{quadrantTitle}</span>
     </div>
   );
 }

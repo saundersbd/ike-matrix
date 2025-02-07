@@ -1,11 +1,11 @@
 import { THEME_COLORS, ThemeName } from "@/app/types/Theme";
 
 export function Pill({
-  count,
+  label,
   theme,
   className,
 }: {
-  count: number;
+  label: string;
   theme: ThemeName;
   className?: string;
 }) {
@@ -15,7 +15,7 @@ export function Pill({
     <span
       className={`inline-flex items-center justify-center px-2 py-0.5 min-w-7 text-xs font-bold rounded-full ${fillColor} ${textColor} ${className}`}
     >
-      {count}
+      {label}
     </span>
   );
 }

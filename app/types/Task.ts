@@ -1,12 +1,12 @@
 import { ThemeName } from "./CustomTheme";
-
+import { Quadrant } from "./Quadrant";
 export interface Task {
   id: string;
   title: string;
   description?: string;
   dueDate?: Date;
   dueTime?: Date;
-  quadrant: number;
+  quadrant: Quadrant;
   createdAt: Date;
   updatedAt?: Date;
   completed: boolean;

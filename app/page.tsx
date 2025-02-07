@@ -12,9 +12,8 @@ import {
   DropdownMenuTrigger,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
-  DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import {
   SidebarProvider,
@@ -24,16 +23,17 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 
-import { AppSidebar } from "@/components/app-sidebar";
+import { AppSidebar } from "@/components/layout/app_sidebar/app-sidebar";
 import { Quadrant } from "@/components/quadrant";
-import { TaskListTableRow } from "@/components/task-list-table-row";
-import { NewTaskDialog } from "@/components/new-task-dialog";
+import { TaskListTableRow } from "@/components/lists/task-list-table-row";
+import { NewTaskDialog } from "@/components/dialogs/new-task-dialog";
 import {
   ArrowUpDown,
   ChevronDown,
   Circle,
   Grid2X2,
   List,
+  Plus,
   Tag,
 } from "lucide-react";
 import { THEME_COLORS, ThemeName } from "@/app/types/Theme";
@@ -43,10 +43,11 @@ import {
 } from "@/app/types/CustomTheme";
 
 import { Project } from "@/app/types/Project";
-import { TaskList } from "@/components/task-list";
+import { TaskList } from "@/components/lists/task-list";
 import { cn } from "@/lib/utils";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-
+import StopLight from "@/components/controls/stop-light";
+import ViewSwitcher from "@/components/controls/view-switcher";
+import { QUADRANTS } from "@/app/types/Quadrant";
 // Create a safe useLayoutEffect that falls back to useEffect on server
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -71,11 +72,17 @@ export default function Home() {
   );
   const { tasks, projects } = useWorkspace();
   const sortedAndFilteredTasks = useTasks(tasks, sortBy, activeProject);
-  const [isNewTaskDialogOpen, setIsNewTaskDialogOpen] = useState(false);
-
+  const [newTaskDialog, setNewTaskDialog] = useState<{
+    isOpen: boolean;
+    destinationQuadrant: number;
+  }>({
+    isOpen: false,
+    destinationQuadrant: 0,
+  });
   const visibleQuadrantCount = visibilityControls.filter(
     (quadrant) => !quadrant
   ).length;
+  const [defaultDestination, setDefaultDestination] = useState(0);
 
   useEffect(() => {
     if (taskId) {
@@ -96,14 +103,14 @@ export default function Home() {
     "mod+k",
     (e) => {
       e.preventDefault();
-      if (!isNewTaskDialogOpen) {
-        setIsNewTaskDialogOpen(true);
+      if (!newTaskDialog.isOpen) {
+        setNewTaskDialog((prev) => ({ ...prev, isOpen: true }));
       }
     },
     {
       enableOnFormTags: true,
     },
-    [isNewTaskDialogOpen]
+    [newTaskDialog.isOpen]
   );
 
   const handleViewChange = (newView: "grid" | "list") => {
@@ -147,12 +154,10 @@ export default function Home() {
       )}
     >
       <Quadrant
-        quadrant={1}
-        title="Important and urgent"
-        theme="red"
+        quadrant={QUADRANTS[1]}
         tasks={sortedAndFilteredTasks.filter(
           (task) =>
-            task.quadrant === 1 &&
+            task.quadrant.id === 1 &&
             (!task.completed || task.isCompletionTransitioning)
         )}
         hidden={visibilityControls[0]}
@@ -160,14 +165,18 @@ export default function Home() {
           visibleQuadrantCount === 3 && "row-span-2",
           visibleQuadrantCount === 2 && "row-span-1"
         )}
+        setIsNewTaskDialogOpen={(open) => {
+          setNewTaskDialog({
+            isOpen: open,
+            destinationQuadrant: 1, // Use the passed quadrantId, fallback to 1
+          });
+        }}
       />
       <Quadrant
-        quadrant={2}
-        title="Important but not urgent"
-        theme="amber"
+        quadrant={QUADRANTS[2]}
         tasks={sortedAndFilteredTasks.filter(
           (task) =>
-            task.quadrant === 2 &&
+            task.quadrant.id === 2 &&
             (!task.completed || task.isCompletionTransitioning)
         )}
         hidden={visibilityControls[1]}
@@ -178,28 +187,42 @@ export default function Home() {
             !visibilityControls[3] &&
             "row-span-2"
         )}
+        setIsNewTaskDialogOpen={(open) => {
+          setNewTaskDialog({
+            isOpen: open,
+            destinationQuadrant: 2, // Use the passed quadrantId, fallback to 1
+          });
+        }}
       />
       <Quadrant
-        quadrant={3}
-        title="Urgent but not important"
-        theme="sky"
+        quadrant={QUADRANTS[3]}
         tasks={sortedAndFilteredTasks.filter(
           (task) =>
-            task.quadrant === 3 &&
+            task.quadrant.id === 3 &&
             (!task.completed || task.isCompletionTransitioning)
         )}
         hidden={visibilityControls[2]}
+        setIsNewTaskDialogOpen={(open) => {
+          setNewTaskDialog({
+            isOpen: open,
+            destinationQuadrant: 3, // Use the passed quadrantId, fallback to 1
+          });
+        }}
       />
       <Quadrant
-        quadrant={4}
-        title="Neither urgent nor important"
-        theme="purple"
+        quadrant={QUADRANTS[4]}
         tasks={sortedAndFilteredTasks.filter(
           (task) =>
-            task.quadrant === 4 &&
+            task.quadrant.id === 4 &&
             (!task.completed || task.isCompletionTransitioning)
         )}
         hidden={visibilityControls[3]}
+        setIsNewTaskDialogOpen={(open) => {
+          setNewTaskDialog({
+            isOpen: open,
+            destinationQuadrant: 4, // Use the passed quadrantId, fallback to 1
+          });
+        }}
       />
     </div>
   );
@@ -227,7 +250,7 @@ export default function Home() {
 
           const quadrantTasks = tasks.filter(
             (task) =>
-              task.quadrant === quadrantNumber &&
+              task.quadrant.id === quadrantNumber &&
               (!task.completed || task.isCompletionTransitioning)
           );
 
@@ -245,17 +268,11 @@ export default function Home() {
                   </h3>
                 </div>
                 <NewTaskDialog
-                  theme="subtleGray"
-                  defaultDestination={
-                    quadrantNumber === 1
-                      ? "Important and urgent"
-                      : quadrantNumber === 2
-                      ? "Important but not urgent"
-                      : quadrantNumber === 3
-                      ? "Urgent but not important"
-                      : "Neither urgent nor important"
+                  defaultDestination={QUADRANTS[quadrantNumber]}
+                  isOpen={newTaskDialog.isOpen}
+                  onOpenChange={(open) =>
+                    setNewTaskDialog((prev) => ({ ...prev, isOpen: open }))
                   }
-                  variant="inline"
                 />
               </div>
 
@@ -280,19 +297,21 @@ export default function Home() {
                     {quadrantTitles[quadrantNumber]}
                   </h3>
                 </div>
-                <NewTaskDialog
-                  theme="gray"
-                  defaultDestination={
-                    quadrantNumber === 1
-                      ? "Important and urgent"
-                      : quadrantNumber === 2
-                      ? "Important but not urgent"
-                      : quadrantNumber === 3
-                      ? "Urgent but not important"
-                      : "Neither urgent nor important"
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="rounded-lg"
+                  onClick={() =>
+                    setNewTaskDialog((prev) => ({
+                      ...prev,
+                      isOpen: true,
+                      destinationQuadrant: quadrantNumber,
+                    }))
                   }
-                  variant="inline"
-                />
+                >
+                  <Plus className="h-4 w-4" />
+                  New task
+                </Button>
               </div>
               <div className="flex items-center justify-center p-7 ring-1 ring-black/[.08] rounded-xl bg-white/50">
                 <span className="text-sm text-gray-500 text-center">
@@ -306,234 +325,181 @@ export default function Home() {
     </div>
   );
 
-  const focusedQuadrantLabel = (quadrant: string) => {
-    // Get the quadrant number by finding the matching title
-    const quadrantNumber = Object.entries(quadrantTitles).find(
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      ([num, title]) => title === quadrant
-    )?.[0];
-
-    // Use the corresponding theme color, or default to gray for "All quadrants"
-    const themeColor = quadrantNumber
-      ? THEME_COLORS[quadrantThemes[parseInt(quadrantNumber)]]
-      : THEME_COLORS.gray;
-
-    return (
-      <div className="flex items-center gap-1.5">
-        <Circle className={`!w-[8px] !h-[8px] ${themeColor.accentColor}`} />
-        {quadrant}
-      </div>
-    );
-  };
-
   return (
-    <Tabs
-      value={view}
-      onValueChange={(value) => handleViewChange(value as "grid" | "list")}
-    >
-      <SidebarProvider
-        open={open}
-        onOpenChange={setOpen}
-        className="flex flex-col"
+    <>
+      <Tabs
+        value={view}
+        onValueChange={(value) => handleViewChange(value as "grid" | "list")}
       >
-        <header className="sticky top-0 mb-0 flex shrink-0 items-center justify-between gap-4 h-[calc(var(--header-height))] bg-white px-8 border-b border-zinc-200/70">
-          <SidebarTrigger className="flex items-center gap-2">
-            <Switch
-              checked={open}
-              onCheckedChange={(checked) => setOpen(checked)}
-            />
-            <Label>{open ? "Hide" : "Show"} backlog</Label>
-          </SidebarTrigger>
+        <SidebarProvider
+          open={open}
+          onOpenChange={setOpen}
+          className="flex flex-col"
+        >
+          <header className="sticky top-0 mb-0 flex shrink-0 items-center justify-between gap-4 h-[calc(var(--header-height))] bg-white px-8 border-b border-zinc-200/70">
+            <SidebarTrigger className="flex items-center gap-2">
+              <Switch
+                checked={open}
+                onCheckedChange={(checked) => setOpen(checked)}
+              />
+              <Label>{open ? "Hide" : "Show"} backlog</Label>
+            </SidebarTrigger>
 
-          <div className="flex items-center gap-3">
-            {activeProject && (
-              <Button
-                variant="link"
-                size="sm"
-                className="mr-2 underline decoration-dotted decoration-1 decoration-zinc-700 underline-offset-3 hover:decoration-solid"
-                onClick={handleFilterReset}
-              >
-                Clear filters
-              </Button>
-            )}
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="rounded-lg">
-                  {activeProject === undefined ? (
-                    <Tag className="h-4 w-4" />
-                  ) : activeProject.icon ? (
-                    <activeProject.icon
-                      className={`w-4 h-4 ${
-                        CUSTOM_THEME_COLORS[
-                          (activeProject.theme as CustomThemeName) ?? "default"
-                        ].iconColor
-                      }`}
-                    />
-                  ) : (
-                    <Tag className="h-4 w-4" />
-                  )}
-                  {activeProject === undefined
-                    ? "All projects"
-                    : activeProject.name}
-                  <ChevronDown className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-66">
-                <DropdownMenuRadioGroup
-                  value={activeProject?.id}
-                  onValueChange={(value) =>
-                    setActiveProject(
-                      projects.find((project) => project.id === value)
-                    )
-                  }
+            <div className="flex items-center gap-3">
+              {activeProject && (
+                <Button
+                  variant="link"
+                  size="sm"
+                  className="mr-2 underline decoration-dotted decoration-1 decoration-zinc-700 underline-offset-3 hover:decoration-solid"
+                  onClick={handleFilterReset}
                 >
-                  {projects.map((project) => (
-                    <DropdownMenuRadioItem key={project.id} value={project.id}>
-                      {project.icon && (
-                        <project.icon
-                          className={`w-4 h-4 mr-2 ${
-                            CUSTOM_THEME_COLORS[
-                              (project.theme as CustomThemeName) ?? "default"
-                            ].iconColor
-                          }`}
-                        />
-                      )}
-                      {project.name}
+                  Clear filters
+                </Button>
+              )}
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="rounded-lg">
+                    {activeProject === undefined ? (
+                      <Tag className="h-4 w-4" />
+                    ) : activeProject.icon ? (
+                      <activeProject.icon
+                        className={`w-4 h-4 ${
+                          CUSTOM_THEME_COLORS[
+                            (activeProject.theme as CustomThemeName) ??
+                              "default"
+                          ].iconColor
+                        }`}
+                      />
+                    ) : (
+                      <Tag className="h-4 w-4" />
+                    )}
+                    {activeProject === undefined
+                      ? "All projects"
+                      : activeProject.name}
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-66">
+                  <DropdownMenuRadioGroup
+                    value={activeProject?.id}
+                    onValueChange={(value) =>
+                      setActiveProject(
+                        projects.find((project) => project.id === value)
+                      )
+                    }
+                  >
+                    {projects.map((project) => (
+                      <DropdownMenuRadioItem
+                        key={project.id}
+                        value={project.id}
+                      >
+                        {project.icon && (
+                          <project.icon
+                            className={`w-4 h-4 mr-2 ${
+                              CUSTOM_THEME_COLORS[
+                                (project.theme as CustomThemeName) ?? "default"
+                              ].iconColor
+                            }`}
+                          />
+                        )}
+                        {project.name}
+                      </DropdownMenuRadioItem>
+                    ))}
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="rounded-lg">
+                    <ArrowUpDown className="h-4 w-4" />
+                    <span className="text-sm font-medium">
+                      Sort by:{" "}
+                      {sortBy.charAt(0).toUpperCase() + sortBy.slice(1)}
+                    </span>
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56">
+                  <DropdownMenuRadioGroup
+                    value={sortBy}
+                    onValueChange={setSortBy}
+                  >
+                    <DropdownMenuRadioItem value="created">
+                      Created
                     </DropdownMenuRadioItem>
-                  ))}
-                </DropdownMenuRadioGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                    <DropdownMenuRadioItem value="updated">
+                      Last updated
+                    </DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="dueDate">
+                      Due date
+                    </DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="custom">
+                      Custom
+                    </DropdownMenuRadioItem>
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="rounded-lg">
-                  <ArrowUpDown className="h-4 w-4" />
-                  <span className="text-sm font-medium">
-                    Sort by: {sortBy.charAt(0).toUpperCase() + sortBy.slice(1)}
-                  </span>
-                  <ChevronDown className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56">
-                <DropdownMenuRadioGroup
-                  value={sortBy}
-                  onValueChange={setSortBy}
-                >
-                  <DropdownMenuRadioItem value="created">
-                    Created
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="updated">
-                    Last updated
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="dueDate">
-                    Due date
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="custom">
-                    Custom
-                  </DropdownMenuRadioItem>
-                </DropdownMenuRadioGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
+              <StopLight
+                selection={visibilityControls}
+                onSelectionChange={setVisibilityControls}
+              />
 
-            <ToggleGroup
-              type="multiple"
-              className="h-9 ring-1 ring-zinc-200 bg-white rounded-lg gap-0"
-              value={visibilityControls
-                .map((control, index) => (control ? index.toString() : null))
-                .filter((value): value is string => value !== null)}
-              onValueChange={(value) =>
-                setVisibilityControls(
-                  [0, 1, 2, 3].map((i) => value.includes(i.toString()))
-                )
-              }
-            >
-              <ToggleGroupItem value="0" size="sm">
-                <Circle
-                  className={cn(
-                    "!w-[11px] !h-[11px] fill-red-500 text-red-500",
-                    visibilityControls[0] &&
-                      "fill-red-200/70 text-red-200/70 group-hover:fill-red-500 group-hover:text-red-500 transition-colors duration-200"
-                  )}
-                />
-              </ToggleGroupItem>
-              <ToggleGroupItem value="1" size="sm">
-                <Circle
-                  className={cn(
-                    "!w-[11px] !h-[11px] fill-amber-400 text-amber-400",
-                    visibilityControls[1] &&
-                      "fill-amber-200 text-amber-200 group-hover:fill-amber-400 group-hover:text-amber-400 transition-colors duration-200"
-                  )}
-                />
-              </ToggleGroupItem>
-              <ToggleGroupItem value="2" size="sm">
-                <Circle
-                  className={cn(
-                    "!w-[11px] !h-[11px] fill-sky-500 text-sky-500",
-                    visibilityControls[2] &&
-                      "fill-sky-200/70 text-sky-200/70 group-hover:fill-sky-500 group-hover:text-sky-500 transition-colors duration-200"
-                  )}
-                />
-              </ToggleGroupItem>
-              <ToggleGroupItem value="3" size="sm">
-                <Circle
-                  className={cn(
-                    "!w-[11px] !h-[11px] fill-purple-500 text-purple-500",
-                    visibilityControls[3] &&
-                      "fill-purple-200/90 text-purple-200/90 group-hover:fill-purple-500 group-hover:text-purple-500 transition-colors duration-200"
-                  )}
-                />
-              </ToggleGroupItem>
-            </ToggleGroup>
+              <ViewSwitcher setView={setView} />
 
-            <TabsList className="bg-zinc-200/[.75] rounded-lg">
-              <TabsTrigger
-                value="grid"
-                className="rounded-md"
-                onClick={() => setView("grid")}
+              <Separator
+                orientation="vertical"
+                className="h-[20px] mx-2 bg-zinc-300"
+              />
+              <Button
+                size="sm"
+                className="rounded-lg"
+                onClick={() =>
+                  setNewTaskDialog((prev) => ({ ...prev, isOpen: true }))
+                }
               >
-                <Grid2X2 className="w-4 h-4" />
-              </TabsTrigger>
-              <TabsTrigger
-                value="list"
-                className="rounded-md"
-                onClick={() => setView("list")}
-              >
-                <List className="w-4 h-4" />
-              </TabsTrigger>
-            </TabsList>
-            <Separator
-              orientation="vertical"
-              className="h-[20px] mx-2 bg-zinc-300"
-            />
-            <NewTaskDialog
-              defaultDestination="Backlog"
-              isOpen={isNewTaskDialogOpen}
-              onOpenChange={setIsNewTaskDialogOpen}
-            />
-          </div>
-        </header>
-        <div className="flex flex-1">
-          <AppSidebar
-            tasks={sortedAndFilteredTasks.filter(
-              (task) =>
-                task.quadrant === 0 &&
-                (!task.completed || task.isCompletionTransitioning)
-            )}
-          />
-          <SidebarInset
-            className={`${open ? "md:mx-5" : "md:mx-8"} md:my-8 md:mr-8`}
-          >
-            <div className="flex-1 h-full min-h-[calc(100svh-76px-128px)]">
-              <div className="h-[calc(100svh-(var(--header-height)+120px))]">
-                <TabsContent value="grid">{gridView(sortBy)}</TabsContent>
-                <TabsContent value="list">{listView(sortBy)}</TabsContent>
-              </div>
+                <Plus className="h-4 w-4" />
+                <span>New task</span>
+              </Button>
             </div>
-          </SidebarInset>
-        </div>
-      </SidebarProvider>
-    </Tabs>
+          </header>
+          <div className="flex flex-1">
+            <AppSidebar
+              tasks={sortedAndFilteredTasks.filter(
+                (task) =>
+                  task.quadrant.id === 0 &&
+                  (!task.completed || task.isCompletionTransitioning)
+              )}
+              setIsNewTaskDialogOpen={(open) => {
+                setNewTaskDialog({
+                  isOpen: open,
+                  destinationQuadrant: 0, // Use the passed quadrantId, fallback to 1
+                });
+              }}
+            />
+            <SidebarInset
+              className={`${open ? "md:mx-5" : "md:mx-8"} md:my-8 md:mr-8`}
+            >
+              <div className="flex-1 h-full min-h-[calc(100svh-76px-128px)]">
+                <div className="h-[calc(100svh-(var(--header-height)+120px))]">
+                  <TabsContent value="grid">{gridView(sortBy)}</TabsContent>
+                  <TabsContent value="list">{listView(sortBy)}</TabsContent>
+                </div>
+              </div>
+            </SidebarInset>
+          </div>
+        </SidebarProvider>
+      </Tabs>
+
+      <NewTaskDialog
+        defaultDestination={QUADRANTS[newTaskDialog.destinationQuadrant]}
+        isOpen={newTaskDialog.isOpen}
+        onOpenChange={(open) =>
+          setNewTaskDialog((prev) => ({ ...prev, isOpen: open }))
+        }
+      />
+    </>
   );
 }

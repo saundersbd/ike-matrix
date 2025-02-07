@@ -28,7 +28,9 @@ import { use } from "react";
 import { ThemeName } from "@/app/types/Theme";
 import { DetailsSidebar } from "@/components/layout/detail_sidebar/DetailsSidebar";
 import { Archive, ChevronDown, Ellipsis, Trash } from "lucide-react";
-import { ConfirmationDialog } from "@/components/dialogs/ConfirmationDialog";
+import { ConfirmationDialog } from "@/components/dialogs/confirmation-dialog";
+import { QUADRANTS } from "@/app/types/Quadrant";
+import { Quadrant } from "@/app/types/Quadrant";
 
 export default function TaskModal({
   params,
@@ -49,7 +51,7 @@ export default function TaskModal({
     }
   }, [pathname, id]);
 
-  const handleQuadrantChange = (quadrant: number) => {
+  const handleQuadrantChange = (quadrant: Quadrant) => {
     if (task?.id) {
       updateTask(task.id, { quadrant });
     }
@@ -99,11 +101,7 @@ export default function TaskModal({
                   className="w-max rounded-lg text-xs font-semibold text-zinc-700 hover:ring-zinc-300 transition-all duration-150 mb-0"
                 >
                   <QuadrantSelectOption
-                    label={{
-                      value: quadrantTitles[task?.quadrant || 0],
-                      theme: quadrantThemes[task?.quadrant || 0],
-                    }}
-                    type={task?.quadrant === 0 ? "backlog" : "quadrant"}
+                    quadrant={task?.quadrant || QUADRANTS[0]}
                     padding="dense"
                   />
                   <ChevronDown className="w-3.5 h-3.5" />
@@ -112,33 +110,23 @@ export default function TaskModal({
               <DropdownMenuContent className="w-68">
                 <DropdownMenuLabel>Select a list</DropdownMenuLabel>
                 <DropdownMenuRadioGroup
-                  value={quadrantTitles[task?.quadrant || 0]}
+                  value={task?.quadrant.id.toString()}
                   onValueChange={(value) => {
-                    handleQuadrantChange(
-                      Number(
-                        Object.keys(quadrantTitles).find(
-                          (key) => quadrantTitles[Number(key)] === value
-                        )
-                      ) || 0
+                    const quadrant = QUADRANTS.find(
+                      (q) => q.id === parseInt(value)
                     );
+                    if (quadrant) {
+                      handleQuadrantChange(quadrant);
+                    }
                   }}
                 >
                   {Object.entries(quadrantTitles).map(([key, title]) => (
                     <DropdownMenuRadioItem
                       key={key}
-                      value={title}
+                      value={key}
                       className="cursor-pointer"
                     >
-                      <QuadrantSelectOption
-                        label={{
-                          value: title,
-                          theme:
-                            quadrantThemes[
-                              Number(key) as keyof typeof quadrantThemes
-                            ],
-                        }}
-                        type={Number(key) === 0 ? "backlog" : "quadrant"}
-                      />
+                      <QuadrantSelectOption quadrant={QUADRANTS[Number(key)]} />
                     </DropdownMenuRadioItem>
                   ))}
                 </DropdownMenuRadioGroup>
