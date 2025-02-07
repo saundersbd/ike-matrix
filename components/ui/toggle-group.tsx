@@ -47,7 +47,7 @@ const ToggleGroupItem = React.forwardRef<
           variant: context.variant || variant,
           size: context.size || size,
         }),
-        "h-full py-3 data-[state=on]:bg-white data-[state=on]:ring-1 data-[state=on]:border data-[state=on]:border-zinc-900 data-[state=on]:ring-zinc-900",
+        "group h-full py-3",
         className
       )}
       {...props}

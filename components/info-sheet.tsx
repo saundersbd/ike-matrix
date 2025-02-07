@@ -17,11 +17,10 @@ export function InfoSheet() {
     <Sheet>
       <SheetTrigger asChild>
         <Button
-          variant="secondary"
+          variant="link"
           size="sm"
-          className="bg-zinc-700/80 text-zinc-50 hover:bg-zinc-700 rounded-lg font-semibold"
+          className="text-zinc-100 font-semibold underline decoration-dotted decoration-zinc-300 decoration-1 underline-offset-4 hover:text-white hover:decoration-zinc-50"
         >
-          <CircleHelp className="w-5 h-5" />
           <span>The method</span>
         </Button>
       </SheetTrigger>

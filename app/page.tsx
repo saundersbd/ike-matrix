@@ -204,9 +204,9 @@ export default function Home() {
     </div>
   );
 
-  const listView = (quadrants: boolean[], sortBy: string) => (
+  const listView = (sortBy: string) => (
     <div className="max-w-4xl mx-auto py-2 px-4 flex flex-col h-[calc(100svh-(var(--header-height)+82px))]">
-      {!quadrants.some((q) => q) ? (
+      {visibilityControls.every((q) => q) ? (
         <div className="flex flex-col items-center justify-center h-full gap-4">
           <span className="text-sm text-gray-500 text-center">
             All quadrants are hidden. Use the &ldquo;Show&rdquo; filter to
@@ -222,10 +222,10 @@ export default function Home() {
           </Button>
         </div>
       ) : (
-        [1, 3, 2, 4].map((quadrantNumber) => {
-          if (!quadrants[quadrantNumber - 1]) return null;
+        [1, 2, 3, 4].map((quadrantNumber) => {
+          if (visibilityControls[quadrantNumber - 1]) return null;
 
-          const quadrantTasks = sortedAndFilteredTasks.filter(
+          const quadrantTasks = tasks.filter(
             (task) =>
               task.quadrant === quadrantNumber &&
               (!task.completed || task.isCompletionTransitioning)
@@ -357,52 +357,6 @@ export default function Home() {
               </Button>
             )}
 
-            <ToggleGroup
-              type="multiple"
-              className="h-9 ring-1 ring-zinc-200 bg-white rounded-lg gap-0"
-              value={visibilityControls
-                .map((control, index) => (control ? index.toString() : null))
-                .filter((value): value is string => value !== null)}
-              onValueChange={(value) =>
-                setVisibilityControls(
-                  [0, 1, 2, 3].map((i) => value.includes(i.toString()))
-                )
-              }
-            >
-              <ToggleGroupItem value="0" size="sm">
-                <Circle
-                  className={cn(
-                    "!w-[12px] !h-[12px] fill-red-500 text-red-500",
-                    visibilityControls[0] && "fill-white"
-                  )}
-                />
-              </ToggleGroupItem>
-              <ToggleGroupItem value="1" size="sm">
-                <Circle
-                  className={cn(
-                    "!w-[12px] !h-[12px] fill-amber-400 text-amber-400",
-                    visibilityControls[1] && "fill-white"
-                  )}
-                />
-              </ToggleGroupItem>
-              <ToggleGroupItem value="2" size="sm">
-                <Circle
-                  className={cn(
-                    "!w-[12px] !h-[12px] fill-sky-500 text-sky-500",
-                    visibilityControls[2] && "fill-white"
-                  )}
-                />
-              </ToggleGroupItem>
-              <ToggleGroupItem value="3" size="sm">
-                <Circle
-                  className={cn(
-                    "!w-[12px] !h-[12px] fill-purple-500 text-purple-500",
-                    visibilityControls[3] && "fill-white"
-                  )}
-                />
-              </ToggleGroupItem>
-            </ToggleGroup>
-
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="rounded-lg">
@@ -483,6 +437,56 @@ export default function Home() {
               </DropdownMenuContent>
             </DropdownMenu>
 
+            <ToggleGroup
+              type="multiple"
+              className="h-9 ring-1 ring-zinc-200 bg-white rounded-lg gap-0"
+              value={visibilityControls
+                .map((control, index) => (control ? index.toString() : null))
+                .filter((value): value is string => value !== null)}
+              onValueChange={(value) =>
+                setVisibilityControls(
+                  [0, 1, 2, 3].map((i) => value.includes(i.toString()))
+                )
+              }
+            >
+              <ToggleGroupItem value="0" size="sm">
+                <Circle
+                  className={cn(
+                    "!w-[11px] !h-[11px] fill-red-500 text-red-500",
+                    visibilityControls[0] &&
+                      "fill-red-200/70 text-red-200/70 group-hover:fill-red-500 group-hover:text-red-500 transition-colors duration-200"
+                  )}
+                />
+              </ToggleGroupItem>
+              <ToggleGroupItem value="1" size="sm">
+                <Circle
+                  className={cn(
+                    "!w-[11px] !h-[11px] fill-amber-400 text-amber-400",
+                    visibilityControls[1] &&
+                      "fill-amber-200 text-amber-200 group-hover:fill-amber-400 group-hover:text-amber-400 transition-colors duration-200"
+                  )}
+                />
+              </ToggleGroupItem>
+              <ToggleGroupItem value="2" size="sm">
+                <Circle
+                  className={cn(
+                    "!w-[11px] !h-[11px] fill-sky-500 text-sky-500",
+                    visibilityControls[2] &&
+                      "fill-sky-200/70 text-sky-200/70 group-hover:fill-sky-500 group-hover:text-sky-500 transition-colors duration-200"
+                  )}
+                />
+              </ToggleGroupItem>
+              <ToggleGroupItem value="3" size="sm">
+                <Circle
+                  className={cn(
+                    "!w-[11px] !h-[11px] fill-purple-500 text-purple-500",
+                    visibilityControls[3] &&
+                      "fill-purple-200/90 text-purple-200/90 group-hover:fill-purple-500 group-hover:text-purple-500 transition-colors duration-200"
+                  )}
+                />
+              </ToggleGroupItem>
+            </ToggleGroup>
+
             <TabsList className="bg-zinc-200/[.75] rounded-lg">
               <TabsTrigger
                 value="grid"
@@ -524,9 +528,7 @@ export default function Home() {
             <div className="flex-1 h-full min-h-[calc(100svh-76px-128px)]">
               <div className="h-[calc(100svh-(var(--header-height)+120px))]">
                 <TabsContent value="grid">{gridView(sortBy)}</TabsContent>
-                <TabsContent value="list">
-                  {listView(visibilityControls, sortBy)}
-                </TabsContent>
+                <TabsContent value="list">{listView(sortBy)}</TabsContent>
               </div>
             </div>
           </SidebarInset>

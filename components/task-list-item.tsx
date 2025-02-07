@@ -90,7 +90,7 @@ export function TaskListItem({
               </span>
             )}
             {task.projectId && task.dueDate && (
-              <Circle className="w-1 h-1 mx-0.5 text-zinc-400/60 fill-zinc-400/60" />
+              <Circle className="w-1 h-1 text-zinc-400/60 fill-zinc-400/60" />
             )}
             {task.projectId && (
               <span
