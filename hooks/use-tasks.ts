@@ -12,8 +12,9 @@ export function useTasks(
     const filteredTasks = tasks.filter((task) => {
       const matchesProject =
         !activeProject || task.projectId === activeProject.id;
+      const matchesArchived = !task.isArchived;
 
-      return matchesProject;
+      return matchesProject && matchesArchived;
     });
 
     // Sort tasks

@@ -5,7 +5,7 @@ import { SidebarGroup, SidebarGroupLabel } from "@/components/ui/sidebar";
 import { ProjectPicker } from "./ProjectPicker";
 import { ProjectActionsMenu } from "./ProjectActionsMenu";
 export function ProjectSection({ task }: { task: Task }) {
-  const { projects } = useWorkspace();
+  const { projects, createProject } = useWorkspace();
   const {
     selectedProject,
     setSelectedProject,
@@ -18,13 +18,14 @@ export function ProjectSection({ task }: { task: Task }) {
   } = useProjectManagement(projects.find((p) => p.id === task.projectId));
 
   return (
-    <SidebarGroup className="p-3 pt-5 gap-1.5">
+    <SidebarGroup className="p-3 gap-1.5">
       <SidebarGroupLabel>Project</SidebarGroupLabel>
       <div className="flex items-center gap-2">
         <ProjectPicker
           selectedProject={selectedProject}
           onProjectSelect={setSelectedProject}
           task={task}
+          createProject={createProject}
         />
         {selectedProject && (
           <ProjectActionsMenu

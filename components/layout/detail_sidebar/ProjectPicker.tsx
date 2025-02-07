@@ -10,7 +10,7 @@ import {
   PopoverContent,
 } from "@/components/ui/popover";
 import { SidebarMenuButton } from "@/components/ui/sidebar";
-import { ChevronDown, Plus, Tag } from "lucide-react";
+import { ChevronDown, Home, Plus, Tag } from "lucide-react";
 import {
   Command,
   CommandEmpty,
@@ -20,18 +20,20 @@ import {
   CommandList,
   CommandSeparator,
 } from "@/components/ui/command";
-import { CUSTOM_THEME_COLORS } from "@/app/types/CustomTheme";
+import { CUSTOM_THEME_COLORS, ThemeName } from "@/app/types/CustomTheme";
 
 interface ProjectPickerProps {
   selectedProject: Project | undefined;
   onProjectSelect: (project: Project) => void;
   task: Task;
+  createProject: (project: Project) => void;
 }
 
 export function ProjectPicker({
   selectedProject,
   onProjectSelect,
   task,
+  createProject,
 }: ProjectPickerProps) {
   const { projects, updateTask } = useWorkspace();
   const [isOpen, setIsOpen] = useState(false);
@@ -47,8 +49,10 @@ export function ProjectPicker({
               {selectedProject.icon && (
                 <selectedProject.icon
                   className={`w-3.5 h-3.5 mr-2 ${
-                    CUSTOM_THEME_COLORS[selectedProject.theme ?? "default"]
-                      .iconColor
+                    CUSTOM_THEME_COLORS[
+                      (selectedProject.theme ??
+                        "default") as keyof typeof CUSTOM_THEME_COLORS
+                    ].iconColor
                   }`}
                 />
               )}
@@ -86,7 +90,7 @@ export function ProjectPicker({
                 console.log(`Creating new project: ${searchValue}`);
               }}
             >
-              <Plus className="w-4 h-4 mr-2" />
+              <Plus className="!w-5 !h-5 mr-1" />
               Create &ldquo;{searchValue}&rdquo;
             </CommandItem>
           </CommandEmpty>
@@ -104,28 +108,54 @@ export function ProjectPicker({
                     });
                     setIsOpen(false);
                   }}
+                  className="px-2.5 py-2 rounded-lg"
                 >
-                  {project.icon && <project.icon className="w-4 h-4 mr-2" />}
+                  {project.icon && (
+                    <project.icon
+                      className={`!w-5 !h-5 mr-1 ${
+                        CUSTOM_THEME_COLORS[
+                          (project.theme ??
+                            "default") as keyof typeof CUSTOM_THEME_COLORS
+                        ].iconColor
+                      }`}
+                    />
+                  )}
                   {project.name}
                 </CommandItem>
               ))}
             </CommandGroup>
-            <CommandSeparator />
+
             {searchValue &&
               !projects.some(
                 (p) => p.name.toLowerCase() === searchValue.toLowerCase()
               ) && (
-                <CommandGroup heading="Create New" className="pt-0">
-                  <CommandItem
-                    onSelect={() => {
-                      // TODO: Implement project creation logic
-                      console.log(`Creating new project: ${searchValue}`);
-                    }}
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Create &ldquo;{searchValue}&rdquo;
-                  </CommandItem>
-                </CommandGroup>
+                <>
+                  <CommandSeparator />
+                  <CommandGroup heading="Create New" className="pt-0">
+                    <CommandItem
+                      onSelect={() => {
+                        const newProject = {
+                          id: crypto.randomUUID(),
+                          name: searchValue,
+                          value: searchValue,
+                          icon: Home,
+                          theme: "default" as ThemeName,
+                        };
+                        createProject(newProject);
+                        onProjectSelect(newProject);
+                        console.log("task", task);
+                        updateTask(task.id, {
+                          projectId: newProject.id,
+                        });
+                        console.log("newProject", newProject.id);
+                        setIsOpen(false);
+                      }}
+                    >
+                      <Plus className="w-4 h-4" />
+                      Create &ldquo;{searchValue}&rdquo;
+                    </CommandItem>
+                  </CommandGroup>
+                </>
               )}
           </CommandList>
         </Command>

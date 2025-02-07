@@ -5,6 +5,7 @@ import { Task } from "@/app/types/Task";
 import { Project } from "@/app/types/Project";
 import { tasks as initialTasks } from "@/app/data/tasks";
 import { projects as initialProjects } from "@/app/data/projects";
+
 interface WorkspaceContextType {
   tasks: Task[];
   updateTask: (taskId: string, updates: Partial<Task>) => void;
@@ -12,8 +13,8 @@ interface WorkspaceContextType {
   deleteTask: (taskId: string) => void;
 
   projects: Project[];
+  createProject: (project: Project) => void;
   updateProject: (projectId: string, updates: Partial<Project>) => void;
-  createProject: (project: Omit<Project, "id">) => void;
   deleteProject: (projectId: string) => void;
 
   getTasksByQuadrant: (quadrant: number) => Task[];
@@ -52,22 +53,20 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
     setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
   };
 
+  const createProject = useCallback((project: Project) => {
+    const newProject: Project = {
+      ...project,
+    };
+    setProjects((prev) => [...prev, newProject]);
+    return newProject;
+  }, []);
+
   const updateProject = (projectId: string, updates: Partial<Project>) => {
     setProjects((prevProjects) =>
       prevProjects.map((project) =>
         project.id === projectId ? { ...project, ...updates } : project
       )
     );
-  };
-
-  const createProject = (project: Omit<Project, "id">) => {
-    setProjects((prevProjects) => [
-      ...prevProjects,
-      {
-        ...project,
-        id: crypto.randomUUID(),
-      },
-    ]);
   };
 
   const deleteProject = (projectId: string) => {
@@ -98,8 +97,8 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
         createTask,
         deleteTask,
         projects,
-        updateProject,
         createProject,
+        updateProject,
         deleteProject,
         getTasksByQuadrant,
         getTasksByProject,

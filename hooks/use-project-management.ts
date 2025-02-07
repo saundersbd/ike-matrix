@@ -43,6 +43,14 @@ export function useProjectManagement(initialProject?: Project) {
     [handleProjectUpdate]
   );
 
+  const handleNewProject = useCallback(
+    (newProject: Project) => {
+      setSelectedProject(newProject);
+      handleProjectUpdate(newProject);
+    },
+    [handleProjectUpdate]
+  );
+
   const handleClearProject = useCallback(() => {
     setSelectedProject(undefined);
   }, []);
@@ -56,5 +64,6 @@ export function useProjectManagement(initialProject?: Project) {
     handleNameChange,
     handleThemeChange,
     handleClearProject,
+    handleNewProject,
   };
 }

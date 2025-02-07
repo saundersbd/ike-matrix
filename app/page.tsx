@@ -32,7 +32,6 @@ import {
   ArrowUpDown,
   ChevronDown,
   Circle,
-  Filter,
   Grid2X2,
   List,
   Tag,
@@ -44,7 +43,6 @@ import {
 } from "@/app/types/CustomTheme";
 
 import { Project } from "@/app/types/Project";
-import { QuadrantSelectOption } from "@/components/quadrant-select-option";
 import { TaskList } from "@/components/task-list";
 import { cn } from "@/lib/utils";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
