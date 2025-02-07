@@ -7,6 +7,19 @@ import { Project } from "@/app/types/Project";
 import { tasks as initialTasks } from "@/app/data/tasks";
 import { projects as initialProjects } from "@/app/data/projects";
 
+import {
+  CodeXml,
+  Heart,
+  Leaf,
+  LucideIcon,
+  Paintbrush,
+  Star,
+  TreePalm,
+  Earth,
+  Bug,
+  Hammer,
+} from "lucide-react";
+
 interface WorkspaceContextType {
   tasks: Task[];
   updateTask: (taskId: string, updates: Partial<Task>) => void;
@@ -55,8 +68,24 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
   };
 
   const createProject = useCallback((project: Project) => {
+    const randomIcon = () => {
+      const icons = [
+        Star,
+        Paintbrush,
+        Heart,
+        Leaf,
+        TreePalm,
+        Earth,
+        Bug,
+        Hammer,
+        CodeXml,
+      ];
+      return icons[Math.floor(Math.random() * icons.length)];
+    };
+
     const newProject: Project = {
       ...project,
+      icon: randomIcon(),
     };
     setProjects((prev) => [...prev, newProject]);
     return newProject;

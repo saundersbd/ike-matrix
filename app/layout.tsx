@@ -5,18 +5,14 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { WorkspaceProvider } from "@/app/contexts/WorkspaceContext";
 import { Toaster } from "@/components/ui/toaster";
-import { Separator } from "@/components/ui/separator";
+import { ManageProjectsDialog } from "@/components/dialogs/manage-projects-dialog";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSub,
-  DropdownMenuSubTrigger,
-  DropdownMenuPortal,
-  DropdownMenuLabel,
-  DropdownMenuSubContent,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { InfoSheet } from "@/components/layout/info-sheet";
 import { Cog } from "lucide-react";
@@ -98,6 +94,7 @@ export default function RootLayout({
             {modal}
             <Toaster />
           </div>
+          <ManageProjectsDialog />
         </WorkspaceProvider>
       </body>
     </html>
