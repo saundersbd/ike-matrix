@@ -21,7 +21,7 @@ export function CardHeader({
   };
 }) {
   return (
-    <div className="flex flex-row items-center justify-between px-4 py-3 gap-3 bg-zinc-white border-b border-zinc-200/80">
+    <div className="flex flex-row items-center justify-between px-4 py-3 gap-3 bg-zinc-white border-b border-zinc-200/80 h-[52px]">
       <div className="flex items-center gap-2.5 min-h-8">
         <h2 className={cn("text-sm font-semibold inline-flex text-zinc-800")}>
           {title}

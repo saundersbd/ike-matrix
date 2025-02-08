@@ -157,7 +157,7 @@ export default function Home() {
   const gridView = (sortBy: string) => (
     <div
       className={cn(
-        "grid gap-6 grid-cols-2 grid-rows-2 h-[calc(100svh-(var(--header-height)))] pt-9 pb-8 px-8",
+        "grid gap-6 grid-cols-2 grid-rows-2 h-svh pt-[95px] pb-8 px-8",
         (visibleQuadrantCount === 2 || visibleQuadrantCount === 1) &&
           "grid-rows-1"
       )}
@@ -221,7 +221,7 @@ export default function Home() {
   );
 
   const listView = (sortBy: string) => (
-    <div className="h-[calc(100svh-(var(--header-height)*2))] px-1.5">
+    <div className="px-1.5 pt-[65px]">
       <div className="max-w-4xl mx-auto py-12 px-0 flex flex-col">
         {visibilityControls.every((q) => q) ? (
           <div className="flex flex-col items-center justify-center h-full gap-4">
@@ -333,76 +333,7 @@ export default function Home() {
           onOpenChange={setOpen}
           className="flex flex-col"
         >
-          <header className="sticky top-0 mb-0 flex shrink-0 items-center justify-between gap-4 h-[calc(var(--header-height))] bg-zinc-200/40 pl-8 pr-5">
-            <div className="flex items-center gap-3">
-              {activeProject && (
-                <Button
-                  variant="link"
-                  size="sm"
-                  className="h-8 mr-2 underline decoration-dotted decoration-1 decoration-zinc-700 underline-offset-3 hover:decoration-solid animate-in fade-in-0 duration-200"
-                  onClick={handleFilterReset}
-                >
-                  Clear filters
-                </Button>
-              )}
-
-              <FilterChip
-                label="projects"
-                options={projects}
-                onApplyFilter={(project) => setActiveProject(project)}
-                onResetFilter={() => setActiveProject(undefined)}
-                itemNode={(project) => (
-                  <ProjectListItem project={project} dense />
-                )}
-                behavior="radio"
-                getItemId={(project) => project.id}
-                getDisplayValue={(project) => project.name}
-                value={activeProject}
-              />
-
-              <FilterChip<SortOption<Task>>
-                label="created date"
-                options={TASK_SORT_OPTIONS}
-                onApplyFilter={(option) => setSortBy(option.id)}
-                onResetFilter={() => setSortBy("created")}
-                itemNode={(option) => <SortOptionListItem option={option} />}
-                behavior="sort"
-                getItemId={(option) => option.id}
-                getDisplayValue={(option) => option.label}
-                value={TASK_SORT_OPTIONS.find((option) => option.id === sortBy)}
-                defaultValue={TASK_SORT_OPTIONS.find(
-                  (option) => option.id === "created"
-                )}
-              />
-
-              <StopLight
-                selection={visibilityControls}
-                onSelectionChange={setVisibilityControls}
-              />
-
-              <ViewSwitcher setView={setView} />
-
-              <Separator
-                orientation="vertical"
-                className="h-[20px] mx-2 bg-zinc-300"
-              />
-              <Button
-                size="sm"
-                className="rounded-lg"
-                onClick={() =>
-                  setNewTaskDialog((prev) => ({
-                    ...prev,
-                    isOpen: true,
-                    destinationQuadrant: 0,
-                  }))
-                }
-              >
-                <Plus className="h-4 w-4" />
-                <span>New task</span>
-              </Button>
-            </div>
-          </header>
-          <div className="flex flex-1 w-[calc(100vw-64px)]">
+          <div className="relative flex flex-1 w-[calc(100vw-64px)]">
             <AppSidebar
               tasks={sortedAndFilteredTasks.filter(
                 (task) =>
@@ -413,21 +344,78 @@ export default function Home() {
             />
             <SidebarInset
               className={cn(
-                "md:my-0 md:mx-0",
+                "md:my-0 md:mx-0 z-10",
                 view === "grid" && open && "md:mr-0",
                 view === "list" && "md:my-0 md:mr-0",
                 view === "list" && !open && "md:ml-0"
               )}
             >
-              <div className="flex-1 h-full min-h-[calc(100svh-64px)]">
-                <div className="h-[calc(100svh-(var(--header-height)))]">
-                  <TabsContent value="grid">{gridView(sortBy)}</TabsContent>
-                  <TabsContent value="list">
-                    <ScrollArea className="h-full px-12">
-                      {listView(sortBy)}
-                    </ScrollArea>
-                  </TabsContent>
-                </div>
+              <div className="relative h-svh">
+                <header className="z-20 absolute left-0 top-0 right-0 mb-0 flex shrink-0 items-center justify-center gap-4 pt-8 pl-8 pr-5 pb-[18px]">
+                  <div className="flex items-center gap-3">
+                    {activeProject && (
+                      <Button
+                        variant="link"
+                        size="sm"
+                        className="h-8 mr-2 underline decoration-dotted decoration-1 decoration-zinc-700 underline-offset-3 hover:decoration-solid animate-in fade-in-0 duration-200"
+                        onClick={handleFilterReset}
+                      >
+                        Clear filters
+                      </Button>
+                    )}
+
+                    {/* <FilterChip
+                      label="projects"
+                      options={projects}
+                      onApplyFilter={(project) => setActiveProject(project)}
+                      onResetFilter={() => setActiveProject(undefined)}
+                      itemNode={(project) => (
+                        <ProjectListItem project={project} dense />
+                      )}
+                      behavior="radio"
+                      getItemId={(project) => project.id}
+                      getDisplayValue={(project) => project.name}
+                      value={activeProject}
+                    />
+
+                    <FilterChip<SortOption<Task>>
+                      label="created date"
+                      options={TASK_SORT_OPTIONS}
+                      onApplyFilter={(option) => setSortBy(option.id)}
+                      onResetFilter={() => setSortBy("created")}
+                      itemNode={(option) => (
+                        <SortOptionListItem option={option} />
+                      )}
+                      behavior="sort"
+                      getItemId={(option) => option.id}
+                      getDisplayValue={(option) => option.label}
+                      value={TASK_SORT_OPTIONS.find(
+                        (option) => option.id === sortBy
+                      )}
+                      defaultValue={TASK_SORT_OPTIONS.find(
+                        (option) => option.id === "created"
+                      )}
+                    /> */}
+
+                    <StopLight
+                      selection={visibilityControls}
+                      onSelectionChange={setVisibilityControls}
+                      onToggleChange={(toggle) => {
+                        setOpen(toggle);
+                      }}
+                    />
+
+                    <ViewSwitcher setView={setView} />
+                  </div>
+                </header>
+                <TabsContent value="grid" className="h-svh">
+                  {gridView(sortBy)}
+                </TabsContent>
+                <TabsContent value="list">
+                  <ScrollArea className="px-12 !overflow-visible h-svh">
+                    {listView(sortBy)}
+                  </ScrollArea>
+                </TabsContent>
               </div>
             </SidebarInset>
           </div>
