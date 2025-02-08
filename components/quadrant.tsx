@@ -26,7 +26,7 @@ interface QuadrantProps {
   children?: React.ReactNode;
   hidden?: boolean;
   tasks: Task[];
-  setIsNewTaskDialogOpen: (isOpen: boolean) => void;
+  handleOpenNewTaskDialog: (quadrantId: number) => void;
   className?: string;
 }
 
@@ -35,7 +35,7 @@ export function Quadrant({
   hidden,
   tasks,
   className,
-  setIsNewTaskDialogOpen,
+  handleOpenNewTaskDialog,
 }: QuadrantProps) {
   const taskCount = tasks.length;
 
@@ -136,9 +136,7 @@ export function Quadrant({
           size="fab"
           variant="secondary"
           className="absolute bottom-5 right-5"
-          onClick={() => {
-            setIsNewTaskDialogOpen(true);
-          }}
+          onClick={() => handleOpenNewTaskDialog(quadrant.id)}
         >
           <Plus className="w-4 h-4" />
         </Button>

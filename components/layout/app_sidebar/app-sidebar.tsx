@@ -5,20 +5,21 @@ import {
   SidebarHeader,
 } from "@/components/ui/sidebar";
 import { Task } from "@/app/types/Task";
-import { NewTaskDialog } from "@/components/dialogs/new-task-dialog";
 import { TaskListItem } from "@/components/lists/task-list-item";
 import { TaskList } from "@/components/lists/task-list";
 import { HelpCircle } from "lucide-react";
 import { QUADRANTS } from "@/app/types/Quadrant";
 import { EmptyState } from "@/components/common/empty-state";
 import { CardHeader } from "../card-header";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 
 export function AppSidebar({
   tasks,
-  setIsNewTaskDialogOpen,
+  handleOpenNewTaskDialog,
 }: {
   tasks: Task[];
-  setIsNewTaskDialogOpen: (isOpen: boolean) => void;
+  handleOpenNewTaskDialog: (quadrantId: number) => void;
 }) {
   const tasksToDisplay = tasks.filter(
     (task) => !task.completed || task.isCompletionTransitioning
@@ -50,13 +51,20 @@ export function AppSidebar({
                 ))}
               </TaskList>
             </ScrollArea>
-            <NewTaskDialog defaultDestination={QUADRANTS[0]} />
+            <Button
+              onClick={() => handleOpenNewTaskDialog(0)}
+              className="absolute bottom-5 right-5"
+              size="fab"
+              variant="secondary"
+            >
+              <Plus className="w-4 h-4" />
+            </Button>
           </div>
         ) : (
           <EmptyState
             onClick={{
               label: "Add task",
-              action: () => setIsNewTaskDialogOpen(true),
+              action: () => handleOpenNewTaskDialog(0),
             }}
             heading="Start here, sort later"
             description="Get all of your to-dos out of your brain and into this box, to be prioritized later."

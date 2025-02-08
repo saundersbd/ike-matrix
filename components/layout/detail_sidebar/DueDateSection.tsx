@@ -26,6 +26,7 @@ import {
   Plus,
   Trash,
   RotateCcw,
+  CalendarX2,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -37,6 +38,7 @@ import {
   DropdownMenuPortal,
   DropdownMenuLabel,
   DropdownMenuSubContent,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 
 export function DueDateSection({ task }: { task: Task }) {
@@ -44,6 +46,13 @@ export function DueDateSection({ task }: { task: Task }) {
 
   const [editProjectNamePopoverOpen, setEditProjectNamePopoverOpen] =
     useState(false);
+
+  const shouldSuggestTime = (hours: number) => {
+    if (!task.dueDate || !isToday(task.dueDate)) return true;
+    const now = new Date();
+    const currentHours = now.getHours();
+    return hours > currentHours;
+  };
 
   const {
     dueDate,
@@ -78,7 +87,7 @@ export function DueDateSection({ task }: { task: Task }) {
                     isToday(dueDate) ? (
                       "Today"
                     ) : dueDate < new Date() ? (
-                      <span className="text-red-500">
+                      <span className="text-red-600">
                         {`Due ${formatDistance(dueDate, new Date(), {
                           addSuffix: true,
                         }).replace(/^about /, "")}`}
@@ -118,22 +127,30 @@ export function DueDateSection({ task }: { task: Task }) {
                   <Ellipsis className="w-3.5 h-3.5" />
                 </div>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 rounded-xl">
+              <DropdownMenuContent align="end" className="w-68 py-2 rounded-xl">
                 <DropdownMenuSub>
-                  <DropdownMenuSubTrigger className="px-2.5 py-2 rounded-lg">
-                    <Plus className="w-3.5 h-3.5" />
+                  <DropdownMenuSubTrigger className="px-3 py-2.5 rounded-lg gap-1 mx-1">
                     <span>Extend due date</span>
                   </DropdownMenuSubTrigger>
                   <DropdownMenuPortal>
                     <DropdownMenuSubContent
-                      className="w-48 rounded-xl"
+                      className="w-48 rounded-xl py-2"
                       alignOffset={-5}
                     >
-                      <DropdownMenuItem className="px-2.5 py-2 rounded-lg">
-                        One day
+                      <DropdownMenuLabel className="px-3">
+                        Extend by
+                      </DropdownMenuLabel>
+                      <DropdownMenuItem
+                        className="px-3 py-2.5 rounded-lg gap-1 mx-1"
+                        onClick={() => {
+                          const newDate = addDays(dueDate, 1);
+                          updateDueDate(newDate);
+                        }}
+                      >
+                        24 hours
                       </DropdownMenuItem>
                       <DropdownMenuItem
-                        className="px-2.5 py-2 rounded-lg"
+                        className="px-3 py-2.5 rounded-lg gap-1 mx-1"
                         onClick={() => {
                           const newDate = addDays(dueDate, 7);
                           updateDueDate(newDate);
@@ -144,12 +161,13 @@ export function DueDateSection({ task }: { task: Task }) {
                     </DropdownMenuSubContent>
                   </DropdownMenuPortal>
                 </DropdownMenuSub>
+                <DropdownMenuSeparator className="my-2" />
                 <DropdownMenuItem
-                  className="px-2.5 py-2 rounded-lg"
+                  className="px-3 py-2.5 rounded-lg gap-2.5 mx-1 text-red-600 focus:text-red-600"
                   onClick={clearDueDateAndTime}
                 >
-                  <Trash className="w-3.5 h-3.5" />
-                  Clear due date
+                  <CalendarX2 className="w-3.5 h-3.5" />
+                  Remove due date
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -169,67 +187,87 @@ export function DueDateSection({ task }: { task: Task }) {
                 </span>
               </SidebarMenuButton>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-68 rounded-xl p-2">
-              <DropdownMenuLabel>Suggestions</DropdownMenuLabel>
-              <DropdownMenuItem className="gap-1 items-start rounded-lg py-2 px-3">
-                <Clock className="w-4 h-4 mr-2 mt-[.2rem]" />
-                <div
-                  className="flex flex-col gap-0"
+            <DropdownMenuContent className="w-68 rounded-xl py-2">
+              <DropdownMenuLabel className="px-3">
+                Suggestions
+              </DropdownMenuLabel>
+              {shouldSuggestTime(TIME_PRESETS.MORNING.hours) && (
+                <DropdownMenuItem className="gap-1 items-start rounded-lg py-2 px-3 mx-1">
+                  <Clock className="w-4 h-4 mr-2 mt-[.2rem]" />
+                  <div
+                    className="flex flex-col gap-0"
+                    onClick={() => {
+                      updateDueTime(TIME_PRESETS.MORNING.hours);
+                    }}
+                  >
+                    <span>9:00 AM</span>
+                    <span className="text-zinc-500 text-xs">Morning</span>
+                  </div>
+                </DropdownMenuItem>
+              )}
+              {shouldSuggestTime(TIME_PRESETS.NOON.hours) && (
+                <DropdownMenuItem className="gap-1 items-start rounded-lg py-2 px-3 mx-1">
+                  <Clock className="w-4 h-4 mr-2 mt-[.2rem]" />
+                  <div
+                    className="flex flex-col gap-0"
+                    onClick={() => {
+                      updateDueTime(TIME_PRESETS.NOON.hours);
+                    }}
+                  >
+                    <span>12:00 PM</span>
+                    <span className="text-zinc-500 text-xs">Noon</span>
+                  </div>
+                </DropdownMenuItem>
+              )}
+              {shouldSuggestTime(TIME_PRESETS.AFTERNOON.hours) && (
+                <DropdownMenuItem
+                  className="gap-1 items-start rounded-lg py-2 px-3 mx-1"
                   onClick={() => {
-                    updateDueTime(TIME_PRESETS.MORNING.hours);
+                    updateDueTime(TIME_PRESETS.AFTERNOON.hours);
                   }}
                 >
-                  <span>9:00 AM</span>
-                  <span className="text-zinc-500 text-xs">Morning</span>
-                </div>
-              </DropdownMenuItem>
-              <DropdownMenuItem className="gap-1 items-start rounded-lg py-2 px-3">
-                <Clock className="w-4 h-4 mr-2 mt-[.2rem]" />
-                <div
-                  className="flex flex-col gap-0"
+                  <Clock className="w-4 h-4 mr-2 mt-[.2rem]" />
+                  <div className="flex flex-col gap-0">
+                    <span>3:00 PM</span>
+                    <span className="text-zinc-500 text-xs">Afternoon</span>
+                  </div>
+                </DropdownMenuItem>
+              )}
+              {shouldSuggestTime(TIME_PRESETS.EVENING.hours) && (
+                <DropdownMenuItem
+                  className="gap-1 items-start rounded-lg py-2 px-3 mx-1"
                   onClick={() => {
-                    updateDueTime(TIME_PRESETS.NOON.hours);
+                    updateDueTime(TIME_PRESETS.EVENING.hours);
                   }}
                 >
-                  <span>12:00 PM</span>
-                  <span className="text-zinc-500 text-xs">Noon</span>
-                </div>
-              </DropdownMenuItem>
+                  <Clock className="w-4 h-4 mr-2 mt-[.2rem]" />
+                  <div className="flex flex-col gap-0">
+                    <span>6:00 PM</span>
+                    <span className="text-zinc-500 text-xs">Evening</span>
+                  </div>
+                </DropdownMenuItem>
+              )}
+              {shouldSuggestTime(TIME_PRESETS.NIGHT.hours) && (
+                <DropdownMenuItem
+                  className="gap-1 items-start rounded-lg py-2 px-3 mx-1"
+                  onClick={() => {
+                    updateDueTime(TIME_PRESETS.NIGHT.hours);
+                  }}
+                >
+                  <Clock className="w-4 h-4 mr-2 mt-[.2rem]" />
+                  <div className="flex flex-col gap-0">
+                    <span>9:00 PM</span>
+                    <span className="text-zinc-500 text-xs">Night</span>
+                  </div>
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuSeparator className="my-2" />
               <DropdownMenuItem
-                className="gap-1 items-start rounded-lg py-2 px-3"
-                onClick={() => {
-                  updateDueTime(TIME_PRESETS.AFTERNOON.hours);
-                }}
+                className="px-3 py-2.5 rounded-lg gap-1 mx-1"
+                onClick={clearDueDateAndTime}
               >
-                <Clock className="w-4 h-4 mr-2 mt-[.2rem]" />
-                <div className="flex flex-col gap-0">
-                  <span>3:00 PM</span>
-                  <span className="text-zinc-500 text-xs">Afternoon</span>
-                </div>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="gap-1 items-start rounded-lg py-2 px-3"
-                onClick={() => {
-                  updateDueTime(TIME_PRESETS.EVENING.hours);
-                }}
-              >
-                <Clock className="w-4 h-4 mr-2 mt-[.2rem]" />
-                <div className="flex flex-col gap-0">
-                  <span>6:00 PM</span>
-                  <span className="text-zinc-500 text-xs">Evening</span>
-                </div>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="gap-1 items-start rounded-lg py-2 px-3"
-                onClick={() => {
-                  updateDueTime(TIME_PRESETS.NIGHT.hours);
-                }}
-              >
-                <Clock className="w-4 h-4 mr-2 mt-[.2rem]" />
-                <div className="flex flex-col gap-0">
-                  <span>9:00 PM</span>
-                  <span className="text-zinc-500 text-xs">Night</span>
-                </div>
+                <Plus className="w-4 h-4 mr-2" />
+                Custom time
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

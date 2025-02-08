@@ -32,9 +32,9 @@ export function DetailsSidebar({ task }: { task: Task }) {
         className="w-[264px] h-[calc(80svh-64px)] hidden md:flex bg-zinc-50"
       >
         <SidebarContent className="gap-0">
-          <ProjectSection task={task} />
-          <Separator className="bg-zinc-200/70" />
           <DueDateSection task={task} />
+          <Separator className="bg-zinc-200/70" />
+          <ProjectSection task={task} />
           <Separator className="bg-zinc-200/70" />
         </SidebarContent>
       </Sidebar>

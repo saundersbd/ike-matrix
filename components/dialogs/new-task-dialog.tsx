@@ -65,16 +65,11 @@ export function NewTaskDialog({
   onOpenChange?: (isOpen: boolean) => void;
 }) {
   const { toast } = useToast();
-
   const { createTask } = useWorkspace();
-  const [open, setOpen] = useState(false);
+
   const handleOpenChange = (newOpen: boolean) => {
-    setOpen(newOpen);
     onOpenChange?.(newOpen);
   };
-
-  const isDialogOpen = isOpen ?? open;
-  const setIsDialogOpen = onOpenChange ?? setOpen;
 
   const [quadrant, setQuadrant] = useState(defaultDestination || QUADRANTS[0]);
   const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
@@ -120,7 +115,7 @@ export function NewTaskDialog({
     });
 
     if (!continueAdding) {
-      setIsDialogOpen(false);
+      handleOpenChange(false);
     }
     // Reset form
     setTaskText("");
@@ -157,7 +152,7 @@ export function NewTaskDialog({
     if (!isOpen && hasUnsavedChanges()) {
       setShowUnsavedChangesAlert(true);
     } else {
-      setIsDialogOpen(isOpen);
+      handleOpenChange(isOpen);
       setError("");
     }
   };
@@ -171,7 +166,7 @@ export function NewTaskDialog({
     setError("");
     setQuadrant(defaultDestination);
     setShowUnsavedChangesAlert(false);
-    setOpen(false);
+    handleOpenChange(false);
   };
 
   const handleCancelClose = () => {
@@ -182,19 +177,19 @@ export function NewTaskDialog({
     "mod+enter",
     (e) => {
       e.preventDefault();
-      if (isDialogOpen) {
+      if (isOpen) {
         handleCreateTask();
       }
     },
     {
       enableOnFormTags: true,
     },
-    [isDialogOpen, handleCreateTask]
+    [isOpen, handleCreateTask]
   );
 
   return (
     <>
-      <Dialog open={isDialogOpen} onOpenChange={handleOpenChange}>
+      <Dialog open={isOpen} onOpenChange={handleOpenChange}>
         <DialogContent className="max-w-3xl" hideCloseButton>
           <DialogTitle className="sr-only">Add a new task</DialogTitle>
 

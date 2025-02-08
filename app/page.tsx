@@ -22,11 +22,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import {
-  ScrollArea,
-  ScrollBar,
-  ScrollAreaViewport,
-} from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 import { AppSidebar } from "@/components/layout/app_sidebar/app-sidebar";
 import { Quadrant } from "@/components/quadrant";
@@ -79,6 +75,7 @@ export default function Home() {
   );
   const { tasks, projects } = useWorkspace();
   const sortedAndFilteredTasks = useTasks(tasks, sortBy, activeProject);
+
   const [newTaskDialog, setNewTaskDialog] = useState<{
     isOpen: boolean;
     destinationQuadrant: number;
@@ -86,6 +83,14 @@ export default function Home() {
     isOpen: false,
     destinationQuadrant: 0,
   });
+
+  const handleOpenNewTaskDialog = (quadrantId: number) => {
+    setNewTaskDialog({
+      isOpen: true,
+      destinationQuadrant: quadrantId,
+    });
+  };
+
   const visibleQuadrantCount = visibilityControls.filter(
     (quadrant) => !quadrant
   ).length;
@@ -170,12 +175,7 @@ export default function Home() {
           visibleQuadrantCount === 3 && "row-span-2",
           visibleQuadrantCount === 2 && "row-span-1"
         )}
-        setIsNewTaskDialogOpen={(open) => {
-          setNewTaskDialog({
-            isOpen: open,
-            destinationQuadrant: 1, // Use the passed quadrantId, fallback to 1
-          });
-        }}
+        handleOpenNewTaskDialog={handleOpenNewTaskDialog}
       />
       <Quadrant
         quadrant={QUADRANTS[2]}
@@ -193,12 +193,7 @@ export default function Home() {
             !visibilityControls[3] &&
             "row-span-2"
         )}
-        setIsNewTaskDialogOpen={(open) => {
-          setNewTaskDialog({
-            isOpen: open,
-            destinationQuadrant: 2, // Use the passed quadrantId, fallback to 1
-          });
-        }}
+        handleOpenNewTaskDialog={handleOpenNewTaskDialog}
       />
       <Quadrant
         quadrant={QUADRANTS[3]}
@@ -208,12 +203,7 @@ export default function Home() {
             (!task.completed || task.isCompletionTransitioning)
         )}
         hidden={visibilityControls[2]}
-        setIsNewTaskDialogOpen={(open) => {
-          setNewTaskDialog({
-            isOpen: open,
-            destinationQuadrant: 3, // Use the passed quadrantId, fallback to 1
-          });
-        }}
+        handleOpenNewTaskDialog={handleOpenNewTaskDialog}
         className={cn(view === "columns" && "shrink-0 w-[45%]")}
       />
       <Quadrant
@@ -224,12 +214,7 @@ export default function Home() {
             (!task.completed || task.isCompletionTransitioning)
         )}
         hidden={visibilityControls[3]}
-        setIsNewTaskDialogOpen={(open) => {
-          setNewTaskDialog({
-            isOpen: open,
-            destinationQuadrant: 4, // Use the passed quadrantId, fallback to 1
-          });
-        }}
+        handleOpenNewTaskDialog={handleOpenNewTaskDialog}
         className={cn(view === "columns" && "shrink-0 w-[45%]")}
       />
     </div>
@@ -432,12 +417,7 @@ export default function Home() {
                   task.quadrant.id === 0 &&
                   (!task.completed || task.isCompletionTransitioning)
               )}
-              setIsNewTaskDialogOpen={(open) => {
-                setNewTaskDialog({
-                  isOpen: open,
-                  destinationQuadrant: 0, // Use the passed quadrantId, fallback to 1
-                });
-              }}
+              handleOpenNewTaskDialog={handleOpenNewTaskDialog}
             />
             <SidebarInset
               className={cn(
