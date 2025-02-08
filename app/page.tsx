@@ -157,7 +157,7 @@ export default function Home() {
   const gridView = (sortBy: string) => (
     <div
       className={cn(
-        "grid gap-6 grid-cols-2 grid-rows-2 h-[calc(100svh-(var(--header-height)*2))] pt-9 pb-8 px-8",
+        "grid gap-6 grid-cols-2 grid-rows-2 h-[calc(100svh-(var(--header-height)))] pt-9 pb-8 px-8",
         (visibleQuadrantCount === 2 || visibleQuadrantCount === 1) &&
           "grid-rows-1"
       )}
@@ -221,7 +221,7 @@ export default function Home() {
   );
 
   const listView = (sortBy: string) => (
-    <div className="h-[calc(100svh-(var(--header-height)*2))]">
+    <div className="h-[calc(100svh-(var(--header-height)*2))] px-1.5">
       <div className="max-w-4xl mx-auto py-12 px-0 flex flex-col">
         {visibilityControls.every((q) => q) ? (
           <div className="flex flex-col items-center justify-center h-full gap-4">
@@ -333,15 +333,7 @@ export default function Home() {
           onOpenChange={setOpen}
           className="flex flex-col"
         >
-          <header className="sticky top-0 mb-0 flex shrink-0 items-center justify-between gap-4 h-[calc(var(--header-height))] bg-white pl-8 pr-5 border-b border-zinc-200/70">
-            <SidebarTrigger className="flex items-center gap-2">
-              <Switch
-                checked={open}
-                onCheckedChange={(checked) => setOpen(checked)}
-              />
-              <Label>{open ? "Hide" : "Show"} backlog</Label>
-            </SidebarTrigger>
-
+          <header className="sticky top-0 mb-0 flex shrink-0 items-center justify-between gap-4 h-[calc(var(--header-height))] bg-zinc-200/40 pl-8 pr-5">
             <div className="flex items-center gap-3">
               {activeProject && (
                 <Button
@@ -410,7 +402,7 @@ export default function Home() {
               </Button>
             </div>
           </header>
-          <div className="flex flex-1 w-[100vw]">
+          <div className="flex flex-1 w-[calc(100vw-64px)]">
             <AppSidebar
               tasks={sortedAndFilteredTasks.filter(
                 (task) =>
@@ -423,12 +415,12 @@ export default function Home() {
               className={cn(
                 "md:my-0 md:mx-0",
                 view === "grid" && open && "md:mr-0",
-                view === "list" && "md:my-0 md:mr-0 md:ml-1",
+                view === "list" && "md:my-0 md:mr-0",
                 view === "list" && !open && "md:ml-0"
               )}
             >
-              <div className="flex-1 h-full min-h-[calc(100svh-76px-128px)]">
-                <div className="h-[calc(100svh-(var(--header-height)*2))]">
+              <div className="flex-1 h-full min-h-[calc(100svh-64px)]">
+                <div className="h-[calc(100svh-(var(--header-height)))]">
                   <TabsContent value="grid">{gridView(sortBy)}</TabsContent>
                   <TabsContent value="list">
                     <ScrollArea className="h-full px-12">

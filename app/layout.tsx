@@ -61,8 +61,8 @@ export default function RootLayout({
         style={{ "--header-height": HEADER_HEIGHT } as React.CSSProperties}
       >
         <WorkspaceProvider>
-          <div className="relative">
-            <header className="sticky top-0 flex h-[var(--header-height)] items-center justify-between bg-zinc-900 px-8 z-20 text-zinc-100 gap-2">
+          <div className="relative flex flex-col">
+            <header className="hidden sticky top-0 h-[var(--header-height)] items-center shrink-0 justify-between bg-zinc-950 px-8 z-20 text-zinc-100 gap-2">
               <h1 className="inline-flex text-xl font-medium">
                 Eisenhower Matrix
               </h1>
@@ -90,11 +90,18 @@ export default function RootLayout({
                 </DropdownMenu>
               </div>
             </header>
-            {children}
-            {modal}
-            <Toaster />
+            <div className="flex flex-1">
+              <div className="relative w-[64px] shrink-0 h-[100svh] bg-zinc-900 z-50">
+                Nav
+              </div>
+              <div className="flex flex-1 overflow-hidden">
+                {children}
+                {modal}
+              </div>
+            </div>
           </div>
           <ManageProjectsDialog />
+          <Toaster />
         </WorkspaceProvider>
       </body>
     </html>
