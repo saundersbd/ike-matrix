@@ -4,7 +4,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { useWorkspace } from "@/app/contexts/WorkspaceContext";
 import { useHotkeys } from "react-hotkeys-hook";
-import { useTasks } from "@/hooks/use-tasks";
+import { useTasks, useTaskSortOptions } from "@/hooks/use-tasks";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -22,11 +22,17 @@ import {
 } from "@/components/ui/sidebar";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import {
+  ScrollArea,
+  ScrollBar,
+  ScrollAreaViewport,
+} from "@/components/ui/scroll-area";
 
 import { AppSidebar } from "@/components/layout/app_sidebar/app-sidebar";
 import { Quadrant } from "@/components/quadrant";
 import { TaskListTableRow } from "@/components/lists/task-list-table-row";
 import { NewTaskDialog } from "@/components/dialogs/new-task-dialog";
+import { ProjectListItem } from "@/components/controls/filtering/project-list-item";
 import {
   ArrowUpDown,
   ChevronDown,
@@ -37,10 +43,6 @@ import {
   Tag,
 } from "lucide-react";
 import { THEME_COLORS, ThemeName } from "@/app/types/Theme";
-import {
-  CUSTOM_THEME_COLORS,
-  ThemeName as CustomThemeName,
-} from "@/app/types/CustomTheme";
 
 import { Project } from "@/app/types/Project";
 import { TaskList } from "@/components/lists/task-list";
@@ -49,6 +51,10 @@ import StopLight from "@/components/controls/stop-light";
 import ViewSwitcher from "@/components/controls/view-switcher";
 import { QUADRANTS } from "@/app/types/Quadrant";
 import { FilterChip } from "@/components/controls/filtering/filter-chip";
+import { TASK_SORT_OPTIONS, SortOption } from "@/lib/sort-options";
+import { Task } from "@/app/types/Task";
+import { SortOptionListItem } from "@/components/lists/sort-option-list-item";
+
 // Create a safe useLayoutEffect that falls back to useEffect on server
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -58,7 +64,7 @@ export default function Home() {
   const router = useRouter();
   const taskId = searchParams.get("task");
 
-  const [view, setView] = useState<"grid" | "list">("grid");
+  const [view, setView] = useState<"grid" | "list" | "columns">("grid");
   const [isLoading, setIsLoading] = useState(true);
   const [sortBy, setSortBy] = useState("created");
   const [visibilityControls, setVisibilityControls] = useState([
@@ -113,7 +119,7 @@ export default function Home() {
     [newTaskDialog.isOpen]
   );
 
-  const handleViewChange = (newView: "grid" | "list") => {
+  const handleViewChange = (newView: "grid" | "list" | "columns") => {
     setView(newView);
     localStorage.setItem("preferredView", newView);
   };
@@ -125,6 +131,7 @@ export default function Home() {
 
   const handleFilterReset = () => {
     setActiveProject(undefined);
+    setSortBy("created");
     setVisibilityControls([false, false, false, false]);
   };
 
@@ -145,10 +152,7 @@ export default function Home() {
   const gridView = (sortBy: string) => (
     <div
       className={cn(
-        `grid grid-cols-2 grid-rows-2 gap-6 h-[calc(100svh-184px)] ${
-          open ? "md:px-4" : "md:px-0"
-        }`,
-        "h-[calc(100svh-200px)]",
+        "grid gap-6 grid-cols-2 grid-rows-2 h-[calc(100svh-(var(--header-height)*2))] pt-9 pb-8 px-8",
         (visibleQuadrantCount === 2 || visibleQuadrantCount === 1) &&
           "grid-rows-1"
       )}
@@ -162,6 +166,7 @@ export default function Home() {
         )}
         hidden={visibilityControls[0]}
         className={cn(
+          view === "columns" && " shrink-0 w-[45%]",
           visibleQuadrantCount === 3 && "row-span-2",
           visibleQuadrantCount === 2 && "row-span-1"
         )}
@@ -181,6 +186,7 @@ export default function Home() {
         )}
         hidden={visibilityControls[1]}
         className={cn(
+          view === "columns" && " shrink-0 w-[45%]",
           visibilityControls[0] &&
             !visibilityControls[1] &&
             !visibilityControls[2] &&
@@ -208,6 +214,7 @@ export default function Home() {
             destinationQuadrant: 3, // Use the passed quadrantId, fallback to 1
           });
         }}
+        className={cn(view === "columns" && "shrink-0 w-[45%]")}
       />
       <Quadrant
         quadrant={QUADRANTS[4]}
@@ -223,105 +230,110 @@ export default function Home() {
             destinationQuadrant: 4, // Use the passed quadrantId, fallback to 1
           });
         }}
+        className={cn(view === "columns" && "shrink-0 w-[45%]")}
       />
     </div>
   );
 
   const listView = (sortBy: string) => (
-    <div className="max-w-4xl mx-auto py-2 px-4 flex flex-col h-[calc(100svh-(var(--header-height)+82px))]">
-      {visibilityControls.every((q) => q) ? (
-        <div className="flex flex-col items-center justify-center h-full gap-4">
-          <span className="text-sm text-gray-500 text-center">
-            All quadrants are hidden. Use the &ldquo;Show&rdquo; filter to
-            display tasks.
-          </span>
-          <Button
-            variant="outline"
-            size="sm"
-            className="rounded-lg"
-            onClick={() => setVisibilityControls([false, false, false, false])}
-          >
-            Bring &apos;em back
-          </Button>
-        </div>
-      ) : (
-        [1, 2, 3, 4].map((quadrantNumber) => {
-          if (visibilityControls[quadrantNumber - 1]) return null;
+    <div className="h-[calc(100svh-(var(--header-height)*2))]">
+      <div className="max-w-4xl mx-auto py-12 px-0 flex flex-col">
+        {visibilityControls.every((q) => q) ? (
+          <div className="flex flex-col items-center justify-center h-full gap-4">
+            <span className="text-sm text-gray-500 text-center">
+              All quadrants are hidden. Use the &ldquo;Show&rdquo; filter to
+              display tasks.
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              className="rounded-lg"
+              onClick={() =>
+                setVisibilityControls([false, false, false, false])
+              }
+            >
+              Bring &apos;em back
+            </Button>
+          </div>
+        ) : (
+          [1, 2, 3, 4].map((quadrantNumber) => {
+            if (visibilityControls[quadrantNumber - 1]) return null;
 
-          const quadrantTasks = tasks.filter(
-            (task) =>
-              task.quadrant.id === quadrantNumber &&
-              (!task.completed || task.isCompletionTransitioning)
-          );
+            const quadrantTasks = tasks.filter(
+              (task) =>
+                task.quadrant.id === quadrantNumber &&
+                (!task.completed || task.isCompletionTransitioning)
+            );
 
-          return quadrantTasks.length > 0 ? (
-            <div key={quadrantNumber} className="mb-6 last:mb-0">
-              <div className="flex items-center justify-between mb-2.5 mx-4">
-                <div className="flex items-center gap-2.5">
-                  <Circle
-                    className={`w-[8px] h-[8px] ${
-                      THEME_COLORS[quadrantThemes[quadrantNumber]].accentColor
-                    }`}
+            return quadrantTasks.length > 0 ? (
+              <div key={quadrantNumber} className="mb-6 last:mb-0">
+                <div className="flex items-center justify-between mb-2.5 mx-4">
+                  <div className="flex items-center gap-2.5">
+                    <Circle
+                      className={`w-[8px] h-[8px] ${
+                        THEME_COLORS[quadrantThemes[quadrantNumber]].accentColor
+                      }`}
+                    />
+                    <h3 className="text-sm font-medium text-gray-500">
+                      {quadrantTitles[quadrantNumber]}
+                    </h3>
+                  </div>
+                  <NewTaskDialog
+                    defaultDestination={QUADRANTS[quadrantNumber]}
+                    isOpen={newTaskDialog.isOpen}
+                    onOpenChange={(open) =>
+                      setNewTaskDialog((prev) => ({ ...prev, isOpen: open }))
+                    }
                   />
-                  <h3 className="text-sm font-medium text-gray-500">
-                    {quadrantTitles[quadrantNumber]}
-                  </h3>
                 </div>
-                <NewTaskDialog
-                  defaultDestination={QUADRANTS[quadrantNumber]}
-                  isOpen={newTaskDialog.isOpen}
-                  onOpenChange={(open) =>
-                    setNewTaskDialog((prev) => ({ ...prev, isOpen: open }))
-                  }
-                />
-              </div>
 
-              <div className="ring-1 ring-black/[.08] rounded-2xl bg-white shadow-xs">
-                <TaskList gap={false} className="px-5 py-4">
-                  {quadrantTasks.map((task) => (
-                    <TaskListTableRow key={task.id} task={task} />
-                  ))}
-                </TaskList>
-              </div>
-            </div>
-          ) : (
-            <div key={quadrantNumber} className="mb-6 last:mb-0">
-              <div className="flex items-center justify-between mb-2.5 mx-4">
-                <div className="flex items-center gap-2.5">
-                  <Circle
-                    className={`w-[8px] h-[8px] ${
-                      THEME_COLORS[quadrantThemes[quadrantNumber]].accentColor
-                    }`}
-                  />
-                  <h3 className="text-sm font-medium text-gray-500">
-                    {quadrantTitles[quadrantNumber]}
-                  </h3>
+                <div className="ring-1 ring-black/[.08] rounded-2xl bg-white shadow-xs">
+                  <TaskList gap={false} className="px-5 py-4">
+                    {quadrantTasks.map((task) => (
+                      <TaskListTableRow key={task.id} task={task} />
+                    ))}
+                  </TaskList>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="rounded-lg"
-                  onClick={() =>
-                    setNewTaskDialog((prev) => ({
-                      ...prev,
-                      isOpen: true,
-                      destinationQuadrant: quadrantNumber,
-                    }))
-                  }
-                >
-                  <Plus className="h-4 w-4" />
-                  New task
-                </Button>
               </div>
-              <div className="flex items-center justify-center p-7 ring-1 ring-black/[.08] rounded-xl bg-white/50">
-                <span className="text-sm text-gray-500 text-center">
-                  No tasks
-                </span>
+            ) : (
+              <div key={quadrantNumber} className="mb-6 last:mb-0">
+                <div className="flex items-center justify-between mb-2.5 mx-4">
+                  <div className="flex items-center gap-2.5">
+                    <Circle
+                      className={`w-[8px] h-[8px] ${
+                        THEME_COLORS[quadrantThemes[quadrantNumber]].accentColor
+                      }`}
+                    />
+                    <h3 className="text-sm font-medium text-gray-500">
+                      {quadrantTitles[quadrantNumber]}
+                    </h3>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="rounded-lg"
+                    onClick={() =>
+                      setNewTaskDialog((prev) => ({
+                        ...prev,
+                        isOpen: true,
+                        destinationQuadrant: quadrantNumber,
+                      }))
+                    }
+                  >
+                    <Plus className="h-4 w-4" />
+                    New task
+                  </Button>
+                </div>
+                <div className="flex items-center justify-center p-7 ring-1 ring-black/[.08] rounded-xl bg-white/50">
+                  <span className="text-sm text-gray-500 text-center">
+                    No tasks
+                  </span>
+                </div>
               </div>
-            </div>
-          );
-        })
-      )}
+            );
+          })
+        )}
+      </div>
     </div>
   );
 
@@ -336,7 +348,7 @@ export default function Home() {
           onOpenChange={setOpen}
           className="flex flex-col"
         >
-          <header className="sticky top-0 mb-0 flex shrink-0 items-center justify-between gap-4 h-[calc(var(--header-height))] bg-white px-8 border-b border-zinc-200/70">
+          <header className="sticky top-0 mb-0 flex shrink-0 items-center justify-between gap-4 h-[calc(var(--header-height))] bg-white pl-8 pr-5 border-b border-zinc-200/70">
             <SidebarTrigger className="flex items-center gap-2">
               <Switch
                 checked={open}
@@ -350,7 +362,7 @@ export default function Home() {
                 <Button
                   variant="link"
                   size="sm"
-                  className="mr-2 underline decoration-dotted decoration-1 decoration-zinc-700 underline-offset-3 hover:decoration-solid"
+                  className="h-8 mr-2 underline decoration-dotted decoration-1 decoration-zinc-700 underline-offset-3 hover:decoration-solid animate-in fade-in-0 duration-200"
                   onClick={handleFilterReset}
                 >
                   Clear filters
@@ -358,43 +370,33 @@ export default function Home() {
               )}
 
               <FilterChip
-                label="All projects"
+                label="projects"
                 options={projects}
                 onApplyFilter={(project) => setActiveProject(project)}
                 onResetFilter={() => setActiveProject(undefined)}
+                itemNode={(project) => (
+                  <ProjectListItem project={project} dense />
+                )}
+                behavior="radio"
+                getItemId={(project) => project.id}
+                getDisplayValue={(project) => project.name}
+                value={activeProject}
               />
 
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="rounded-lg">
-                    <ArrowUpDown className="h-4 w-4" />
-                    <span className="text-sm font-medium">
-                      Sort by:{" "}
-                      {sortBy.charAt(0).toUpperCase() + sortBy.slice(1)}
-                    </span>
-                    <ChevronDown className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56">
-                  <DropdownMenuRadioGroup
-                    value={sortBy}
-                    onValueChange={setSortBy}
-                  >
-                    <DropdownMenuRadioItem value="created">
-                      Created
-                    </DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem value="updated">
-                      Last updated
-                    </DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem value="dueDate">
-                      Due date
-                    </DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem value="custom">
-                      Custom
-                    </DropdownMenuRadioItem>
-                  </DropdownMenuRadioGroup>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <FilterChip<SortOption<Task>>
+                label="created date"
+                options={TASK_SORT_OPTIONS}
+                onApplyFilter={(option) => setSortBy(option.id)}
+                onResetFilter={() => setSortBy("created")}
+                itemNode={(option) => <SortOptionListItem option={option} />}
+                behavior="sort"
+                getItemId={(option) => option.id}
+                getDisplayValue={(option) => option.label}
+                value={TASK_SORT_OPTIONS.find((option) => option.id === sortBy)}
+                defaultValue={TASK_SORT_OPTIONS.find(
+                  (option) => option.id === "created"
+                )}
+              />
 
               <StopLight
                 selection={visibilityControls}
@@ -423,7 +425,7 @@ export default function Home() {
               </Button>
             </div>
           </header>
-          <div className="flex flex-1">
+          <div className="flex flex-1 w-[100vw]">
             <AppSidebar
               tasks={sortedAndFilteredTasks.filter(
                 (task) =>
@@ -438,12 +440,21 @@ export default function Home() {
               }}
             />
             <SidebarInset
-              className={`${open ? "md:mx-5" : "md:mx-8"} md:my-8 md:mr-8`}
+              className={cn(
+                "md:my-0 md:mx-0",
+                view === "grid" && open && "md:mr-0",
+                view === "list" && "md:my-0 md:mr-0 md:ml-1",
+                view === "list" && !open && "md:ml-0"
+              )}
             >
               <div className="flex-1 h-full min-h-[calc(100svh-76px-128px)]">
-                <div className="h-[calc(100svh-(var(--header-height)+120px))]">
+                <div className="h-[calc(100svh-(var(--header-height)*2))]">
                   <TabsContent value="grid">{gridView(sortBy)}</TabsContent>
-                  <TabsContent value="list">{listView(sortBy)}</TabsContent>
+                  <TabsContent value="list">
+                    <ScrollArea className="h-full px-12">
+                      {listView(sortBy)}
+                    </ScrollArea>
+                  </TabsContent>
                 </div>
               </div>
             </SidebarInset>

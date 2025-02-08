@@ -42,7 +42,7 @@ export function Quadrant({
   return (
     <div
       className={cn(
-        "flex flex-col min-h-0 grow gap-2.5 transition-all duration-300",
+        "flex flex-col min-h-0 gap-2.5 transition-all duration-300 scroll-snap-start",
         hidden && "hidden",
         className
       )}

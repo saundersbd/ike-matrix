@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { Task } from "@/app/types/Task";
 import { Project } from "@/app/types/Project";
+import { TASK_SORT_OPTIONS } from "@/lib/sort-options";
 
 export function useTasks(
   tasks: Task[],
@@ -13,28 +14,22 @@ export function useTasks(
       const matchesProject =
         !activeProject || task.projectId === activeProject.id;
       const matchesArchived = !task.isArchived;
-
       return matchesProject && matchesArchived;
     });
 
     // Sort tasks
     return [...filteredTasks].sort((a, b) => {
-      switch (sortBy) {
-        case "created":
-          return (
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-          );
-        case "updated":
-          if (!a.updatedAt) return 1;
-          if (!b.updatedAt) return -1;
-          return b.updatedAt.getTime() - a.updatedAt.getTime();
-        case "dueDate":
-          if (!a.dueDate) return 1;
-          if (!b.dueDate) return -1;
-          return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
-        default:
-          return 0;
-      }
+      const sortOption = TASK_SORT_OPTIONS.find(
+        (option) => option.id === sortBy
+      );
+      if (!sortOption) return 0;
+
+      return sortOption.getValue(b) - sortOption.getValue(a);
     });
   }, [tasks, activeProject, sortBy]);
+}
+
+// You could also expose the sort options from the hook if needed
+export function useTaskSortOptions() {
+  return TASK_SORT_OPTIONS;
 }

@@ -16,6 +16,10 @@ const ScrollArea = React.forwardRef<
   const [hasScrolled, setHasScrolled] = React.useState(false);
   const [isAtBottom, setIsAtBottom] = React.useState(false);
 
+  const hasViewportChild = React.Children.toArray(children).some(
+    (child) => React.isValidElement(child) && child.type === ScrollAreaViewport
+  );
+
   React.useEffect(() => {
     const viewport = viewportRef.current;
     if (!viewport) return;
@@ -46,20 +50,45 @@ const ScrollArea = React.forwardRef<
         isAtBottom && "group scroll-bottom",
         className
       )}
+      type="auto"
       {...props}
     >
-      <ScrollAreaPrimitive.Viewport
-        ref={viewportRef}
-        className="h-full w-full rounded-[inherit]"
-      >
-        {children}
-      </ScrollAreaPrimitive.Viewport>
+      {hasViewportChild ? (
+        children
+      ) : (
+        <ScrollAreaViewport>{children}</ScrollAreaViewport>
+      )}
       <ScrollBar />
       <ScrollAreaPrimitive.Corner />
     </ScrollAreaPrimitive.Root>
   );
 });
 ScrollArea.displayName = ScrollAreaPrimitive.Root.displayName;
+
+const ScrollAreaViewport = React.forwardRef<
+  React.ElementRef<typeof ScrollAreaPrimitive.ScrollAreaViewport>,
+  React.ComponentPropsWithoutRef<
+    typeof ScrollAreaPrimitive.ScrollAreaViewport
+  > & {
+    innerClassName?: string;
+  }
+>(({ className, innerClassName, children, ...props }, ref) => {
+  return (
+    <ScrollAreaPrimitive.Viewport
+      ref={ref}
+      className={cn("h-full w-full rounded-[inherit]", className)}
+      style={{
+        display: innerClassName ? "block" : undefined,
+      }}
+      {...props}
+    >
+      <div className={innerClassName}>{children}</div>
+    </ScrollAreaPrimitive.Viewport>
+  );
+});
+
+ScrollAreaViewport.displayName =
+  ScrollAreaPrimitive.ScrollAreaViewport.displayName;
 
 const ScrollBar = React.forwardRef<
   React.ElementRef<typeof ScrollAreaPrimitive.ScrollAreaScrollbar>,
@@ -83,4 +112,4 @@ const ScrollBar = React.forwardRef<
 ));
 ScrollBar.displayName = ScrollAreaPrimitive.ScrollAreaScrollbar.displayName;
 
-export { ScrollArea, ScrollBar };
+export { ScrollArea, ScrollBar, ScrollAreaViewport };

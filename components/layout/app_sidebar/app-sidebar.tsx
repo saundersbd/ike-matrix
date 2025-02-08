@@ -26,7 +26,7 @@ export function AppSidebar({
 
   return (
     <Sidebar
-      className="top-[150px] bg-zinc-50 h-[calc(100svh-128px-var(--spacing(1))]"
+      className="top-[158px] bg-zinc-50 h-[calc(100svh-128px-4rem)]"
       variant="floating"
     >
       <SidebarHeader className="p-0">

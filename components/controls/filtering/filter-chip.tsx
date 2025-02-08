@@ -10,82 +10,124 @@ import {
   DropdownMenuTrigger,
   DropdownMenuItem,
   DropdownMenuSeparator,
+  DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
-import { ChevronDown, X } from "lucide-react";
-import { ProjectListItem } from "@/components/controls/filtering/project-list-item";
-
-interface FilterChipProps {
+import { SortOptionListItem } from "@/components/lists/sort-option-list-item";
+import { ChevronDown, ArrowUpDown } from "lucide-react";
+import { SortOption } from "@/lib/sort-options";
+import { Task } from "@/app/types/Task";
+interface FilterChipProps<T> {
   label: string;
-  options: Project[];
-  onApplyFilter: (selectedItem: Project) => void;
+  options: T[];
+  onApplyFilter: (selectedItem: T) => void;
   onResetFilter: () => void;
+  behavior: "radio" | "checkbox" | "sort";
+  itemNode?: (item: T) => React.ReactNode;
+  getItemId: (item: T) => string;
+  getDisplayValue: (item: T) => string;
+  value?: T | null;
+  defaultValue?: T;
 }
 
-export function FilterChip({
+export function FilterChip<T>({
   label,
   options,
   onApplyFilter,
   onResetFilter,
-}: FilterChipProps) {
-  const [active, setActive] = useState<Project | null>(null);
+  behavior = "radio",
+  itemNode,
+  getItemId,
+  getDisplayValue,
+  value,
+  defaultValue,
+}: FilterChipProps<T>) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const initialLabel = <span>All {label}</span>;
+  const isDefaultValue =
+    defaultValue && value && getItemId(defaultValue) === getItemId(value);
 
   return (
     <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
       <DropdownMenuTrigger asChild>
-        <div className="relative inline-flex">
+        <div className="relative inline-flex transition-all duration-200">
           <Button
             variant="outline"
             size="sm"
             className={cn(
-              "h-8 gap-1 px-4",
+              "h-8 gap-1 px-4 pr-3",
               "ring-zinc-300 rounded-full",
-              active && "!pr-2.5 !pl-3 ring-2 ring-zinc-800"
+              value && behavior === "sort" && "!pr-3.5 !pl-3",
+              value && !isDefaultValue && "pr-2.5 pl-3 ring-2 ring-zinc-800"
             )}
           >
-            {active ? <ProjectListItem project={active} dense /> : label}
-            <ChevronDown className="h-3.5 w-3.5 ml-0.5" />
+            {behavior === "sort" && (
+              <SortOptionListItem option={value as SortOption<Task>} />
+            )}
+            {(behavior === "radio" || behavior === "checkbox") && (
+              <>
+                {value ? itemNode?.(value) : initialLabel}
+                <ChevronDown className="h-3.5 w-3.5 ml-0.5" />
+              </>
+            )}
           </Button>
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-66 rounded-xl">
-        {active && (
+        {value && behavior === "radio" && (
           <>
             <DropdownMenuItem
               className="px-3 py-2 rounded-lg"
               onClick={() => {
                 onResetFilter();
-                setActive(null);
                 setIsMenuOpen(false);
               }}
             >
-              View all projects
+              View all {label}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
           </>
         )}
-        <DropdownMenuRadioGroup
-          value={active?.id}
-          onValueChange={(value) => {
-            const selectedProject =
-              options.find((option) => option.id === value) ?? null;
-            setActive(selectedProject);
-            if (selectedProject) {
-              onApplyFilter(selectedProject);
-            }
-            setIsMenuOpen(false);
-          }}
-        >
-          {options.map((option) => (
-            <DropdownMenuRadioItem
-              key={option.id}
-              value={option.id}
-              className="rounded-lg px-3 py-2"
+        {(behavior === "radio" || behavior === "sort") && (
+          <DropdownMenuRadioGroup
+            value={value ? getItemId(value) : undefined}
+            onValueChange={(newValue) => {
+              const selectedItem = options.find(
+                (option) => getItemId(option) === newValue
+              );
+              if (selectedItem) {
+                onApplyFilter(selectedItem);
+              } else {
+                onResetFilter();
+              }
+              setIsMenuOpen(false);
+            }}
+          >
+            {options.map((option) => (
+              <DropdownMenuRadioItem
+                key={getItemId(option)}
+                value={getItemId(option)}
+                className="rounded-lg px-3 py-2"
+              >
+                {itemNode ? itemNode(option) : getDisplayValue(option)}
+              </DropdownMenuRadioItem>
+            ))}
+          </DropdownMenuRadioGroup>
+        )}
+        {behavior === "checkbox" &&
+          options.map((option) => (
+            <DropdownMenuCheckboxItem
+              key={getItemId(option)}
+              checked={value ? getItemId(value) === getItemId(option) : false}
+              onCheckedChange={(checked) => {
+                if (checked) {
+                  onApplyFilter(option);
+                }
+              }}
             >
-              <ProjectListItem project={option} />
-            </DropdownMenuRadioItem>
+              {itemNode ? itemNode(option) : getDisplayValue(option)}
+            </DropdownMenuCheckboxItem>
           ))}
-        </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   );

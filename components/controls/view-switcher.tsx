@@ -1,5 +1,5 @@
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Grid2X2, List } from "lucide-react";
+import { Grid2X2, List, Columns3 } from "lucide-react";
 
 interface ViewSwitcherProps {
   setView: (view: "grid" | "list") => void;

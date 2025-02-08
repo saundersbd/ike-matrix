@@ -14,7 +14,7 @@ export default function StopLight({
   return (
     <ToggleGroup
       type="multiple"
-      className="h-9 ring-1 ring-zinc-200 bg-white rounded-full gap-0"
+      className="h-8 px-1 ring-1 ring-zinc-200 bg-white rounded-full gap-0"
       value={selection
         .map((control, index) => (control ? index.toString() : null))
         .filter((value): value is string => value !== null)}
