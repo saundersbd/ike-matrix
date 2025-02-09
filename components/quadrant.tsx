@@ -110,7 +110,7 @@ export function Quadrant({
       >
         <div className="relative flex flex-col min-h-0 grow">
           {taskCount > 0 ? (
-            <div className="h-full bg-zinc-200/50">
+            <div className="h-full bg-zinc-100">
               <ScrollArea
                 type="auto"
                 className="has-data-[state=visible]:pr-2 relative h-full"

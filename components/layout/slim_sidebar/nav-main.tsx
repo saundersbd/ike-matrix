@@ -1,6 +1,6 @@
 "use client";
 
-import { Circle } from "lucide-react";
+import { Circle, Inbox, ListOrdered, Scroll } from "lucide-react";
 
 import {
   Collapsible,
@@ -16,17 +16,56 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  SidebarMenuBadge,
 } from "@/components/ui/sidebar";
 
 export function NavMain() {
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Navigation</SidebarGroupLabel>
-      <SidebarMenu>
+      <SidebarMenu className="font-medium">
         <SidebarMenuItem>
-          <SidebarMenuButton onClick={() => {}}>
-            <Circle />
-            <span>Home</span>
+          <SidebarMenuButton>
+            <Inbox />
+            <span>Inbox</span>
+          </SidebarMenuButton>
+          <SidebarMenuBadge>8</SidebarMenuBadge>
+        </SidebarMenuItem>
+        <SidebarMenuItem>
+          <SidebarMenuButton isActive>
+            <ListOrdered />
+            <span>Prioritized tasks</span>
+          </SidebarMenuButton>
+          <SidebarMenuSub>
+            <SidebarMenuSubItem>
+              <SidebarMenuSubButton size="sm">
+                <Circle className="!size-2 !text-red-500 fill-red-500" />
+                <span>Urgent &amp; important</span>
+              </SidebarMenuSubButton>
+            </SidebarMenuSubItem>
+            <SidebarMenuSubItem>
+              <SidebarMenuSubButton size="sm">
+                <Circle className="!size-2 !text-amber-400 fill-amber-400" />
+                <span>Urgent &amp; not important</span>
+              </SidebarMenuSubButton>
+            </SidebarMenuSubItem>
+            <SidebarMenuSubItem>
+              <SidebarMenuSubButton size="sm">
+                <Circle className="!size-2 !text-sky-500 fill-sky-500" />
+                <span>Important &amp; not urgent</span>
+              </SidebarMenuSubButton>
+            </SidebarMenuSubItem>
+            <SidebarMenuSubItem>
+              <SidebarMenuSubButton size="sm">
+                <Circle className="!size-2 !text-purple-500 fill-purple-500" />
+                <span>Neither urgent nor important</span>
+              </SidebarMenuSubButton>
+            </SidebarMenuSubItem>
+          </SidebarMenuSub>
+        </SidebarMenuItem>
+        <SidebarMenuItem>
+          <SidebarMenuButton>
+            <Scroll />
+            <span>History</span>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>

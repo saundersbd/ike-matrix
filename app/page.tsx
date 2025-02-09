@@ -72,7 +72,7 @@ export default function Home() {
   const [activeProject, setActiveProject] = useState<Project | undefined>(
     undefined
   );
-  const { tasks, projects } = useWorkspace();
+  const { tasks } = useWorkspace();
   const sortedAndFilteredTasks = useTasks(tasks, sortBy, activeProject);
 
   const [hasScrolled, setHasScrolled] = useState(true);

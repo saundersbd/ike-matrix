@@ -30,7 +30,7 @@
 
   --font-weight-normal: 410;
   --font-weight-medium: 450;
-  --font-weight-semibold: 530;
+  --font-weight-semibold: 500;
   --font-weight-bold: 650;
 
   --container-3xl: 44rem;
@@ -55,7 +55,6 @@
 
   :root {
     font-feature-settings: "liga" 1, "calt" 1, "ss02" 1; /* fix for Chrome */
-    font-size: 15px;
   }
 }
 
