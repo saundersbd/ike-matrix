@@ -11,6 +11,7 @@ import {
   SidebarMenuButton,
 } from "@/components/ui/sidebar";
 import { NavMain } from "./nav-main";
+import { NavProjects } from "./nav-projects";
 import { Scroll, Circle } from "lucide-react";
 
 export function SlimSidebar({
@@ -24,12 +25,14 @@ export function SlimSidebar({
       data-theme="dark"
     >
       <SidebarHeader className="p-5 bg-slate-800">
-        <span className="group-data-[state=collapsed]:hidden truncate text-lg text-zinc-700 font-medium dark:text-zinc-100">
+        <span className="group-data-[state=collapsed]:hidden truncate text-lg text-zinc-700 font-medium dark:text-slate-100">
           Eisenhower matrix
         </span>
       </SidebarHeader>
       <SidebarContent className="bg-slate-800">
         <NavMain />
+        <SidebarSeparator />
+        <NavProjects />
       </SidebarContent>
     </Sidebar>
   );

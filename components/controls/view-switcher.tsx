@@ -7,7 +7,7 @@ interface ViewSwitcherProps {
 
 export function ViewSwitcher({ setView }: ViewSwitcherProps) {
   return (
-    <TabsList className="h-9 px-1 bg-zinc-200/[.75] rounded-lg">
+    <TabsList className="h-9 px-1 bg-zinc-200/[.5] rounded-lg">
       <TabsTrigger
         value="grid"
         className="h-7 rounded-md"

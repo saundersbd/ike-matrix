@@ -34,7 +34,7 @@ export function TaskListItem({
         parent === "sidebar" && "bg-white",
         parent === "quadrant" &&
           "bg-white hover:bg-zinc-50/[.99] transition-all duration-200",
-        "group/drag-handle flex gap-2.5 shadow-xs ring-1 ring-black/[.03] rounded-[12px] pl-3.5 pr-3.5 py-2.5"
+        "group/drag-handle flex gap-2.5 shadow-xs ring-1 ring-black/[.03] rounded-[12px] pl-3.5 pr-3.5 py-3"
       )}
     >
       <Checkbox
@@ -46,9 +46,9 @@ export function TaskListItem({
       />
       <Link
         href={`/task/${task.id}`}
-        className="group/task-list-item flex grow flex-col gap-1 pointer-events-auto"
+        className="group/task-list-item flex grow flex-col gap-0.5 pointer-events-auto"
       >
-        <p className="grow peer-data-[state=checked]:line-through peer-data-[state=checked]:text-zinc-400 text-base leading-snug font-medium">
+        <p className="grow peer-data-[state=checked]:line-through peer-data-[state=checked]:text-zinc-400 text-sm leading-snug font-medium">
           {task.title}
         </p>
         {(task.projectId || task.dueDate) && (

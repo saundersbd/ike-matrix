@@ -38,29 +38,30 @@ export function NavMain() {
           <SidebarMenuSub>
             <SidebarMenuSubItem>
               <SidebarMenuSubButton size="sm">
-                <Circle className="!size-2 !text-red-500 fill-red-500" />
+                <Circle className="!size-2 !text-red-400 fill-red-400" />
                 <span>Urgent &amp; important</span>
               </SidebarMenuSubButton>
             </SidebarMenuSubItem>
             <SidebarMenuSubItem>
               <SidebarMenuSubButton size="sm">
-                <Circle className="!size-2 !text-amber-400 fill-amber-400" />
+                <Circle className="!size-2 !text-amber-300 fill-amber-300" />
                 <span>Urgent &amp; not important</span>
               </SidebarMenuSubButton>
             </SidebarMenuSubItem>
             <SidebarMenuSubItem>
               <SidebarMenuSubButton size="sm">
-                <Circle className="!size-2 !text-sky-500 fill-sky-500" />
+                <Circle className="!size-2 !text-sky-400 fill-sky-400" />
                 <span>Important &amp; not urgent</span>
               </SidebarMenuSubButton>
             </SidebarMenuSubItem>
             <SidebarMenuSubItem>
               <SidebarMenuSubButton size="sm">
-                <Circle className="!size-2 !text-purple-500 fill-purple-500" />
+                <Circle className="!size-2 !text-purple-400 fill-purple-400" />
                 <span>Neither urgent nor important</span>
               </SidebarMenuSubButton>
             </SidebarMenuSubItem>
           </SidebarMenuSub>
+          <SidebarMenuBadge>8</SidebarMenuBadge>
         </SidebarMenuItem>
         <SidebarMenuItem>
           <SidebarMenuButton>

@@ -26,7 +26,7 @@ export function ProjectListItem({
           )}
         />
       )}
-      {project.name}
+      <span>{project.name}</span>
     </>
   );
 }
