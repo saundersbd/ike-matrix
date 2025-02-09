@@ -54,7 +54,10 @@ export function Quadrant({
         <div className="flex items-center gap-2.5 min-h-8">
           <Circle className={`w-2 h-2 ${quadrant.theme.accentColor}`} />
           <h2
-            className={cn("text-zinc-800", "text-sm font-semibold inline-flex")}
+            className={cn(
+              "text-zinc-800",
+              "text-base font-semibold inline-flex"
+            )}
           >
             {quadrant.title}
           </h2>
@@ -79,7 +82,7 @@ export function Quadrant({
                   {quadrant.description}
                 </PopoverContent>
               </Popover>
-              <DropdownMenu>
+              {/* <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
@@ -97,7 +100,7 @@ export function Quadrant({
                     Archive all
                   </DropdownMenuItem>
                 </DropdownMenuContent>
-              </DropdownMenu>
+              </DropdownMenu> */}
             </>
           )}
         </div>
@@ -105,7 +108,7 @@ export function Quadrant({
       <div
         data-hidden={hidden}
         className={cn(
-          "group relative flex flex-col rounded-2xl overflow-hidden h-full bg-zinc-100/80",
+          "group relative flex flex-col rounded-2xl overflow-hidden h-full bg-zinc-100",
           taskCount === 0 &&
             "ring-0 shadow-none border border-dashed border-zinc-200"
         )}

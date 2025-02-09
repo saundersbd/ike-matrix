@@ -28,10 +28,10 @@ export function TaskListTableRow({ task }: { task: Task }) {
       />
       <Link
         href={`/task/${task.id}`}
-        className="group/table-list-item flex flex-col grow gap-1 border-b border-zinc-200 group-last/whole-row:border-b-0 py-3 px-0.5"
+        className="group/table-list-item flex flex-col grow gap-1 border-b border-zinc-200/70 group-last/whole-row:border-b-0 py-3 px-0.5"
       >
         <div className="flex grow gap-2 peer-data-[state=checked]:line-through peer-data-[state=checked]:text-zinc-400">
-          <p className="mr-auto text-base leading-snug font-medium group-hover/table-list-item:underline">
+          <p className="mr-auto text-sm leading-snug font-medium group-hover/table-list-item:underline">
             {task.title}
           </p>
 

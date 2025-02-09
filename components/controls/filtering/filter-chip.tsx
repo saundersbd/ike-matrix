@@ -57,12 +57,15 @@ export function FilterChip<T>({
             className={cn(
               "h-8 gap-1 px-4 pr-3",
               "ring-zinc-300 rounded-full",
-              value && behavior === "sort" && "!pr-3.5 !pl-3",
+              value && behavior === "sort" && "!pr-3 !pl-3",
               value && !isDefaultValue && "pr-2.5 pl-3 ring-2 ring-zinc-800"
             )}
           >
             {behavior === "sort" && (
-              <SortOptionListItem option={value as SortOption<Task>} />
+              <>
+                <SortOptionListItem option={value as SortOption<Task>} />
+                <ChevronDown className="h-3.5 w-3.5 ml-0.5" />
+              </>
             )}
             {(behavior === "radio" || behavior === "checkbox") && (
               <>

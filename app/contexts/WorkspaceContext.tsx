@@ -33,6 +33,9 @@ interface WorkspaceContextType {
 
   getTasksByQuadrant: (quadrant: Quadrant) => Task[];
   getTasksByProject: (projectId: string) => Task[];
+
+  sortProjectsByTasksCount: (projectsToSort?: Project[]) => Project[];
+  getActiveProjects: (projectsToFilter?: Project[]) => Project[];
 }
 
 const WorkspaceContext = createContext<WorkspaceContextType | undefined>(
@@ -119,6 +122,27 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
     [tasks]
   );
 
+  const sortProjectsByTasksCount = useCallback(
+    (projectsToSort?: Project[]) => {
+      const projectsArray = projectsToSort || projects;
+      return [...projectsArray].sort((a, b) => {
+        return getTasksByProject(b.id).length - getTasksByProject(a.id).length;
+      });
+    },
+    [projects, getTasksByProject]
+  );
+
+  const getActiveProjects = useCallback(
+    (projectsToFilter?: Project[]) => {
+      const projectsArray = projectsToFilter || projects;
+      return projectsArray.filter((project) => {
+        const projectTasks = getTasksByProject(project.id);
+        return projectTasks.length > 0;
+      });
+    },
+    [projects, getTasksByProject]
+  );
+
   return (
     <WorkspaceContext.Provider
       value={{
@@ -132,6 +156,8 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
         deleteProject,
         getTasksByQuadrant,
         getTasksByProject,
+        sortProjectsByTasksCount,
+        getActiveProjects,
       }}
     >
       {children}

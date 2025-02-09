@@ -1,12 +1,8 @@
 "use client";
 
 import { Circle, Inbox, ListOrdered, Scroll } from "lucide-react";
+import Link from "next/link";
 
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -24,22 +20,17 @@ export function NavMain() {
     <SidebarGroup>
       <SidebarMenu className="font-medium">
         <SidebarMenuItem>
-          <SidebarMenuButton>
-            <Inbox />
-            <span>Inbox</span>
-          </SidebarMenuButton>
-          <SidebarMenuBadge>8</SidebarMenuBadge>
-        </SidebarMenuItem>
-        <SidebarMenuItem>
           <SidebarMenuButton isActive>
             <ListOrdered />
             <span>Prioritized tasks</span>
           </SidebarMenuButton>
           <SidebarMenuSub>
             <SidebarMenuSubItem>
-              <SidebarMenuSubButton size="sm">
-                <Circle className="!size-2 !text-red-400 fill-red-400" />
-                <span>Urgent &amp; important</span>
+              <SidebarMenuSubButton size="sm" asChild>
+                <Link href="/q1" replace>
+                  <Circle className="!size-2 !text-red-400 fill-red-400" />
+                  <span>Urgent &amp; important</span>
+                </Link>
               </SidebarMenuSubButton>
             </SidebarMenuSubItem>
             <SidebarMenuSubItem>
@@ -61,6 +52,13 @@ export function NavMain() {
               </SidebarMenuSubButton>
             </SidebarMenuSubItem>
           </SidebarMenuSub>
+          <SidebarMenuBadge>8</SidebarMenuBadge>
+        </SidebarMenuItem>
+        <SidebarMenuItem>
+          <SidebarMenuButton>
+            <Inbox />
+            <span>Inbox</span>
+          </SidebarMenuButton>
           <SidebarMenuBadge>8</SidebarMenuBadge>
         </SidebarMenuItem>
         <SidebarMenuItem>

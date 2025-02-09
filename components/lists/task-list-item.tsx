@@ -96,7 +96,7 @@ export function TaskListItem({
             )}
             {task.projectId && (
               <span
-                className={`text-xs
+                className={`text-xs font-medium
                 ${
                   CUSTOM_THEME_COLORS[
                     projects.find((p) => p.id === task.projectId)?.theme ??

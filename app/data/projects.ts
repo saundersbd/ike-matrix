@@ -22,7 +22,7 @@ export const projects: Project[] = [
     value: "Project 2",
     name: "Project 2",
     icon: Star,
-    theme: "blue",
+    theme: "orange",
   },
   {
     id: "3",

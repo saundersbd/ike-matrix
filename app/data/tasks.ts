@@ -36,7 +36,7 @@ export const tasks: Task[] = [
     completed: false,
     status: "todo",
     context: "personal",
-    tags: ["Project A"],
+    projectId: "1",
   },
   {
     id: "3",
@@ -48,6 +48,7 @@ export const tasks: Task[] = [
     updatedAt: new Date("2025-02-04"),
     completed: false,
     status: "doing",
+    projectId: "2",
   },
   {
     id: "4",
@@ -69,6 +70,7 @@ export const tasks: Task[] = [
     createdAt: new Date("2025-02-01"),
     completed: false,
     status: "todo",
+    projectId: "2",
   },
   {
     id: "6",
@@ -100,6 +102,7 @@ export const tasks: Task[] = [
     createdAt: new Date("2025-02-02"),
     completed: true,
     status: "done",
+    projectId: "2",
   },
   {
     id: "9",
@@ -112,6 +115,7 @@ export const tasks: Task[] = [
     updatedAt: new Date("2025-02-06"),
     completed: false,
     status: "todo",
+    projectId: "2",
   },
   {
     id: "10",
@@ -133,6 +137,7 @@ export const tasks: Task[] = [
     updatedAt: new Date("2025-02-07"),
     completed: false,
     status: "todo",
+    projectId: "2",
   },
   {
     id: "12",

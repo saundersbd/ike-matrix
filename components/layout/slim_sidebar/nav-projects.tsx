@@ -27,12 +27,14 @@ import {
   SidebarMenuBadge,
 } from "@/components/ui/sidebar";
 
-export function NavProjects() {
-  const { projects, getTasksByProject } = useWorkspace();
+export function NavProjects({ projects }: { projects?: Project[] }) {
+  const { getTasksByProject, sortProjectsByTasksCount, getActiveProjects } =
+    useWorkspace();
 
   const [isOpen, setIsOpen] = useState(true);
 
   const tasksCount = (project: Project) => getTasksByProject(project.id).length;
+  const sortedProjects = sortProjectsByTasksCount(getActiveProjects(projects));
 
   return (
     <SidebarGroup>
@@ -54,10 +56,13 @@ export function NavProjects() {
       <SidebarMenu className="font-medium">
         <Collapsible open={isOpen}>
           <CollapsibleContent>
-            {projects.map((project) => (
-              <SidebarMenuItem key={project.id} className="text-xs">
+            {sortedProjects.map((project) => (
+              <SidebarMenuItem
+                key={project.id}
+                className="text-xs font-semibold"
+              >
                 <SidebarMenuButton asChild>
-                  <Link href="#">
+                  <Link href="#" className="text-sm">
                     <ProjectListItem project={project} dense />
                   </Link>
                 </SidebarMenuButton>

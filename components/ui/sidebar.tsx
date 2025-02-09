@@ -388,7 +388,7 @@ const SidebarSeparator = React.forwardRef<
       ref={ref}
       data-sidebar="separator"
       className={cn(
-        "mx-5 w-auto bg-sidebar-border dark:bg-slate-700/70",
+        "mx-5 w-auto bg-sidebar-border dark:bg-zinc-700/70",
         className
       )}
       {...props}
@@ -441,7 +441,7 @@ const SidebarGroupLabel = React.forwardRef<
       ref={ref}
       data-sidebar="group-label"
       className={cn(
-        "duration-200 flex h-8 shrink-0 items-center rounded-md px-2.5 text-xs font-semibold text-sidebar-foreground/70 dark:text-slate-400 outline-hidden ring-sidebar-ring transition-[margin,opacity] ease-linear focus-visible:ring-2 [&>svg]:size-5 [&>svg]:shrink-0",
+        "duration-200 flex h-8 shrink-0 items-center rounded-md px-2.5 text-xs font-semibold text-sidebar-foreground/70 dark:text-zinc-400 outline-hidden ring-sidebar-ring transition-[margin,opacity] ease-linear focus-visible:ring-2 [&>svg]:size-5 [&>svg]:shrink-0",
         "group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0",
         className
       )}
@@ -462,7 +462,7 @@ const SidebarGroupAction = React.forwardRef<
       ref={ref}
       data-sidebar="group-action"
       className={cn(
-        "absolute right-4 top-3 flex aspect-square w-5 items-center justify-center rounded-md p-0 cursor-pointer outline-hidden ring-sidebar-ring transition-transform hover:bg-zinc-200/40 hover:text-zinc-800 focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0 text-zinc-600 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-50",
+        "absolute right-4 top-3 flex aspect-square w-5 items-center justify-center rounded-md p-0 cursor-pointer outline-hidden ring-sidebar-ring transition-transform hover:bg-zinc-200/40 hover:text-zinc-800 focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0 text-zinc-600 dark:text-zinc-400 dark:hover:bg-zinc-700 dark:hover:text-zinc-50",
         // Increases the hit area of the button on mobile.
         "after:absolute after:-inset-2 md:after:hidden",
         "group-data-[collapsible=icon]:hidden",
@@ -514,18 +514,18 @@ const SidebarMenuItem = React.forwardRef<
 SidebarMenuItem.displayName = "SidebarMenuItem";
 
 const sidebarMenuButtonVariants = cva(
-  "group/menu-button peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-zinc-200/70 data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 cursor-pointer dark:text-slate-200 dark:data-[active=true]:text-white dark:data-[active=true]:bg-slate-700/60",
+  "group/menu-button peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-base outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-zinc-200/70 data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 cursor-pointer dark:text-zinc-200 dark:data-[active=true]:text-white dark:data-[active=true]:bg-zinc-700/60",
   {
     variants: {
       variant: {
         default:
-          "hover:bg-zinc-200/50 hover:text-zinc-900 dark:hover:bg-slate-700/60 dark:hover:text-slate-50",
+          "hover:bg-zinc-200/50 hover:text-zinc-900 dark:hover:bg-zinc-700/60 dark:hover:text-zinc-50",
         outline:
           "bg-white shadow-[0_0_0_1px_hsl(var(--sidebar-border))] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:shadow-[0_0_0_1px_hsl(var(--sidebar-accent))] dark:bg-zinc-950",
       },
       size: {
-        default: "h-9 px-2.5 text-sm",
-        sm: "h-7 text-xs",
+        default: "h-9 px-2.5 text-base",
+        sm: "h-7 text-sm",
         lg: "h-12 text-sm group-data-[collapsible=icon]:p-0!",
       },
     },
@@ -640,7 +640,7 @@ const SidebarMenuBadge = React.forwardRef<
       "peer-data-[size=default]/menu-button:top-1.5",
       "peer-data-[size=lg]/menu-button:top-2.5",
       "group-data-[collapsible=icon]:hidden",
-      "dark:text-slate-300 dark:data-[active=true]:text-white peer-data-[active=true]/menu-button:text-slate-100 dark:peer-data-[active=true]/menu-button:text-slate-50 dark:peer-hover/menu-button:text-slate-50",
+      "dark:text-zinc-300 dark:data-[active=true]:text-white peer-data-[active=true]/menu-button:text-zinc-100 dark:peer-data-[active=true]/menu-button:text-zinc-50 dark:peer-hover/menu-button:text-zinc-50",
       className
     )}
     {...props}
@@ -694,7 +694,7 @@ const SidebarMenuSub = React.forwardRef<
     ref={ref}
     data-sidebar="menu-sub"
     className={cn(
-      "mx-4.5 flex min-w-0 translate-x-px flex-col gap-0.5 border-l border-sidebar-border dark:border-slate-700 px-2.5 my-3",
+      "mx-4.5 flex min-w-0 translate-x-px flex-col gap-0.5 border-l border-sidebar-border dark:border-zinc-700 px-2.5 my-3",
       "group-data-[collapsible=icon]:hidden",
       className
     )}
@@ -726,11 +726,11 @@ const SidebarMenuSubButton = React.forwardRef<
       data-size={size}
       data-active={isActive}
       className={cn(
-        "cursor-pointer flex h-8 min-w-0 -translate-x-px items-center gap-2 overflow-hidden rounded-md px-2 outline-hidden ring-sidebar-ring text-zinc-800/80 hover:bg-zinc-200/50 hover:text-zinc-900 focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-sidebar-accent-foreground",
+        "cursor-pointer flex h-8 min-w-0 -translate-x-px items-center gap-2 overflow-hidden rounded-md px-2.5 outline-hidden ring-sidebar-ring text-zinc-800/80 hover:bg-zinc-200/50 hover:text-zinc-900 focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-sidebar-accent-foreground",
         "data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground",
-        "dark:text-slate-200 dark:data-[active=true]:text-slate-50 dark:hover:bg-slate-700/60 dark:hover:text-slate-100",
-        size === "sm" && "text-xs font-semibold",
-        size === "md" && "text-sm font-medium",
+        "dark:text-zinc-200 dark:data-[active=true]:text-zinc-50 dark:hover:bg-zinc-700/60 dark:hover:text-zinc-100",
+        size === "sm" && "text-sm font-semibold",
+        size === "md" && "text-base font-medium",
         "group-data-[collapsible=icon]:hidden",
         className
       )}

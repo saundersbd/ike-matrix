@@ -41,22 +41,10 @@ export default function Alt() {
   const [activeProject, setActiveProject] = useState<Project | undefined>(
     undefined
   );
-  const [view, setView] = useState<"grid" | "list" | "columns">("grid");
-
-  const handleViewChange = (newView: "grid" | "list" | "columns") => {
-    setView(newView);
-    localStorage.setItem("preferredView", newView);
-  };
 
   const { tasks, projects } = useWorkspace();
   const sortedAndFilteredTasks = useTasks(tasks, sortBy, activeProject);
 
-  const [visibilityControls, setVisibilityControls] = useState([
-    false,
-    false,
-    false,
-    false,
-  ]);
   const [open, setOpen] = useState(true);
 
   const [newTaskDialog, setNewTaskDialog] = useState<{
@@ -166,116 +154,13 @@ export default function Alt() {
   );
 
   return (
-    <SidebarProvider
-      style={
-        {
-          "--sidebar-width": "300px",
-        } as React.CSSProperties
-      }
+    <div
+      className={cn(
+        "flex flex-col p-6 container mx-auto",
+        view === "list" ? "max-w-4xl" : "max-w-6xl"
+      )}
     >
-      <SlimSidebar />
-      <SidebarInset className="bg-white/50">
-        <Tabs
-          value={view}
-          onValueChange={(value) => handleViewChange(value as "grid" | "list")}
-        >
-          <header className="flex h-14 px-5 shrink-0 items-center justify-between bg-white/90 border-b border-zinc-200/50">
-            <SidebarTrigger />
-            <div className="flex items-center gap-3">
-              <FilterChip<SortOption<Task>>
-                label="created date"
-                options={TASK_SORT_OPTIONS}
-                onApplyFilter={(option) => setSortBy(option.id)}
-                onResetFilter={() => setSortBy("created")}
-                itemNode={(option) => <SortOptionListItem option={option} />}
-                behavior="sort"
-                getItemId={(option) => option.id}
-                getDisplayValue={(option) => option.label}
-                value={TASK_SORT_OPTIONS.find((option) => option.id === sortBy)}
-                defaultValue={TASK_SORT_OPTIONS.find(
-                  (option) => option.id === "created"
-                )}
-              />
-              <Separator
-                orientation="vertical"
-                className="h-5 mx-2 bg-zinc-200"
-              />
-              <ViewSwitcher
-                setView={(view) => {
-                  console.log(view);
-                }}
-              />
-            </div>
-          </header>
-          <ScrollArea className="h-[calc(100svh-3.5rem)]">
-            <div
-              className={cn(
-                "flex flex-col p-6 container mx-auto",
-                view === "list" ? "max-w-4xl" : "max-w-6xl"
-              )}
-            >
-              <TabsContent value="grid">
-                <div className="flex flex-1 flex-col">
-                  <div className="h-[calc(100svh-6.5rem)] grid grid-cols-2 grid-rows-2 gap-6">
-                    <Quadrant
-                      quadrant={QUADRANTS[1]}
-                      tasks={sortedAndFilteredTasks.filter(
-                        (task) =>
-                          task.quadrant.id === 1 &&
-                          (!task.completed || task.isCompletionTransitioning)
-                      )}
-                      hidden={visibilityControls[0]}
-                      className={cn(
-                        visibleQuadrantCount === 3 && "row-span-2",
-                        visibleQuadrantCount === 2 && "row-span-1"
-                      )}
-                      handleOpenNewTaskDialog={handleOpenNewTaskDialog}
-                    />
-                    <Quadrant
-                      quadrant={QUADRANTS[2]}
-                      tasks={sortedAndFilteredTasks.filter(
-                        (task) =>
-                          task.quadrant.id === 2 &&
-                          (!task.completed || task.isCompletionTransitioning)
-                      )}
-                      hidden={visibilityControls[1]}
-                      className={cn(
-                        visibilityControls[0] &&
-                          !visibilityControls[1] &&
-                          !visibilityControls[2] &&
-                          !visibilityControls[3] &&
-                          "row-span-2"
-                      )}
-                      handleOpenNewTaskDialog={handleOpenNewTaskDialog}
-                    />
-                    <Quadrant
-                      quadrant={QUADRANTS[3]}
-                      tasks={sortedAndFilteredTasks.filter(
-                        (task) =>
-                          task.quadrant.id === 3 &&
-                          (!task.completed || task.isCompletionTransitioning)
-                      )}
-                      hidden={visibilityControls[2]}
-                      handleOpenNewTaskDialog={handleOpenNewTaskDialog}
-                    />
-                    <Quadrant
-                      quadrant={QUADRANTS[4]}
-                      tasks={sortedAndFilteredTasks.filter(
-                        (task) =>
-                          task.quadrant.id === 4 &&
-                          (!task.completed || task.isCompletionTransitioning)
-                      )}
-                      hidden={visibilityControls[3]}
-                      handleOpenNewTaskDialog={handleOpenNewTaskDialog}
-                    />
-                  </div>
-                </div>
-              </TabsContent>
-              <TabsContent value="list">{listView(sortBy)}</TabsContent>
-            </div>
-          </ScrollArea>
-        </Tabs>
-      </SidebarInset>
-    </SidebarProvider>
+      <TabsContent value="list">{listView(sortBy)}</TabsContent>
+    </div>
   );
 }
