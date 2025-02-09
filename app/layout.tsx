@@ -55,7 +55,7 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${geistMono.variable}`}>
       <body
         className={cn(
-          "antialiased font-sans bg-zinc-white text-zinc-800",
+          "antialiased font-sans bg-zinc-50 text-zinc-800",
           modal ? "overflow-hidden" : "overflow-auto"
         )}
         style={{ "--header-height": HEADER_HEIGHT } as React.CSSProperties}

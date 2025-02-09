@@ -64,7 +64,7 @@ export default function Alt() {
       }
     >
       <SlimSidebar />
-      <SidebarInset className="bg-zinc-50/30 p-6 pt-0">
+      <SidebarInset className="bg-white/50 p-6 pt-0">
         <div className="flex flex-col container max-w-6xl mx-auto">
           <header className="flex h-16 shrink-0 items-center justify-between">
             <SidebarTrigger />

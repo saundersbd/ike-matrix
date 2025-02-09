@@ -17,13 +17,18 @@ export function SlimSidebar({
   ...props
 }: Partial<React.ComponentProps<typeof Sidebar>>) {
   return (
-    <Sidebar collapsible="icon" className="border-none" {...props}>
-      <SidebarHeader className="p-5 bg-zinc-100">
-        <span className="group-data-[state=collapsed]:hidden truncate text-lg text-zinc-700 font-medium">
+    <Sidebar
+      collapsible="icon"
+      className="border-none"
+      {...props}
+      data-theme="dark"
+    >
+      <SidebarHeader className="p-5 bg-slate-800">
+        <span className="group-data-[state=collapsed]:hidden truncate text-lg text-zinc-700 font-medium dark:text-zinc-100">
           Eisenhower matrix
         </span>
       </SidebarHeader>
-      <SidebarContent className="bg-zinc-100">
+      <SidebarContent className="bg-slate-800">
         <NavMain />
       </SidebarContent>
     </Sidebar>

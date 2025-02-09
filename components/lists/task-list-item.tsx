@@ -33,8 +33,8 @@ export function TaskListItem({
         { "items-center": !task.dueDate },
         parent === "sidebar" && "bg-white",
         parent === "quadrant" &&
-          "bg-zinc-50/90 hover:bg-zinc-50/[.99] transition-all duration-200",
-        "group/drag-handle flex gap-2.5 shadow-xs ring-1 ring-black/6 rounded-xl pl-3.5 pr-3.5 py-2.5"
+          "bg-white hover:bg-zinc-50/[.99] transition-all duration-200",
+        "group/drag-handle flex gap-2.5 shadow-xs ring-1 ring-black/[.03] rounded-[12px] pl-3.5 pr-3.5 py-2.5"
       )}
     >
       <Checkbox

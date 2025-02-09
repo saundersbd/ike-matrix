@@ -105,12 +105,14 @@ export function Quadrant({
       <div
         data-hidden={hidden}
         className={cn(
-          "group relative flex flex-col rounded-2xl overflow-hidden h-full"
+          "group relative flex flex-col rounded-2xl overflow-hidden h-full bg-zinc-100/80",
+          taskCount === 0 &&
+            "ring-0 shadow-none border border-dashed border-zinc-200"
         )}
       >
         <div className="relative flex flex-col min-h-0 grow">
           {taskCount > 0 ? (
-            <div className="h-full bg-zinc-100">
+            <div className="h-full">
               <ScrollArea
                 type="auto"
                 className="has-data-[state=visible]:pr-2 relative h-full"
@@ -125,7 +127,7 @@ export function Quadrant({
               </ScrollArea>
             </div>
           ) : (
-            <div className="flex flex-col grow items-center justify-center gap-3 py-4 bg-zinc-100/60 border border-dashed border-zinc-300/60 rounded-2xl">
+            <div className="flex flex-col grow items-center justify-center gap-3 py-4 bg-white/80">
               <p className="text-zinc-400 text-sm font-medium text-center">
                 No tasks to speak of.
               </p>
