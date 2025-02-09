@@ -8,10 +8,11 @@ import { cn } from "@/lib/utils";
 const ScrollArea = React.forwardRef<
   React.ElementRef<typeof ScrollAreaPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root> & {
-    onScroll?: (hasScrolled: boolean) => void;
+    onScrollChange?: (hasScrolled: boolean) => void;
     onScrollEnd?: (hasReachedEnd: boolean) => void;
+    className?: string;
   }
->(({ className, children, onScroll, onScrollEnd, ...props }, ref) => {
+>(({ className, children, onScrollChange, onScrollEnd, ...props }, ref) => {
   const viewportRef = React.useRef<HTMLDivElement>(null);
   const [hasScrolled, setHasScrolled] = React.useState(false);
   const [isAtBottom, setIsAtBottom] = React.useState(false);
@@ -23,7 +24,7 @@ const ScrollArea = React.forwardRef<
     const handleScroll = () => {
       const scrolled = viewport.scrollTop > 0;
       setHasScrolled(scrolled);
-      onScroll?.(scrolled);
+      onScrollChange?.(scrolled);
 
       // Check if we've scrolled to the bottom with a small threshold
       const isBottom =
@@ -35,7 +36,7 @@ const ScrollArea = React.forwardRef<
 
     viewport.addEventListener("scroll", handleScroll);
     return () => viewport.removeEventListener("scroll", handleScroll);
-  }, [onScroll, onScrollEnd]);
+  }, [onScrollChange, onScrollEnd]);
 
   return (
     <ScrollAreaPrimitive.Root

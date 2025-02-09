@@ -5,7 +5,7 @@ interface ViewSwitcherProps {
   setView: (view: "grid" | "list") => void;
 }
 
-export default function ViewSwitcher({ setView }: ViewSwitcherProps) {
+export function ViewSwitcher({ setView }: ViewSwitcherProps) {
   return (
     <TabsList className="h-9 px-1 bg-zinc-200/[.75] rounded-lg">
       <TabsTrigger

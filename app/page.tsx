@@ -43,13 +43,12 @@ import { THEME_COLORS, ThemeName } from "@/app/types/Theme";
 import { Project } from "@/app/types/Project";
 import { TaskList } from "@/components/lists/task-list";
 import { cn } from "@/lib/utils";
-import StopLight from "@/components/controls/stop-light";
-import ViewSwitcher from "@/components/controls/view-switcher";
 import { QUADRANTS } from "@/app/types/Quadrant";
 import { FilterChip } from "@/components/controls/filtering/filter-chip";
 import { TASK_SORT_OPTIONS, SortOption } from "@/lib/sort-options";
 import { Task } from "@/app/types/Task";
 import { SortOptionListItem } from "@/components/lists/sort-option-list-item";
+import { Toolbar } from "@/components/controls/toolbar";
 
 // Create a safe useLayoutEffect that falls back to useEffect on server
 const useIsomorphicLayoutEffect =
@@ -75,6 +74,8 @@ export default function Home() {
   );
   const { tasks, projects } = useWorkspace();
   const sortedAndFilteredTasks = useTasks(tasks, sortBy, activeProject);
+
+  const [hasScrolled, setHasScrolled] = useState(true);
 
   const [newTaskDialog, setNewTaskDialog] = useState<{
     isOpen: boolean;
@@ -157,7 +158,7 @@ export default function Home() {
   const gridView = (sortBy: string) => (
     <div
       className={cn(
-        "grid gap-6 grid-cols-2 grid-rows-2 h-svh pt-[95px] pb-8 px-8",
+        "grid gap-x-6 gap-y-5 grid-cols-2 grid-rows-2 h-svh pt-[30px] pb-28 px-8",
         (visibleQuadrantCount === 2 || visibleQuadrantCount === 1) &&
           "grid-rows-1"
       )}
@@ -221,7 +222,7 @@ export default function Home() {
   );
 
   const listView = (sortBy: string) => (
-    <div className="px-1.5 pt-[65px]">
+    <div className="px-1.5 pb-[80px]">
       <div className="max-w-4xl mx-auto py-12 px-0 flex flex-col">
         {visibilityControls.every((q) => q) ? (
           <div className="flex flex-col items-center justify-center h-full gap-4">
@@ -351,7 +352,7 @@ export default function Home() {
               )}
             >
               <div className="relative h-svh">
-                <header className="z-20 absolute left-0 top-0 right-0 mb-0 flex shrink-0 items-center justify-center gap-4 pt-8 pl-8 pr-5 pb-[18px]">
+                <header className="z-20 absolute left-0 bottom-0 right-0 mb-0 flex shrink-0 items-center justify-center gap-4 pt-8 pl-8 pr-5 pb-8">
                   <div className="flex items-center gap-3">
                     {activeProject && (
                       <Button
@@ -396,23 +397,25 @@ export default function Home() {
                         (option) => option.id === "created"
                       )}
                     /> */}
-
-                    <StopLight
-                      selection={visibilityControls}
-                      onSelectionChange={setVisibilityControls}
-                      onToggleChange={(toggle) => {
-                        setOpen(toggle);
-                      }}
+                    <Toolbar
+                      visibilityControls={visibilityControls}
+                      setVisibilityControls={setVisibilityControls}
+                      setOpen={setOpen}
+                      setView={setView}
+                      handleOpenNewTaskDialog={handleOpenNewTaskDialog}
+                      onToggleChange={(pressed) => setOpen(pressed)}
+                      isSidebarOpen={open}
                     />
-
-                    <ViewSwitcher setView={setView} />
                   </div>
                 </header>
                 <TabsContent value="grid" className="h-svh">
                   {gridView(sortBy)}
                 </TabsContent>
                 <TabsContent value="list">
-                  <ScrollArea className="px-12 !overflow-visible h-svh">
+                  <ScrollArea
+                    className="px-12 !overflow-visible h-svh"
+                    onScrollChange={(scrolled) => setHasScrolled(scrolled)}
+                  >
                     {listView(sortBy)}
                   </ScrollArea>
                 </TabsContent>
