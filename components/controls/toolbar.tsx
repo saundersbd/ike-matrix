@@ -33,7 +33,7 @@ export function Toolbar({
   return (
     <div
       className={cn(
-        "flex items-center gap-3 p-3 rounded-2xl transition-all duration-300 bg-white/90 drop-shadow-md ring-1 ring-black/[.05]"
+        "h-15 flex items-center gap-3 p-3 rounded-2xl transition-all duration-300 bg-white/90 drop-shadow-md ring-1 ring-black/[.05]"
       )}
     >
       <Toggle
@@ -67,7 +67,7 @@ export function Toolbar({
 
       <Button
         size="icon"
-        className="rounded-full"
+        className="h-10 w-10 -mr-0.5 rounded-full"
         onClick={() => handleOpenNewTaskDialog(0)}
       >
         <Plus className="h-4 w-4" />

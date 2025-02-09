@@ -158,7 +158,7 @@ export default function Home() {
   const gridView = (sortBy: string) => (
     <div
       className={cn(
-        "grid gap-x-6 gap-y-5 grid-cols-2 grid-rows-2 h-svh pt-[30px] pb-28 px-8",
+        "max-w-7xl mx-auto grid gap-x-6 gap-y-5 grid-cols-2 grid-rows-2 h-svh pt-[30px] pb-28 px-8",
         (visibleQuadrantCount === 2 || visibleQuadrantCount === 1) &&
           "grid-rows-1"
       )}

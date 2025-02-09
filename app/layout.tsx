@@ -91,7 +91,7 @@ export default function RootLayout({
               </div>
             </header>
             <div className="flex flex-1">
-              <div className="relative w-[64px] shrink-0 h-[100svh] bg-zinc-900 z-50">
+              <div className="hidden relative w-[64px] shrink-0 h-[100svh] bg-zinc-900 z-50">
                 Nav
               </div>
               <div className="flex flex-1 overflow-hidden">

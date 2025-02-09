@@ -24,6 +24,8 @@ export function TaskListItem({
     handleTaskCompletion(checked, task, updateTask);
   };
 
+  const isOverdue = task.dueDate && task.dueDate < new Date();
+
   return (
     <div
       className={cn(
@@ -79,7 +81,7 @@ export function TaskListItem({
                   )
                 )}
 
-                {task.dueTime && (
+                {task.dueTime && !isOverdue && (
                   <>
                     ,{" "}
                     <span className="text-xs text-zinc-500">
