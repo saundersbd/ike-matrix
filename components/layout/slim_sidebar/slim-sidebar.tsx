@@ -28,7 +28,7 @@ export function SlimSidebar({
       icon: ListOrdered,
       subItems: [
         {
-          path: "/q1",
+          path: "/quadrant",
           label: "Urgent & important",
           theme: "!text-red-400 fill-red-400",
         },
