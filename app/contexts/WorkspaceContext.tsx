@@ -36,6 +36,9 @@ interface WorkspaceContextType {
 
   sortProjectsByTasksCount: (projectsToSort?: Project[]) => Project[];
   getActiveProjects: (projectsToFilter?: Project[]) => Project[];
+
+  sortBy: string;
+  setSortBy: (sortBy: string) => void;
 }
 
 const WorkspaceContext = createContext<WorkspaceContextType | undefined>(
@@ -45,6 +48,7 @@ const WorkspaceContext = createContext<WorkspaceContextType | undefined>(
 export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
   const [projects, setProjects] = useState<Project[]>(initialProjects);
+  const [sortBy, setSortBy] = useState("dueDate");
 
   const updateTask = (taskId: string, updates: Partial<Task>) => {
     setTasks((prevTasks) =>
@@ -158,6 +162,8 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
         getTasksByProject,
         sortProjectsByTasksCount,
         getActiveProjects,
+        sortBy,
+        setSortBy,
       }}
     >
       {children}

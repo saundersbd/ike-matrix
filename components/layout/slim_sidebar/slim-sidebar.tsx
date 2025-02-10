@@ -1,5 +1,6 @@
 "use client";
 
+import { useWorkspace } from "@/app/contexts/WorkspaceContext";
 import {
   Sidebar,
   SidebarContent,
@@ -11,55 +12,12 @@ import {
 import { NavMain } from "./nav-main";
 import { NavProjects } from "./nav-projects";
 import { Info, ListOrdered, Inbox, History } from "lucide-react";
-import { Task } from "@/app/types/Task";
-import { Project } from "@/app/types/Project";
+import { navigationItems } from "@/lib/navigation";
+
 export function SlimSidebar({
-  tasks,
-  projects,
   ...props
-}: Partial<React.ComponentProps<typeof Sidebar>> & {
-  tasks: Task[];
-  projects?: Project[];
-}) {
-  const items = {
-    prioritizedTasks: {
-      label: "Prioritized tasks",
-      path: "/",
-      icon: ListOrdered,
-      subItems: [
-        {
-          path: "/quadrant",
-          label: "Urgent & important",
-          theme: "!text-red-400 fill-red-400",
-        },
-        {
-          path: "/q2",
-          label: "Urgent & not important",
-          theme: "!text-amber-300 fill-amber-300",
-        },
-        {
-          path: "/q3",
-          label: "Important & not urgent",
-          theme: "!text-sky-400 fill-sky-400",
-        },
-        {
-          path: "/q4",
-          label: "Not urgent or important",
-          theme: "!text-purple-400 fill-purple-400",
-        },
-      ],
-    },
-    inbox: {
-      label: "Inbox",
-      path: "/inbox",
-      icon: Inbox,
-    },
-    history: {
-      label: "History",
-      path: "/history",
-      icon: History,
-    },
-  };
+}: Partial<React.ComponentProps<typeof Sidebar>> & {}) {
+  const { tasks, projects } = useWorkspace();
 
   return (
     <Sidebar
@@ -74,7 +32,7 @@ export function SlimSidebar({
         </span>
       </SidebarHeader>
       <SidebarContent className="bg-zinc-800">
-        <NavMain items={items} />
+        <NavMain items={navigationItems} />
         <SidebarSeparator />
         <NavProjects />
       </SidebarContent>

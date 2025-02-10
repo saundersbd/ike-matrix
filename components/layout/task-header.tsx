@@ -1,25 +1,32 @@
-import { SidebarTrigger } from "@/components/ui/sidebar";
-import { FilterChip } from "@/components/controls/filtering/filter-chip";
+"use client";
+
+import { useState } from "react";
+import { useTasks } from "@/hooks/use-tasks";
+import { useWorkspace } from "@/app/contexts/WorkspaceContext";
 import { TASK_SORT_OPTIONS, SortOption } from "@/lib/sort-options";
-import { SortOptionListItem } from "@/components/lists/sort-option-list-item";
-import { ViewSwitcher } from "@/components/controls/view-switcher";
-import { Separator } from "@/components/ui/separator";
 import { Task } from "@/app/types/Task";
+import { SortOptionListItem } from "@/components/lists/sort-option-list-item";
+import { FilterChip } from "@/components/controls/filtering/filter-chip";
+import { Cog, LucideIcon } from "lucide-react";
 
 interface TaskHeaderProps {
-  sortBy: string;
-  setSortBy: (sortBy: string) => void;
-  handleViewChange?: (view: string) => void;
+  pageTitle: {
+    title: string;
+    icon?: LucideIcon;
+  };
 }
 
-export function TaskHeader({
-  sortBy,
-  setSortBy,
-  handleViewChange,
-}: TaskHeaderProps) {
+export function TaskHeader({ pageTitle }: TaskHeaderProps) {
+  const { sortBy, setSortBy } = useWorkspace();
+
   return (
-    <header className="flex h-14 px-5 shrink-0 items-center justify-between bg-white/90 border-b border-zinc-200/50">
-      <SidebarTrigger />
+    <header className="flex h-14 pl-8 pr-4 shrink-0 items-center justify-between">
+      <div>
+        <h1 className="flex items-center gap-2 text-sm font-semibold">
+          {pageTitle.icon && <pageTitle.icon className="w-4 h-4" />}
+          {pageTitle.title}
+        </h1>
+      </div>
       <div className="flex items-center gap-3">
         <FilterChip<SortOption<Task>>
           label="created date"
@@ -30,22 +37,11 @@ export function TaskHeader({
           behavior="sort"
           getItemId={(option) => option.id}
           getDisplayValue={(option) => option.label}
-          value={TASK_SORT_OPTIONS.find((option) => option.id === sortBy)}
+          value={TASK_SORT_OPTIONS.find((option) => option.id === sortBy)} // Remove hardcoded value
           defaultValue={TASK_SORT_OPTIONS.find(
             (option) => option.id === "created"
           )}
         />
-        {handleViewChange && (
-          <>
-            <Separator
-              orientation="vertical"
-              className="h-5 mx-2 bg-zinc-200"
-            />
-            <ViewSwitcher
-              setView={handleViewChange as (view: "grid" | "list") => void}
-            />
-          </>
-        )}
       </div>
     </header>
   );

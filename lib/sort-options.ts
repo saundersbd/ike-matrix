@@ -16,12 +16,6 @@ export const TASK_SORT_OPTIONS: SortOption<Task>[] = [
     getValue: (task) => new Date(task.createdAt).getTime(),
   },
   {
-    id: "updated",
-    label: "Last updated",
-    icon: History,
-    getValue: (task) => (task.updatedAt ? task.updatedAt.getTime() : 0),
-  },
-  {
     id: "dueDate",
     label: "Due date",
     icon: CalendarCheck2,

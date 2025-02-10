@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Project } from "@/app/types/Project";

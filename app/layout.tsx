@@ -35,10 +35,9 @@ export const metadata: Metadata = {
 
 type RootLayoutProps = {
   children: React.ReactNode;
-  main: React.ReactNode;
 };
 
-export default function RootLayout({ children, main }: RootLayoutProps) {
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en" className={`${inter.variable} ${geistMono.variable}`}>
       <body className={cn("antialiased font-sans bg-zinc-50 text-zinc-800")}>
