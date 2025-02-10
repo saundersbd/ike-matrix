@@ -694,7 +694,7 @@ const SidebarMenuSub = React.forwardRef<
     ref={ref}
     data-sidebar="menu-sub"
     className={cn(
-      "mx-4.5 flex min-w-0 translate-x-px flex-col gap-0.5 border-l border-sidebar-border dark:border-zinc-700 px-2.5 my-3",
+      "ml-4.5 mr-2 flex min-w-0 translate-x-px flex-col gap-1 border-l border-sidebar-border dark:border-zinc-700 px-2.5 my-3",
       "group-data-[collapsible=icon]:hidden",
       className
     )}
@@ -728,7 +728,7 @@ const SidebarMenuSubButton = React.forwardRef<
       className={cn(
         "cursor-pointer flex h-8 min-w-0 -translate-x-px items-center gap-2 overflow-hidden rounded-md px-2.5 outline-hidden ring-sidebar-ring text-zinc-800/80 hover:bg-zinc-200/50 hover:text-zinc-900 focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-sidebar-accent-foreground",
         "data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground",
-        "dark:text-zinc-200 dark:data-[active=true]:text-zinc-50 dark:hover:bg-zinc-700/60 dark:hover:text-zinc-100",
+        "dark:text-zinc-200 dark:data-[active=true]:text-zinc-50 dark:hover:bg-zinc-700/60 dark:hover:text-zinc-100 dark:data-[active=true]:bg-zinc-700/60",
         size === "sm" && "text-sm font-semibold",
         size === "md" && "text-base font-medium",
         "group-data-[collapsible=icon]:hidden",

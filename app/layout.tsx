@@ -87,8 +87,8 @@ export default function RootLayout({
         <WorkspaceProvider>
           <WorkspaceContent>
             {children}
-            {quadrants}
-            {main}
+
+            {quadrants || main}
           </WorkspaceContent>
           {modal}
           <ManageProjectsDialog />

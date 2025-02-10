@@ -22,8 +22,8 @@ export default function Grid() {
   const sortedAndFilteredTasks = tasks;
 
   return (
-    <div className="flex flex-1 flex-col p-6">
-      <div className="max-w-6xl mx-auto container h-[calc(100svh-6.5rem)] grid grid-cols-2 grid-rows-2 gap-6">
+    <div className="flex flex-1 flex-col p-6 pb-8">
+      <div className="max-w-6xl mx-auto container h-[calc(100svh-8rem)] grid grid-cols-2 grid-rows-2 gap-6">
         <Quadrant
           quadrant={QUADRANTS[1]}
           tasks={sortedAndFilteredTasks.filter(
