@@ -4,7 +4,7 @@ import { createContext, useContext, useState } from "react";
 import { usePathname } from "next/navigation";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { SlimSidebar } from "@/components/layout/slim_sidebar/slim-sidebar";
+import { NewSidebar } from "@/components/layout/sidebar/new-sidebar";
 import { TaskHeader } from "@/components/layout/task-header";
 import { navigationItems } from "@/lib/navigation";
 import { QUADRANTS, Quadrant } from "@/app/types/Quadrant";
@@ -77,7 +77,7 @@ export function WorkspaceContent({ children }: WorkspaceContentProps) {
         className="relative flex flex-1 overflow-hidden"
         style={{ "--sidebar-width": "260px" } as React.CSSProperties}
       >
-        <SlimSidebar />
+        <NewSidebar />
         <SidebarInset className="relative bg-zinc-200/90">
           <ScrollArea className="h-svh" type="auto">
             {/* <TaskHeader pageTitle={getCurrentPageTitle()} /> */}

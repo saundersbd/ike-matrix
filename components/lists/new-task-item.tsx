@@ -9,7 +9,7 @@ import { Task } from "@/app/types/Task";
 import { handleTaskCompletion } from "@/app/utils/taskHandlers";
 import { format, formatDistance, isToday, isTomorrow } from "date-fns";
 import { CUSTOM_THEME_COLORS } from "@/app/types/CustomTheme";
-import { Circle, CalendarDays } from "lucide-react";
+import { Circle, CalendarDays, SquareChartGantt } from "lucide-react";
 
 export function NewTaskItem({ task }: { task: Task }) {
   const { updateTask, projects } = useWorkspace();
@@ -24,14 +24,14 @@ export function NewTaskItem({ task }: { task: Task }) {
     if (isToday(dueDate)) {
       return (
         <span className="inline-flex items-center gap-1.5">
-          <CalendarDays className="size-3.5 text-zinc-500" />
+          <CalendarDays className="size-3.25 text-zinc-500" />
           Today
         </span>
       );
     } else if (dueDate < new Date()) {
       return (
         <span className="inline-flex items-center gap-1.5">
-          <CalendarDays className="size-3.5 text-red-500" />
+          <CalendarDays className="size-3.25 text-red-500" />
           {formatDistance(dueDate, new Date(), { addSuffix: true }).replace(
             /^about /,
             ""
@@ -50,6 +50,11 @@ export function NewTaskItem({ task }: { task: Task }) {
       );
     }
   };
+
+  const projectTheme =
+    CUSTOM_THEME_COLORS[
+      projects.find((p) => p.id === task.projectId)?.theme ?? "default"
+    ].textColor;
 
   return (
     <div className="flex gap-2.5">
@@ -76,15 +81,13 @@ export function NewTaskItem({ task }: { task: Task }) {
             )}
             {task.projectId && (
               <span
-                className={`text-xs font-medium
-                ${
-                  CUSTOM_THEME_COLORS[
-                    projects.find((p) => p.id === task.projectId)?.theme ??
-                      "default"
-                  ].textColor
-                }`}
+                className={cn(
+                  "text-xs font-medium inline-flex items-center gap-1",
+                  projectTheme
+                )}
               >
-                #{projects.find((p) => p.id === task.projectId)?.name}
+                <SquareChartGantt className="size-3.5" />
+                {projects.find((p) => p.id === task.projectId)?.name}
               </span>
             )}
           </div>

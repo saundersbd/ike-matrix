@@ -8,28 +8,25 @@ import {
   SidebarFooter,
   SidebarSeparator,
   SidebarMenuButton,
+  SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { NavMain } from "./nav-main";
-import { NavProjects } from "./nav-projects";
+import { NavMain } from "@/components/layout/sidebar/nav-main";
 import { Info, ListOrdered, Inbox, History } from "lucide-react";
 import { navigationItems } from "@/lib/navigation";
 
-export function SlimSidebar({
+export function NewSidebar({
   ...props
 }: Partial<React.ComponentProps<typeof Sidebar>> & {}) {
   const { tasks, projects } = useWorkspace();
 
   return (
     <Sidebar collapsible="icon" className="border-none" {...props}>
-      <SidebarHeader className="p-5 dark:bg-zinc-800">
-        <span className="group-data-[state=collapsed]:hidden truncate text-lg text-zinc-700 font-medium dark:text-zinc-100">
-          Eisenhower matrix
-        </span>
+      <SidebarHeader className="flex justify-end p-5 dark:bg-zinc-800">
+        <SidebarTrigger />
       </SidebarHeader>
       <SidebarContent className="dark:bg-zinc-800">
         <NavMain items={navigationItems} />
         <SidebarSeparator />
-        <NavProjects />
       </SidebarContent>
       <SidebarFooter className="p-5 dark:bg-zinc-800">
         <SidebarMenuButton className="text-sm font-semibold">

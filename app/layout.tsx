@@ -3,9 +3,9 @@ import { Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "@/app/globals.css";
 import { cn } from "@/lib/utils";
-import { WorkspaceProvider } from "@/app/contexts/WorkspaceContext";
 import { Toaster } from "@/components/ui/toaster";
 import { WorkspaceContent } from "@/components/workspace-content";
+import { Providers } from "./contexts/Providers";
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -38,12 +38,16 @@ type RootLayoutProps = {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en" className={`${inter.variable} ${geistMono.variable}`}>
+    <html
+      lang="en"
+      data-spacing="default"
+      className={`${inter.variable} ${geistMono.variable}`}
+    >
       <body className={cn("antialiased font-sans bg-zinc-50 text-zinc-800")}>
-        <WorkspaceProvider>
+        <Providers>
           <WorkspaceContent>{children}</WorkspaceContent>
           <Toaster />
-        </WorkspaceProvider>
+        </Providers>
       </body>
     </html>
   );
