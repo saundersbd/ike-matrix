@@ -1,40 +1,33 @@
 "use client";
 
-import { useWorkspace } from "@/app/contexts/WorkspaceContext";
-
-import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { Checkbox } from "@/components/ui/checkbox";
+import { cn } from "@/lib/utils";
+import { useWorkspace } from "@/app/contexts/WorkspaceContext";
 import { Task } from "@/app/types/Task";
-import { handleTaskCompletion } from "@/app/utils/taskHandlers";
-import { format, formatDistance, isToday, isTomorrow } from "date-fns";
-import { CUSTOM_THEME_COLORS } from "@/app/types/CustomTheme";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Circle } from "lucide-react";
+import { formatDistance, isToday, isTomorrow, format } from "date-fns";
+import { handleTaskCompletion } from "@/app/utils/taskHandlers";
+import { CUSTOM_THEME_COLORS } from "@/app/types/CustomTheme";
 
-export function TaskListItem({
-  task,
-  parent = "quadrant",
-}: {
+interface InboxItemProps {
   task: Task;
-  parent?: "sidebar" | "quadrant";
-}) {
+}
+export function InboxItem({ task }: InboxItemProps) {
   const { updateTask, projects } = useWorkspace();
+  const isOverdue = task.dueDate && task.dueDate < new Date();
 
   const handleCheckboxChange = (checked: boolean) => {
     handleTaskCompletion(checked, task, updateTask);
   };
-
-  const isOverdue = task.dueDate && task.dueDate < new Date();
 
   return (
     <div
       className={cn(
         { "items-start": task.dueDate },
         { "items-center": !task.dueDate },
-        parent === "sidebar" && "bg-white",
-        parent === "quadrant" &&
-          "bg-white hover:bg-zinc-50/[.99] transition-all duration-200",
-        "group/drag-handle flex gap-2.5 shadow-xs ring-1 ring-black/[.03] rounded-[12px] pl-3.5 pr-3.5 py-3"
+        "bg-white hover:bg-zinc-50/[.99] transition-all duration-200",
+        "group/drag-handle flex gap-2.5 shadow-xs ring-1 ring-black/[.08] rounded-[12px] pl-3.5 pr-3.5 py-3"
       )}
     >
       <Checkbox

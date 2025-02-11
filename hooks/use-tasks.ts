@@ -7,6 +7,7 @@ export type TaskFilterOptions = {
   showArchived?: boolean;
   projectId?: string | null;
   quadrantId?: number | null;
+  completedOnly?: boolean;
 };
 
 export function useTasks(
@@ -17,8 +18,12 @@ export function useTasks(
   return useMemo(() => {
     // Filter tasks
     const filteredTasks = tasks.filter((task) => {
-      // Only filter completed if specified
-      const completedMatch = filters.showCompleted ? true : !task.completed;
+      // Handle completed tasks filtering
+      const completedMatch = filters.completedOnly
+        ? task.completed // Show only completed tasks
+        : filters.showCompleted
+        ? true
+        : !task.completed; // Normal completed filtering
 
       // Only filter archived if specified
       const archivedMatch = filters.showArchived ? true : !task.isArchived;
@@ -28,9 +33,10 @@ export function useTasks(
         ? task.projectId === filters.projectId
         : true;
 
-      const quadrantMatch = filters.quadrantId
-        ? task.quadrant.id === filters.quadrantId
-        : true;
+      const quadrantMatch =
+        filters.quadrantId !== null
+          ? task.quadrant.id === filters.quadrantId
+          : true;
 
       return completedMatch && archivedMatch && projectMatch && quadrantMatch;
     });

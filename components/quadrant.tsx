@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { useNewTaskDialog } from "@/components/workspace-content";
 import { Pill } from "@/components/common/pill";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
@@ -26,7 +27,6 @@ interface QuadrantProps {
   children?: React.ReactNode;
   hidden?: boolean;
   tasks: Task[];
-  handleOpenNewTaskDialog: (quadrantId: number) => void;
   className?: string;
 }
 
@@ -35,9 +35,13 @@ export function Quadrant({
   hidden,
   tasks,
   className,
-  handleOpenNewTaskDialog,
 }: QuadrantProps) {
+  const { openNewTaskDialog } = useNewTaskDialog();
   const taskCount = tasks.length;
+
+  const handleNewTask = () => {
+    openNewTaskDialog(quadrant);
+  };
 
   return (
     <div
@@ -82,25 +86,6 @@ export function Quadrant({
                   {quadrant.description}
                 </PopoverContent>
               </Popover>
-              {/* <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className={cn(
-                      "h-8 w-8 hover:bg-zinc-200/40 text-zinc-600 hover:text-zinc-800"
-                    )}
-                  >
-                    <Ellipsis className={`w-4 h-4`} />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56">
-                  <DropdownMenuItem>
-                    <Archive className="h-4 w-4" />
-                    Archive all
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu> */}
             </>
           )}
         </div>
@@ -141,7 +126,7 @@ export function Quadrant({
           size="fab"
           variant="secondary"
           className="absolute bottom-5 right-5"
-          onClick={() => handleOpenNewTaskDialog(quadrant.id)}
+          onClick={handleNewTask}
         >
           <Plus className="w-4 h-4" />
         </Button>

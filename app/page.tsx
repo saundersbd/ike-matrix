@@ -10,9 +10,11 @@ import { useState } from "react";
 export default function Home() {
   const { tasks, sortBy } = useWorkspace();
   const sortedAndFilteredTasks = useTasks(tasks, sortBy, {
+    completedOnly: false,
     showCompleted: false,
     showArchived: false,
     projectId: null,
+    quadrantId: null,
   });
 
   const getSortedTasksByQuadrant = (quadrant: QuadrantType) => {
@@ -37,7 +39,6 @@ export default function Home() {
             visibleQuadrantCount === 3 && "row-span-2",
             visibleQuadrantCount === 2 && "row-span-1"
           )}
-          handleOpenNewTaskDialog={handleOpenNewTaskDialog}
         />
         <Quadrant
           quadrant={QUADRANTS[2]}
@@ -50,19 +51,16 @@ export default function Home() {
               !visibilityControls[3] &&
               "row-span-2"
           )}
-          handleOpenNewTaskDialog={handleOpenNewTaskDialog}
         />
         <Quadrant
           quadrant={QUADRANTS[3]}
           tasks={getSortedTasksByQuadrant(QUADRANTS[3])}
           hidden={visibilityControls[2]}
-          handleOpenNewTaskDialog={handleOpenNewTaskDialog}
         />
         <Quadrant
           quadrant={QUADRANTS[4]}
           tasks={getSortedTasksByQuadrant(QUADRANTS[4])}
           hidden={visibilityControls[3]}
-          handleOpenNewTaskDialog={handleOpenNewTaskDialog}
         />
       </div>
     </div>

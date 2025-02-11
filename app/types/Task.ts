@@ -1,6 +1,6 @@
-import { ThemeName } from "./CustomTheme";
 import { Quadrant } from "./Quadrant";
-export interface Task {
+
+type BaseTask = {
   id: string;
   title: string;
   description?: string;
@@ -9,12 +9,19 @@ export interface Task {
   quadrant: Quadrant;
   createdAt: Date;
   updatedAt?: Date;
-  completed: boolean;
   status: "todo" | "doing" | "done";
-  context?: string;
-  tags?: string[];
-  theme?: ThemeName;
-  isCompletionTransitioning?: boolean;
   projectId?: string;
   isArchived?: boolean;
-}
+};
+
+type IncompleteTask = BaseTask & {
+  completed: false;
+  completedAt: undefined;
+};
+
+type CompletedTask = BaseTask & {
+  completed: true;
+  completedAt: Date;
+};
+
+export type Task = IncompleteTask | CompletedTask;

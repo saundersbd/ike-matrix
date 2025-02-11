@@ -20,7 +20,7 @@ export function TaskHeader({ pageTitle }: TaskHeaderProps) {
   const { sortBy, setSortBy } = useWorkspace();
 
   return (
-    <header className="flex h-14 pl-8 pr-4 shrink-0 items-center justify-between">
+    <header className="sticky top-0 left-0 right-0 flex h-14 pl-8 pr-4 shrink-0 items-center justify-between z-20">
       <div>
         <h1 className="flex items-center gap-2 text-sm font-semibold">
           {pageTitle.icon && <pageTitle.icon className="w-4 h-4" />}

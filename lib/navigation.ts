@@ -18,22 +18,22 @@ export const navigationItems: Record<string, NavItem> = {
     icon: ListOrdered,
     subItems: [
       {
-        path: "/q1",
+        path: "/q/1",
         label: "Urgent & important",
         theme: "!text-red-400 fill-red-400",
       },
       {
-        path: "/q2",
-        label: "Urgent & not important",
+        path: "/q/2",
+        label: "Important & not urgent",
         theme: "!text-amber-300 fill-amber-300",
       },
       {
-        path: "/q3",
-        label: "Important & not urgent",
+        path: "/q/3",
+        label: "Urgent & not important",
         theme: "!text-sky-400 fill-sky-400",
       },
       {
-        path: "/q4",
+        path: "/q/4",
         label: "Not urgent or important",
         theme: "!text-purple-400 fill-purple-400",
       },

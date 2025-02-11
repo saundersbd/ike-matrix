@@ -1,17 +1,51 @@
 "use client";
 
-import { useState } from "react";
+import { createContext, useContext, useState } from "react";
 import { usePathname } from "next/navigation";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { SlimSidebar } from "@/components/layout/slim_sidebar/slim-sidebar";
 import { TaskHeader } from "@/components/layout/task-header";
 import { navigationItems } from "@/lib/navigation";
+import { QUADRANTS, Quadrant } from "@/app/types/Quadrant";
+import { NewTaskDialog } from "@/components/dialogs/new-task-dialog";
+
 type WorkspaceContentProps = {
   children: React.ReactNode;
 };
 
+// Create a context for the dialog
+type NewTaskDialogContextType = {
+  openNewTaskDialog: (quadrant?: Quadrant) => void;
+  closeNewTaskDialog: () => void;
+};
+
+export const NewTaskDialogContext = createContext<
+  NewTaskDialogContextType | undefined
+>(undefined);
+
 export function WorkspaceContent({ children }: WorkspaceContentProps) {
   const pathname = usePathname();
+
+  const [isNewTaskDialogOpen, setIsNewTaskDialogOpen] = useState(false);
+  const [selectedQuadrant, setSelectedQuadrant] = useState<Quadrant | null>(
+    null
+  );
+
+  const openNewTaskDialog = (quadrant?: Quadrant) => {
+    setSelectedQuadrant(quadrant || null);
+    setIsNewTaskDialogOpen(true);
+  };
+  const closeNewTaskDialog = () => setIsNewTaskDialogOpen(false);
+
+  const getDestinationQuadrant = () => {
+    if (selectedQuadrant) return selectedQuadrant;
+
+    const quadrantNumber = pathname.split("/").pop();
+    if (!quadrantNumber) return QUADRANTS[0];
+    const quadrant = QUADRANTS.find((q) => q.id === parseInt(quadrantNumber));
+    return quadrant || QUADRANTS[0];
+  };
 
   const getCurrentPageTitle = () => {
     const currentPath = pathname;
@@ -36,15 +70,36 @@ export function WorkspaceContent({ children }: WorkspaceContentProps) {
   };
 
   return (
-    <SidebarProvider
-      className="relative flex flex-1 overflow-hidden"
-      style={{ "--sidebar-width": "300px" } as React.CSSProperties}
+    <NewTaskDialogContext.Provider
+      value={{ openNewTaskDialog, closeNewTaskDialog }}
     >
-      <SlimSidebar />
-      <SidebarInset className="bg-white/50">
-        <TaskHeader pageTitle={getCurrentPageTitle()} />
-        {children}
-      </SidebarInset>
-    </SidebarProvider>
+      <SidebarProvider
+        className="relative flex flex-1 overflow-hidden"
+        style={{ "--sidebar-width": "300px" } as React.CSSProperties}
+      >
+        <SlimSidebar />
+        <SidebarInset className="relative bg-white/50">
+          <ScrollArea className="h-svh" type="auto">
+            <TaskHeader pageTitle={getCurrentPageTitle()} />
+            <div className="h-[calc(100svh-3.5rem)] flex-1">{children}</div>
+          </ScrollArea>
+        </SidebarInset>
+      </SidebarProvider>
+      <NewTaskDialog
+        isOpen={isNewTaskDialogOpen}
+        onOpenChange={setIsNewTaskDialogOpen}
+        defaultDestination={getDestinationQuadrant()}
+      />
+    </NewTaskDialogContext.Provider>
   );
+}
+
+export function useNewTaskDialog() {
+  const context = useContext(NewTaskDialogContext);
+  if (context === undefined) {
+    throw new Error(
+      "useNewTaskDialog must be used within a WorkspaceContent component"
+    );
+  }
+  return context;
 }

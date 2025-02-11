@@ -5,7 +5,6 @@ import "@/app/globals.css";
 import { cn } from "@/lib/utils";
 import { WorkspaceProvider } from "@/app/contexts/WorkspaceContext";
 import { Toaster } from "@/components/ui/toaster";
-import { ManageProjectsDialog } from "@/components/dialogs/manage-projects-dialog";
 import { WorkspaceContent } from "@/components/workspace-content";
 
 const geistMono = Geist_Mono({
@@ -43,8 +42,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
       <body className={cn("antialiased font-sans bg-zinc-50 text-zinc-800")}>
         <WorkspaceProvider>
           <WorkspaceContent>{children}</WorkspaceContent>
-
-          <ManageProjectsDialog />
           <Toaster />
         </WorkspaceProvider>
       </body>
