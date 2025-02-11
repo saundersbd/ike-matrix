@@ -19,7 +19,7 @@ type NavItem = {
 
 export const navigationItems: Record<string, NavItem> = {
   prioritizedTasks: {
-    label: "Grid view",
+    label: "Eisenhower matrix",
     path: "/",
     icon: Grid2x2,
     subItems: [

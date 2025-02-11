@@ -8,7 +8,7 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 
-  --color-sidebar: var(--color-zinc-50);
+  --color-sidebar: rgba(255, 255, 255, 0.85);
   --color-sidebar-foreground: hsl(var(--sidebar-foreground));
   --color-sidebar-primary: hsl(var(--sidebar-primary));
   --color-sidebar-primary-foreground: var(--color-zinc-500);

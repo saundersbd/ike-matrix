@@ -30,30 +30,37 @@ export function NewTaskItem({ task }: { task: Task }) {
   const formatDueDate = (dueDate: Date) => {
     if (isToday(dueDate)) {
       return (
-        <span className="inline-flex items-center gap-1.5">
-          <CalendarDays className="size-3.25 text-zinc-500" />
-          Today
+        <span className="inline-flex items-center gap-1 text-xs">
+          <CalendarDays className="size-3.25 text-zinc-500 -mt-[1px]" />
+          <span>Today</span>
         </span>
       );
     } else if (dueDate < new Date()) {
       return (
-        <span className="inline-flex items-center gap-1.5">
-          <CalendarDays className="size-3.25 text-red-500" />
-          {formatDistance(dueDate, new Date(), { addSuffix: true }).replace(
-            /^about /,
-            ""
-          )}
+        <span className="inline-flex items-center gap-1 text-xs">
+          <CalendarDays className="size-3.25 text-red-500 -mt-[1px]" />
+          <span>
+            {formatDistance(dueDate, new Date(), { addSuffix: true }).replace(
+              /^about /,
+              ""
+            )}
+          </span>
           {task.dueTime && <>, {format(task.dueTime, "h:mm a")}</>}
         </span>
       );
     } else if (isTomorrow(dueDate)) {
       return "Tomorrow";
     } else {
-      return format(
-        dueDate,
-        dueDate.getFullYear() === new Date().getFullYear()
-          ? "MMM d"
-          : "MMM d, yyyy"
+      return dueDate.getFullYear() === new Date().getFullYear() ? (
+        <span className="inline-flex items-center gap-1 text-xs">
+          <CalendarDays className="size-3.25 text-zinc-500" />
+          {format(dueDate, "MMM d")}
+        </span>
+      ) : (
+        <span className="inline-flex items-center gap-1">
+          <CalendarDays className="size-3.25 text-zinc-500" />
+          {format(dueDate, "MMM d, yyyy")}
+        </span>
       );
     }
   };
@@ -79,9 +86,9 @@ export function NewTaskItem({ task }: { task: Task }) {
       <div className="flex flex-col flex-1 gap-1.25">
         <p className="text-base font-medium leading-snug">{task.title}</p>
         {(task.projectId || task.dueDate) && (
-          <div className="flex items-center gap-2 font-medium text-xs">
+          <div className="flex items-center gap-2 font-medium text-xs text-zinc-500">
             {task.dueDate && (
-              <span className="text-zinc-500">
+              <>
                 {task.dueDate && formatDueDate(task.dueDate)}
                 {task.dueTime && !isOverdue && (
                   <>
@@ -91,7 +98,7 @@ export function NewTaskItem({ task }: { task: Task }) {
                     </span>
                   </>
                 )}
-              </span>
+              </>
             )}
             {task.projectId && task.dueDate && (
               <Circle className="w-1 h-1 text-zinc-400/60 fill-zinc-400/60" />

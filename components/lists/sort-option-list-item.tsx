@@ -11,7 +11,10 @@ export function SortOptionListItem({
 }) {
   return (
     <div className={cn("inline-flex items-center gap-2", dense && "gap-1.75")}>
-      <option.icon className={cn("h-4 w-4", dense && "!size-3.5")} />
+      <option.icon
+        strokeWidth={dense ? 2.5 : 2}
+        className={cn("h-4 w-4", dense && "!size-3.5")}
+      />
       <span>{option.label}</span>
     </div>
   );

@@ -31,7 +31,7 @@ export function QuadrantNew({
 
   return (
     <div className="@container/quadrant flex flex-col bg-zinc-100 rounded-xl overflow-hidden">
-      <header className="flex shrink-0 items-center justify-between pl-8 @max-6xl/main:pl-5.5 pr-5 @max-6xl/main:pt-4 pt-7 pb-4 bg-zinc-200/[.75]">
+      <header className="flex shrink-0 items-center justify-between pl-6 @max-6xl/main:pl-5.5 pr-4 @max-6xl/main:pt-4 pt-7 pb-4 bg-zinc-200/[.75]">
         <h2 className="text-xl font-semibold">{quadrant.title}</h2>
         <Button
           variant="ghost"

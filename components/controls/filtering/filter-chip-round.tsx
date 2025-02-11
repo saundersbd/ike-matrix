@@ -15,7 +15,7 @@ import {
   DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
 import { SortOptionListItem } from "@/components/lists/sort-option-list-item";
-import { ChevronDown, ArrowUpDown } from "lucide-react";
+import { ChevronDown, ArrowUpDown, ListFilter } from "lucide-react";
 import { SortOption } from "@/lib/sort-options";
 import { Task } from "@/app/types/Task";
 interface FilterChipProps<T> {
@@ -31,7 +31,7 @@ interface FilterChipProps<T> {
   defaultValue?: T;
 }
 
-export function FilterChip<T>({
+export function FilterChipRound<T>({
   label,
   options,
   onApplyFilter,
@@ -52,31 +52,16 @@ export function FilterChip<T>({
   return (
     <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
       <DropdownMenuTrigger asChild>
-        <div className="relative inline-flex transition-all duration-200">
-          <Button
-            variant="outline"
-            size="sm"
-            className={cn(
-              "h-8 gap-1 px-6 pr-3",
-              "bg-zinc-200/70 rounded-full font-semibold",
-              value && behavior === "sort" && "!pr-3 !pl-3.75",
-              value && !isDefaultValue && "pr-4 pl-4 ring-2 ring-zinc-800"
-            )}
-          >
-            {behavior === "sort" && (
-              <>
-                <SortOptionListItem option={value as SortOption<Task>} dense />
-                <ChevronDown className="!size-4" />
-              </>
-            )}
-            {(behavior === "radio" || behavior === "checkbox") && (
-              <>
-                {value ? itemNode?.(value) : initialLabel}
-                <ChevronDown className="!size-4" />
-              </>
-            )}
-          </Button>
-        </div>
+        <Button
+          variant="secondary"
+          size="sm"
+          className="bg-violet-200/50 hover:bg-violet-200/67 text-violet-800 hover:text-violet-900 rounded-full px-4"
+        >
+          <ArrowUpDown className="!size-4" />
+          <span className="text-sm font-medium">
+            {defaultValue ? getDisplayValue(defaultValue) : initialLabel}
+          </span>
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56 rounded-xl">
         {value && behavior === "radio" && (
