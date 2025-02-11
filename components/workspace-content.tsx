@@ -87,8 +87,7 @@ export function WorkspaceContent({ children }: WorkspaceContentProps) {
             )}
           >
             <div className="flex flex-row space-x-4 p-4">
-              <div className="w-[960px] shrink-0 panel-root">{children}</div>
-              <div className="shrink-0 panel-one w-96 bg-zinc-50 rounded-2xl"></div>
+              <div className="w-full shrink-0 panel-root">{children}</div>
             </div>
             <ScrollBar orientation="horizontal" />
           </ScrollArea>

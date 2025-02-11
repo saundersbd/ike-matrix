@@ -81,14 +81,14 @@ export const QUADRANTS: Quadrant[] = [
   },
   {
     id: 2,
-    title: "Important & not urgent",
+    title: "Important but not urgent",
     description: "Tasks that are important but not urgent",
     color: "bg-yellow-500",
     theme: QUADRANT_THEMES["Quadrant 2"],
   },
   {
     id: 3,
-    title: "Urgent & not important",
+    title: "Urgent but not important",
     description: "Tasks that are not important but urgent",
     color: "bg-blue-500",
     theme: QUADRANT_THEMES["Quadrant 3"],

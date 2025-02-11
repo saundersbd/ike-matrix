@@ -5,11 +5,18 @@ import { useWorkspace } from "@/app/contexts/WorkspaceContext";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
 import { Task } from "@/app/types/Task";
 import { handleTaskCompletion } from "@/app/utils/taskHandlers";
 import { format, formatDistance, isToday, isTomorrow } from "date-fns";
 import { CUSTOM_THEME_COLORS } from "@/app/types/CustomTheme";
-import { Circle, CalendarDays, SquareChartGantt } from "lucide-react";
+import {
+  Circle,
+  CalendarDays,
+  SquareChartGantt,
+  Ellipsis,
+  GripVertical,
+} from "lucide-react";
 
 export function NewTaskItem({ task }: { task: Task }) {
   const { updateTask, projects } = useWorkspace();
@@ -57,8 +64,18 @@ export function NewTaskItem({ task }: { task: Task }) {
     ].textColor;
 
   return (
-    <div className="flex gap-2.5">
-      <Checkbox className="flex-shrink-0 mt-[2px]" />
+    <div
+      className={cn(
+        "group/list-item min-h-[3.25rem] flex items-center gap-2.5 py-2.5 px-3 hover:bg-zinc-200/60 rounded-lg transition-all duration-200",
+        (task.dueDate || task.projectId) && "items-start"
+      )}
+    >
+      <Checkbox
+        className={cn(
+          "flex-shrink-0 mt-0 group-hover/list-item:border-zinc-500 group-hover/list-item:bg-zinc-100/60 transition-all duration-200",
+          (task.dueDate || task.projectId) && "mt-[2px]"
+        )}
+      />
       <div className="flex flex-col flex-1 gap-1.25">
         <p className="text-base font-medium">{task.title}</p>
         {(task.projectId || task.dueDate) && (
@@ -92,6 +109,22 @@ export function NewTaskItem({ task }: { task: Task }) {
             )}
           </div>
         )}
+      </div>
+      <div className="flex items-center self-center gap-1">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="hidden group-hover/list-item:flex text-zinc-600 hover:bg-zinc-300/60 hover:text-zinc-800 transition-all duration-200"
+        >
+          <Ellipsis className="size-4" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="hidden group-hover/list-item:flex text-zinc-600 hover:bg-zinc-300/60 hover:text-zinc-800 transition-all duration-200 hover:cursor-grab"
+        >
+          <GripVertical className="size-4" />
+        </Button>
       </div>
     </div>
   );

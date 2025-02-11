@@ -24,12 +24,10 @@ export default function Home() {
     return sortedAndFilteredTasks.filter((task) => task.quadrant === quadrant);
   };
 
-  const [visibilityControls] = useState([false, false, false, false]);
-  const visibleQuadrantCount = visibilityControls.filter((v) => !v).length;
-
   return (
-    <div className="flex flex-col gap-2.5">
-      <header className="h-14 flex shrink-0 items-center justify-end px-3 bg-zinc-50/80 backdrop-blur-sm rounded-xl">
+    <div className="flex flex-col gap-2.5 bg-white/[.80] rounded-2xl p-4">
+      <header className="h-14 flex shrink-0 items-center justify-between rounded-xl px-3">
+        <h1 className="text-3xl font-bold">Eisenhower matrix</h1>
         <div className="flex items-center gap-2">
           <Button
             variant="secondary"
@@ -48,7 +46,7 @@ export default function Home() {
         </div>
       </header>
       <div className="flex flex-col flex-1">
-        <div className="max-w-6xl mx-auto container h-[calc(100svh-6.125rem)] grid grid-cols-2 grid-rows-2 gap-3">
+        <div className="h-[calc(100svh-8.125rem)] grid grid-cols-2 grid-rows-2 gap-3.5">
           <QuadrantNew
             quadrant={QUADRANTS[1]}
             tasks={getSortedTasksByQuadrant(QUADRANTS[1])}
