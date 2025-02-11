@@ -44,7 +44,7 @@ export function NavMain({
             <SidebarMenuButton isActive={isActive(item.path)} asChild>
               <Link
                 href={item.path}
-                className="flex items-center gap-2.5 text-sm font-medium"
+                className="flex items-center gap-2.5 text-xs font-medium"
               >
                 <item.icon className="!size-4 text-violet-600" />
                 <span>{item.label}</span>

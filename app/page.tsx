@@ -48,7 +48,7 @@ export default function Home() {
         </div>
       </header>
       <div className="flex flex-col flex-1">
-        <div className="max-w-6xl mx-auto container h-[calc(100svh-6.125rem)] grid grid-cols-2 grid-rows-2 gap-2.5">
+        <div className="max-w-6xl mx-auto container h-[calc(100svh-6.125rem)] grid grid-cols-2 grid-rows-2 gap-3">
           <QuadrantNew
             quadrant={QUADRANTS[1]}
             tasks={getSortedTasksByQuadrant(QUADRANTS[1])}
