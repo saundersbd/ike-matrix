@@ -66,18 +66,18 @@ export function NewTaskItem({ task }: { task: Task }) {
   return (
     <div
       className={cn(
-        "group/list-item min-h-[3.25rem] flex items-center gap-2.5 py-2.5 px-3 hover:bg-zinc-200/60 rounded-lg transition-all duration-200",
+        "group/list-item min-h-[3.25rem] flex items-center gap-2.5 py-2.5 @max-6xl/main:py-2 px-3 @max-6xl/main:px-2.5 hover:bg-zinc-200/60 rounded-lg transition-all duration-200",
         (task.dueDate || task.projectId) && "items-start"
       )}
     >
       <Checkbox
         className={cn(
           "flex-shrink-0 mt-0 group-hover/list-item:border-zinc-500 group-hover/list-item:bg-zinc-100/60 transition-all duration-200",
-          (task.dueDate || task.projectId) && "mt-[2px]"
+          (task.dueDate || task.projectId) && "mt-[0.5px]"
         )}
       />
       <div className="flex flex-col flex-1 gap-1.25">
-        <p className="text-base font-medium">{task.title}</p>
+        <p className="text-base font-medium leading-snug">{task.title}</p>
         {(task.projectId || task.dueDate) && (
           <div className="flex items-center gap-2 font-medium text-xs">
             {task.dueDate && (
@@ -121,7 +121,7 @@ export function NewTaskItem({ task }: { task: Task }) {
         <Button
           variant="ghost"
           size="icon"
-          className="hidden group-hover/list-item:flex text-zinc-600 hover:bg-zinc-300/60 hover:text-zinc-800 transition-all duration-200 hover:cursor-grab"
+          className="hidden text-zinc-600 hover:bg-zinc-300/60 hover:text-zinc-800 transition-all duration-200 hover:cursor-grab"
         >
           <GripVertical className="size-4" />
         </Button>

@@ -78,7 +78,7 @@ export function WorkspaceContent({ children }: WorkspaceContentProps) {
         style={{ "--sidebar-width": "260px" } as React.CSSProperties}
       >
         <NewSidebar />
-        <SidebarInset>
+        <SidebarInset className="@container/main">
           <ScrollArea
             type="auto"
             className={cn(

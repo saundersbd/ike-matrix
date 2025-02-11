@@ -9,7 +9,7 @@ import { EllipsisVertical, ListFilter, Plus } from "lucide-react";
 import { useWorkspace } from "@/app/contexts/WorkspaceContext";
 import { useState } from "react";
 import { NewTaskItem } from "@/components/lists/new-task-item";
-
+import { ScrollArea } from "@/components/ui/scroll-area";
 export default function Home() {
   const { tasks, sortBy } = useWorkspace();
   const sortedAndFilteredTasks = useTasks(tasks, sortBy, {
@@ -25,8 +25,8 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col gap-2.5 bg-white/[.80] rounded-2xl p-4">
-      <header className="h-14 flex shrink-0 items-center justify-between rounded-xl px-3">
+    <div className="flex flex-col bg-white/[.85] rounded-2xl h-[calc(100svh-2rem)]">
+      <header className="flex h-12 shrink-0 items-center justify-between rounded-xl px-7 mt-4">
         <h1 className="text-3xl font-bold">Eisenhower matrix</h1>
         <div className="flex items-center gap-2">
           <Button
@@ -45,29 +45,31 @@ export default function Home() {
           </Button>
         </div>
       </header>
-      <div className="flex flex-col flex-1">
-        <div className="h-[calc(100svh-8.125rem)] grid grid-cols-2 grid-rows-2 gap-3.5">
-          <QuadrantNew
-            quadrant={QUADRANTS[1]}
-            tasks={getSortedTasksByQuadrant(QUADRANTS[1])}
-          />
+      <ScrollArea className="flex flex-col flex-1">
+        <div className="flex flex-col flex-1 p-4">
+          <div className="@4xl/main:h-[calc(100svh-8rem)] flex flex-col @4xl/main:grid @4xl/main:grid-cols-2 @4xl/main:grid-rows-2 gap-3.5">
+            <QuadrantNew
+              quadrant={QUADRANTS[1]}
+              tasks={getSortedTasksByQuadrant(QUADRANTS[1])}
+            />
 
-          <QuadrantNew
-            quadrant={QUADRANTS[2]}
-            tasks={getSortedTasksByQuadrant(QUADRANTS[2])}
-          />
+            <QuadrantNew
+              quadrant={QUADRANTS[2]}
+              tasks={getSortedTasksByQuadrant(QUADRANTS[2])}
+            />
 
-          <QuadrantNew
-            quadrant={QUADRANTS[3]}
-            tasks={getSortedTasksByQuadrant(QUADRANTS[3])}
-          />
+            <QuadrantNew
+              quadrant={QUADRANTS[3]}
+              tasks={getSortedTasksByQuadrant(QUADRANTS[3])}
+            />
 
-          <QuadrantNew
-            quadrant={QUADRANTS[4]}
-            tasks={getSortedTasksByQuadrant(QUADRANTS[4])}
-          />
+            <QuadrantNew
+              quadrant={QUADRANTS[4]}
+              tasks={getSortedTasksByQuadrant(QUADRANTS[4])}
+            />
+          </div>
         </div>
-      </div>
+      </ScrollArea>
     </div>
   );
 }
