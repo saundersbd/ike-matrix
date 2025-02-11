@@ -2,9 +2,8 @@
 
 import { createContext, useContext, useState } from "react";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { NewSidebar } from "@/components/layout/sidebar/new-sidebar";
 import { TaskHeader } from "@/components/layout/task-header";
 import { navigationItems } from "@/lib/navigation";
@@ -75,22 +74,14 @@ export function WorkspaceContent({ children }: WorkspaceContentProps) {
       value={{ openNewTaskDialog, closeNewTaskDialog }}
     >
       <SidebarProvider
+        className="relative flex flex-1 overflow-hidden"
         style={{ "--sidebar-width": "260px" } as React.CSSProperties}
       >
         <NewSidebar />
-        <SidebarInset>
-          <ScrollArea
-            type="auto"
-            className={cn(
-              "w-[calc(100vw-260px)] h-svh",
-              "group-has-data-[state=collapsed]/sidebar-wrapper:w-[calc(100vw-3rem)]"
-            )}
-          >
-            <div className="flex flex-row space-x-4 p-4">
-              <div className="w-[960px] shrink-0 panel-root">{children}</div>
-              <div className="shrink-0 panel-one w-96 bg-zinc-50 rounded-2xl"></div>
-            </div>
-            <ScrollBar orientation="horizontal" />
+        <SidebarInset className="relative bg-zinc-200/90">
+          <ScrollArea className="h-svh" type="auto">
+            {/* <TaskHeader pageTitle={getCurrentPageTitle()} /> */}
+            <div className="h-svh flex-1">{children}</div>
           </ScrollArea>
         </SidebarInset>
       </SidebarProvider>

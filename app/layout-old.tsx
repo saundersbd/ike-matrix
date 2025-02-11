@@ -43,11 +43,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       data-spacing="default"
       className={`${inter.variable} ${geistMono.variable}`}
     >
-      <body
-        className={cn(
-          "antialiased font-sans bg-zinc-200/90 text-zinc-800 overflow-y-hidden"
-        )}
-      >
+      <body className={cn("antialiased font-sans bg-zinc-50 text-zinc-800")}>
         <Providers>
           <WorkspaceContent>{children}</WorkspaceContent>
           <Toaster />

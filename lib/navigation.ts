@@ -1,4 +1,10 @@
-import { ListOrdered, Inbox, History, LucideIcon } from "lucide-react";
+import {
+  Grid2x2,
+  Inbox,
+  History,
+  LucideIcon,
+  OctagonAlert,
+} from "lucide-react";
 
 type NavItem = {
   label: string;
@@ -13,9 +19,9 @@ type NavItem = {
 
 export const navigationItems: Record<string, NavItem> = {
   prioritizedTasks: {
-    label: "Prioritized tasks",
+    label: "Grid view",
     path: "/",
-    icon: ListOrdered,
+    icon: Grid2x2,
     subItems: [
       {
         path: "/q/1",
@@ -38,6 +44,11 @@ export const navigationItems: Record<string, NavItem> = {
         theme: "!text-purple-400 fill-purple-400",
       },
     ],
+  },
+  urgent: {
+    label: "Urgent & important",
+    path: "/urgent",
+    icon: OctagonAlert,
   },
   inbox: {
     label: "Inbox",
