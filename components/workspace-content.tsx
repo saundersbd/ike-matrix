@@ -75,13 +75,13 @@ export function WorkspaceContent({ children }: WorkspaceContentProps) {
     >
       <SidebarProvider
         className="relative flex flex-1 overflow-hidden"
-        style={{ "--sidebar-width": "300px" } as React.CSSProperties}
+        style={{ "--sidebar-width": "260px" } as React.CSSProperties}
       >
         <SlimSidebar />
-        <SidebarInset className="relative bg-white/50">
+        <SidebarInset className="relative bg-zinc-200/90">
           <ScrollArea className="h-svh" type="auto">
-            <TaskHeader pageTitle={getCurrentPageTitle()} />
-            <div className="h-[calc(100svh-3.5rem)] flex-1">{children}</div>
+            {/* <TaskHeader pageTitle={getCurrentPageTitle()} /> */}
+            <div className="h-svh flex-1">{children}</div>
           </ScrollArea>
         </SidebarInset>
       </SidebarProvider>

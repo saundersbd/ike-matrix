@@ -10,15 +10,15 @@ export interface SortOption<T> {
 
 export const TASK_SORT_OPTIONS: SortOption<Task>[] = [
   {
-    id: "created",
-    label: "Created date",
-    icon: ArrowUpDown,
-    getValue: (task) => new Date(task.createdAt).getTime(),
-  },
-  {
     id: "dueDate",
     label: "Due date",
     icon: CalendarCheck2,
     getValue: (task) => (task.dueDate ? new Date(task.dueDate).getTime() : 0),
+  },
+  {
+    id: "created",
+    label: "Created date",
+    icon: ArrowUpDown,
+    getValue: (task) => new Date(task.createdAt).getTime(),
   },
 ];

@@ -3,9 +3,11 @@
 import { useTasks } from "@/hooks/use-tasks";
 import { QUADRANTS, Quadrant as QuadrantType } from "@/app/types/Quadrant";
 import { cn } from "@/lib/utils";
-import { Quadrant } from "@/components/quadrant";
+import { QuadrantNew } from "@/components/quadrant-new";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useWorkspace } from "@/app/contexts/WorkspaceContext";
 import { useState } from "react";
+import { NewTaskItem } from "@/components/lists/new-task-item";
 
 export default function Home() {
   const { tasks, sortBy } = useWorkspace();
@@ -29,38 +31,26 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-1 flex-col p-6 pb-8">
-      <div className="max-w-6xl mx-auto container h-[calc(100svh-8rem)] grid grid-cols-2 grid-rows-2 gap-6">
-        <Quadrant
+    <div className="flex flex-1 flex-col">
+      <div className="max-w-6xl mx-auto container h-svh grid grid-cols-2 grid-rows-2 gap-2.5 p-3">
+        <QuadrantNew
           quadrant={QUADRANTS[1]}
           tasks={getSortedTasksByQuadrant(QUADRANTS[1])}
-          hidden={visibilityControls[0]}
-          className={cn(
-            visibleQuadrantCount === 3 && "row-span-2",
-            visibleQuadrantCount === 2 && "row-span-1"
-          )}
         />
-        <Quadrant
+
+        <QuadrantNew
           quadrant={QUADRANTS[2]}
           tasks={getSortedTasksByQuadrant(QUADRANTS[2])}
-          hidden={visibilityControls[1]}
-          className={cn(
-            visibilityControls[0] &&
-              !visibilityControls[1] &&
-              !visibilityControls[2] &&
-              !visibilityControls[3] &&
-              "row-span-2"
-          )}
         />
-        <Quadrant
+
+        <QuadrantNew
           quadrant={QUADRANTS[3]}
           tasks={getSortedTasksByQuadrant(QUADRANTS[3])}
-          hidden={visibilityControls[2]}
         />
-        <Quadrant
+
+        <QuadrantNew
           quadrant={QUADRANTS[4]}
           tasks={getSortedTasksByQuadrant(QUADRANTS[4])}
-          hidden={visibilityControls[3]}
         />
       </div>
     </div>

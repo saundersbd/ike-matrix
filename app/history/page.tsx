@@ -22,7 +22,7 @@ export default function InboxPage() {
   });
 
   return (
-    <div className="flex flex-1 flex-col px-12 py-8">
+    <div className="flex flex-1 flex-col px-10 py-8">
       <div className="max-w-4xl mx-auto flex flex-col gap-8 container">
         <header className="flex flex-col gap-2.5">
           <h1 className="text-2xl font-semibold">History</h1>
