@@ -52,11 +52,7 @@ export function FilterChipRound<T>({
   return (
     <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="secondary"
-          size="sm"
-          className="bg-violet-200/50 hover:bg-violet-200/67 text-violet-800 hover:text-violet-900 rounded-full px-4"
-        >
+        <Button variant="secondary" size="sm" className="rounded-full px-4">
           <ArrowUpDown className="!size-4" />
           <span className="text-sm font-medium">
             {defaultValue ? getDisplayValue(defaultValue) : initialLabel}

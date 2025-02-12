@@ -48,11 +48,7 @@ export default function Home() {
               (option) => option.id === "dueDate"
             )}
           />
-          <Button
-            variant="secondary"
-            size="icon-lg"
-            className="bg-violet-200/50 hover:bg-violet-200/67 text-violet-800 hover:text-violet-900 rounded-full"
-          >
+          <Button variant="secondary" size="icon-lg" className="rounded-full">
             <EllipsisVertical className="!size-4" />
           </Button>
         </div>

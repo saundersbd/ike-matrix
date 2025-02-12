@@ -30,18 +30,20 @@ export function QuadrantNew({
   };
 
   return (
-    <div className="@container/quadrant flex flex-col bg-zinc-100 rounded-xl overflow-hidden">
-      <header className="flex shrink-0 items-center justify-between pl-6 @max-6xl/main:pl-5.5 pr-4 @max-6xl/main:pt-4 pt-7 pb-4 bg-zinc-200/[.75]">
-        <h2 className="text-xl font-semibold">{quadrant.title}</h2>
+    <div className="@container/quadrant flex flex-col bg-zinc-100 rounded-xl overflow-hidden relative">
+      <header className="flex shrink-0 items-center justify-between pl-6 @max-6xl/main:pl-5.5 pr-4 @max-6xl/main:pt-4 pt-4 pb-4 bg-zinc-800/[.98]">
+        <h2 className="text-xl font-semibold text-zinc-100">
+          {quadrant.title}
+        </h2>
         <Button
           variant="ghost"
           size="icon-lg"
-          className="text-zinc-700 hover:bg-zinc-300/60 hover:text-zinc-800"
+          className="text-zinc-200 hover:bg-zinc-700 hover:text-zinc-100"
         >
           <Plus className="size-5" />
         </Button>
       </header>
-      <ScrollArea className="flex flex-col flex-1" type="auto">
+      <ScrollArea className="flex flex-col flex-1 bg-zinc-100" type="auto">
         <div className="flex flex-col flex-1 py-5 @max-6xl/main:py-4 @4xl/main:pb-12 px-5 @max-6xl/main:px-3">
           {tasks.map((task) => (
             <NewTaskItem key={task.id} task={task} />
