@@ -30,9 +30,9 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col bg-white/[.85] rounded-2xl h-[calc(100svh-2rem)]">
-      <header className="flex h-12 shrink-0 items-center justify-between rounded-xl px-7 mt-4">
-        <h1 className="text-3xl font-bold">Eisenhower matrix</h1>
+    <div className="flex flex-col flex-1 h-[calc(100svh)]">
+      <header className="flex h-16 shrink-0 items-center justify-between p-6 border-b border-stone-300/60">
+        <h1 className="text-lg font-semibold">Eisenhower matrix</h1>
         <div className="flex items-center gap-2">
           <FilterChipRound<SortOption<Task>>
             label="created date"
@@ -54,8 +54,8 @@ export default function Home() {
         </div>
       </header>
       <ScrollArea className="flex flex-col flex-1">
-        <div className="flex flex-col flex-1 p-4">
-          <div className="@4xl/main:h-[calc(100svh-8rem)] flex flex-col @4xl/main:grid @4xl/main:grid-cols-2 @4xl/main:grid-rows-2 gap-3.5">
+        <div className="flex flex-col flex-1 p-5">
+          <div className="@4xl/main:h-[calc(100svh-6.5rem)] flex flex-col @4xl/main:grid @4xl/main:grid-cols-2 @4xl/main:grid-rows-2 gap-4.5">
             <QuadrantNew
               quadrant={QUADRANTS[1]}
               tasks={getSortedTasksByQuadrant(QUADRANTS[1])}

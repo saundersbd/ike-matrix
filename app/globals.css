@@ -5,15 +5,15 @@
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
 @theme {
-  --color-background: var(--background);
+  --color-background: var(--color-stone-100);
   --color-foreground: var(--foreground);
 
-  --color-sidebar: rgba(255, 255, 255, 0.85);
-  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar: var(--color-stone-100);
+  --color-sidebar-foreground: var(--color-stone-800);
   --color-sidebar-primary: hsl(var(--sidebar-primary));
-  --color-sidebar-primary-foreground: var(--color-zinc-500);
-  --color-sidebar-accent: var(--color-zinc-200);
-  --color-sidebar-accent-foreground: var(--color-zinc-800);
+  --color-sidebar-primary-foreground: var(--color-stone-100);
+  --color-sidebar-accent: var(--color-stone-200);
+  --color-sidebar-accent-foreground: var(--color-stone-800);
   --color-sidebar-border: hsl(var(--sidebar-border));
   --color-sidebar-ring: hsl(var(--sidebar-ring));
 
@@ -21,7 +21,7 @@
   --radius-xl: calc(var(--radius) + 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
-  --radius-2xl: calc(var(--radius) + 16px);
+  --radius-2xl: calc(var(--radius) + 8px);
 
   --font-sans: var(--font-inter);
   --font-mono: var(--font-geist-mono);
@@ -54,7 +54,7 @@
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-gray-200, currentColor);
+    border-color: var(--color-stone-200, currentColor);
   }
 
   :root {

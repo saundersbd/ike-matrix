@@ -30,6 +30,7 @@ export function DetailsSidebar({ task }: { task: Task }) {
         side="right"
         collapsible="none"
         className="w-[264px] h-[calc(80svh-64px)] hidden md:flex bg-zinc-50"
+        name="details-sidebar"
       >
         <SidebarContent className="gap-0">
           <DueDateSection task={task} />

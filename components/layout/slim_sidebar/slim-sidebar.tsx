@@ -20,7 +20,13 @@ export function SlimSidebar({
   const { tasks, projects } = useWorkspace();
 
   return (
-    <Sidebar collapsible="icon" className="border-none" {...props}>
+    <Sidebar
+      side="left"
+      collapsible="icon"
+      className="border-none"
+      style={{ "--sidebar-width": "260px" } as React.CSSProperties}
+      {...props}
+    >
       <SidebarHeader className="p-5 dark:bg-zinc-800">
         <span className="group-data-[state=collapsed]:hidden truncate text-lg text-zinc-700 font-medium dark:text-zinc-100">
           Eisenhower matrix

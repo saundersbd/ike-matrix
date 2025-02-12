@@ -2,11 +2,15 @@
 
 import { createContext, useContext, useState } from "react";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import {
+  MultiSidebarProvider,
+  SidebarInset,
+  Sidebar,
+  SidebarContent,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 import { NewSidebar } from "@/components/layout/sidebar/new-sidebar";
-import { TaskHeader } from "@/components/layout/task-header";
+import { RightPanel } from "@/components/layout/right_panel/right-panel";
 import { navigationItems } from "@/lib/navigation";
 import { QUADRANTS, Quadrant } from "@/app/types/Quadrant";
 import { NewTaskDialog } from "@/components/dialogs/new-task-dialog";
@@ -74,25 +78,23 @@ export function WorkspaceContent({ children }: WorkspaceContentProps) {
     <NewTaskDialogContext.Provider
       value={{ openNewTaskDialog, closeNewTaskDialog }}
     >
-      <SidebarProvider
-        style={{ "--sidebar-width": "260px" } as React.CSSProperties}
-      >
-        <NewSidebar />
-        <SidebarInset className="@container/main">
-          <ScrollArea
-            type="auto"
-            className={cn(
-              "w-[calc(100vw-260px)] h-svh",
-              "group-has-data-[state=collapsed]/sidebar-wrapper:w-[calc(100vw-3rem)]"
-            )}
-          >
-            <div className="flex flex-row space-x-4 p-4">
-              <div className="w-full shrink-0">{children}</div>
-            </div>
-            <ScrollBar orientation="horizontal" />
-          </ScrollArea>
-        </SidebarInset>
-      </SidebarProvider>
+      <main className="relative flex h-screen">
+        <MultiSidebarProvider
+          className=""
+          style={
+            {
+              ["--sidebar-width" as string]: "260px",
+              ["--right-sidebar-width" as string]: "450px",
+            } as React.CSSProperties
+          }
+        >
+          <NewSidebar side="left" />
+
+          <SidebarInset className="@container/main">{children}</SidebarInset>
+          <RightPanel side="right" />
+        </MultiSidebarProvider>
+      </main>
+
       <NewTaskDialog
         isOpen={isNewTaskDialogOpen}
         onOpenChange={setIsNewTaskDialogOpen}

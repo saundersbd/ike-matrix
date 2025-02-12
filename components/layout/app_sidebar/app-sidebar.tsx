@@ -21,14 +21,13 @@ export function AppSidebar({
   tasks: Task[];
   handleOpenNewTaskDialog: (quadrantId: number) => void;
 }) {
-  const tasksToDisplay = tasks.filter(
-    (task) => !task.completed || task.isCompletionTransitioning
-  );
+  const tasksToDisplay = tasks.filter((task) => !task.completed);
 
   return (
     <Sidebar
       className="z-20 bg-transparent h-[calc(100svh-60px)]"
       variant="floating"
+      name="app-sidebar"
     >
       <SidebarHeader className="p-0">
         <CardHeader

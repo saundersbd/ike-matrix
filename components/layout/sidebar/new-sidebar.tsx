@@ -14,15 +14,17 @@ import { NavMain } from "@/components/layout/sidebar/nav-main";
 import { Info, ListOrdered, Inbox, History } from "lucide-react";
 import { navigationItems } from "@/lib/navigation";
 
-export function NewSidebar({
-  ...props
-}: Partial<React.ComponentProps<typeof Sidebar>> & {}) {
+export function NewSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { tasks, projects } = useWorkspace();
 
   return (
-    <Sidebar collapsible="icon" className="border-none" {...props}>
+    <Sidebar
+      collapsible="icon"
+      className="border-r border-stone-300/60"
+      {...props}
+    >
       <SidebarHeader className="flex justify-end p-5 dark:bg-zinc-800">
-        <SidebarTrigger />
+        <SidebarTrigger name="app-sidebar" />
       </SidebarHeader>
       <SidebarContent className="dark:bg-zinc-800">
         <NavMain items={navigationItems} />

@@ -45,7 +45,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
     >
       <body
         className={cn(
-          "antialiased font-sans bg-zinc-200 text-zinc-800 overflow-y-hidden"
+          "relative antialiased font-sans bg-stone-100 text-stone-800"
         )}
       >
         <Providers>

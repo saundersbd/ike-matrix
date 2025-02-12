@@ -31,7 +31,7 @@ export function NewTaskItem({ task }: { task: Task }) {
     if (isToday(dueDate)) {
       return (
         <span className="inline-flex items-center gap-1 text-xs">
-          <CalendarDays className="size-3.25 text-zinc-500 -mt-[1px]" />
+          <CalendarDays className="size-3.25 text-stone-500 -mt-[1px]" />
           <span>Today</span>
         </span>
       );
@@ -53,12 +53,12 @@ export function NewTaskItem({ task }: { task: Task }) {
     } else {
       return dueDate.getFullYear() === new Date().getFullYear() ? (
         <span className="inline-flex items-center gap-1 text-xs">
-          <CalendarDays className="size-3.25 text-zinc-500" />
+          <CalendarDays className="size-3.25 text-stone-500" />
           {format(dueDate, "MMM d")}
         </span>
       ) : (
         <span className="inline-flex items-center gap-1">
-          <CalendarDays className="size-3.25 text-zinc-500" />
+          <CalendarDays className="size-3.25 text-stone-500" />
           {format(dueDate, "MMM d, yyyy")}
         </span>
       );
@@ -73,27 +73,27 @@ export function NewTaskItem({ task }: { task: Task }) {
   return (
     <div
       className={cn(
-        "group/list-item min-h-[3.25rem] flex items-center gap-2.5 py-2.5 @max-6xl/main:py-2 px-3 @max-6xl/main:px-2.5 hover:bg-zinc-200/60 rounded-lg transition-all duration-200",
+        "group/list-item min-h-[3.25rem] flex items-center gap-2.5 py-2.5 @max-6xl/main:py-2 px-3 @max-6xl/main:px-2.5 hover:bg-stone-200/60 rounded-lg transition-all duration-200",
         (task.dueDate || task.projectId) && "items-start"
       )}
     >
       <Checkbox
         className={cn(
-          "flex-shrink-0 mt-0 group-hover/list-item:border-zinc-500 group-hover/list-item:bg-zinc-100/60 transition-all duration-200",
+          "flex-shrink-0 mt-0 group-hover/list-item:border-stone-500 group-hover/list-item:bg-stone-100/60 transition-all duration-200",
           (task.dueDate || task.projectId) && "mt-[0.5px]"
         )}
       />
       <div className="flex flex-col flex-1 gap-1.25">
         <p className="text-base font-medium leading-snug">{task.title}</p>
         {(task.projectId || task.dueDate) && (
-          <div className="flex items-center gap-2 font-medium text-xs text-zinc-500">
+          <div className="flex items-center gap-2 font-medium text-xs text-stone-500">
             {task.dueDate && (
               <>
                 {task.dueDate && formatDueDate(task.dueDate)}
                 {task.dueTime && !isOverdue && (
                   <>
                     ,{" "}
-                    <span className="text-xs text-zinc-500">
+                    <span className="text-xs text-stone-500">
                       {format(task.dueTime, "h:mm a")}
                     </span>
                   </>
@@ -101,7 +101,7 @@ export function NewTaskItem({ task }: { task: Task }) {
               </>
             )}
             {task.projectId && task.dueDate && (
-              <Circle className="w-1 h-1 text-zinc-400/60 fill-zinc-400/60" />
+              <Circle className="w-1 h-1 text-stone-400/60 fill-stone-400/60" />
             )}
             {task.projectId && (
               <span
@@ -121,14 +121,14 @@ export function NewTaskItem({ task }: { task: Task }) {
         <Button
           variant="ghost"
           size="icon"
-          className="hidden group-hover/list-item:flex text-zinc-600 hover:bg-zinc-300/60 hover:text-zinc-800 transition-all duration-200"
+          className="hidden group-hover/list-item:flex text-stone-600 hover:bg-stone-300/60 hover:text-stone-800 transition-all duration-200"
         >
           <Ellipsis className="size-4" />
         </Button>
         <Button
           variant="ghost"
           size="icon"
-          className="hidden text-zinc-600 hover:bg-zinc-300/60 hover:text-zinc-800 transition-all duration-200 hover:cursor-grab"
+          className="hidden text-stone-600 hover:bg-stone-300/60 hover:text-stone-800 transition-all duration-200 hover:cursor-grab"
         >
           <GripVertical className="size-4" />
         </Button>

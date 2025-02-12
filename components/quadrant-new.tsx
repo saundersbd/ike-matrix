@@ -30,21 +30,19 @@ export function QuadrantNew({
   };
 
   return (
-    <div className="@container/quadrant flex flex-col bg-zinc-100 rounded-xl overflow-hidden relative">
-      <header className="flex shrink-0 items-center justify-between pl-6 @max-6xl/main:pl-5.5 pr-4 @max-6xl/main:pt-4 pt-4 pb-4 bg-zinc-800/[.98]">
-        <h2 className="text-xl font-semibold text-zinc-100">
-          {quadrant.title}
-        </h2>
+    <div className="@container/quadrant flex flex-col bg-white/[.90] rounded-2xl overflow-hidden relative ring-1 ring-stone-900/[.03] shadow-sm">
+      <header className="flex shrink-0 items-center justify-between pl-5 @max-6xl/main:pl-5.5 pr-3 @max-6xl/main:pt-4 pt-3 pb-3">
+        <h2 className="text-base font-semibold">{quadrant.title}</h2>
         <Button
           variant="ghost"
           size="icon-lg"
-          className="text-zinc-200 hover:bg-zinc-700 hover:text-zinc-100"
+          className="text-stone-600 hover:bg-stone-200/70 hover:text-stone-800 rounded-lg"
         >
           <Plus className="size-5" />
         </Button>
       </header>
-      <ScrollArea className="flex flex-col flex-1 bg-zinc-100" type="auto">
-        <div className="flex flex-col flex-1 py-5 @max-6xl/main:py-4 @4xl/main:pb-12 px-5 @max-6xl/main:px-3">
+      <ScrollArea className="flex flex-col flex-1" type="auto">
+        <div className="flex flex-col flex-1 py-5 pt-0 @max-6xl/main:py-4 @4xl/main:pb-12 px-3 @max-6xl/main:px-3">
           {tasks.map((task) => (
             <NewTaskItem key={task.id} task={task} />
           ))}
