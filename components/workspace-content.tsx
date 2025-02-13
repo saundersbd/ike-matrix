@@ -88,10 +88,13 @@ export function WorkspaceContent({ children }: WorkspaceContentProps) {
             } as React.CSSProperties
           }
         >
-          <NewSidebar side="left" />
+          <NewSidebar side="left" variant="inset" collapsible="none" />
 
-          <SidebarInset className="@container/main">{children}</SidebarInset>
-          <RightPanel side="right" />
+          <MultiSidebarProvider className="flex flex-1">
+            <div className="relative flex flex-col flex-1 m-2.5 ring-1 ring-stone-900/[.05] shadow-xs rounded-xl overflow-hidden">
+              {children}
+            </div>
+          </MultiSidebarProvider>
         </MultiSidebarProvider>
       </main>
 
