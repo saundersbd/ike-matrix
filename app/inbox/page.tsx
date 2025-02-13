@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { useTasks } from "@/hooks/use-tasks";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useWorkspace } from "@/app/contexts/WorkspaceContext";
 import { Button } from "@/components/ui/button";
+import TextareaAutosize from "react-textarea-autosize";
 import { ListFilter, EllipsisVertical } from "lucide-react";
 import { useNewTaskDialog } from "@/components/workspace-content";
 import { TableTaskItem } from "@/components/lists/table-task-item";
@@ -17,7 +19,7 @@ import { SortOptionListItem } from "@/components/lists/sort-option-list-item";
 
 export default function InboxPage() {
   const { tasks, sortBy, setSortBy } = useWorkspace();
-
+  const [taskText, setTaskText] = useState("");
   const { openNewTaskDialog } = useNewTaskDialog();
   const sortedAndFilteredTasks = useTasks(tasks, sortBy, {
     showCompleted: false,
@@ -31,7 +33,7 @@ export default function InboxPage() {
   };
 
   return (
-    <div className="flex flex-col flex-1 h-[calc(100svh)]">
+    <div className="flex flex-col flex-1 h-[calc(100svh-4rem)]">
       <header className="flex h-11 shrink-0 items-center justify-between px-5 border-b border-default-border/60">
         {/* <h1 className="text-lg font-semibold">Inbox</h1>
         <div className="flex items-center gap-2">
@@ -75,19 +77,33 @@ export default function InboxPage() {
           />
         </div> */}
       </header>
-      <ScrollArea className="flex flex-col flex-1 p-0">
-        <div className="container max-w-3xl mx-auto flex flex-col flex-1">
-          <div className="my-6 mx-6 flex flex-col bg-zinc-100 rounded-xl overflow-visible text-base">
-            <div className="flex items-center gap-4 bg-white rounded-lg p-4 ring-1 ring-zinc-900/[.05] shadow-xs">
-              <span className="inline-flex flex-1">Hello</span>
-              <Button size="xs">Add task</Button>
-            </div>
-            <div className="flex items-center gap-4 p-4">Content</div>
-          </div>
+      <ScrollArea className="flex flex-col flex-1">
+        <div className="container max-w-3xl mx-auto flex flex-col flex-1 py-6">
           <div className="flex flex-col">
             {sortedAndFilteredTasks.map((task) => (
               <TableTaskItem key={task.id} task={task} />
             ))}
+          </div>
+
+          <div className="max-w-3xl mx-auto absolute bottom-14 left-14 right-14 flex flex-col gap-4 bg-white rounded-xl p-4.5 ring-1 ring-zinc-900/[.05] shadow overflow-visible">
+            <TextareaAutosize
+              className="grow bg-white p-0 resize-none outline-none text-lg"
+              placeholder="Trim the hedges"
+              id="task"
+              value={taskText}
+              onChange={(e) => setTaskText(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                }
+              }}
+            />
+            <div className="flex items-center justify-between">
+              <span>Hello</span>
+              <Button size="xs" className="w-max">
+                Add to inbox
+              </Button>
+            </div>
           </div>
         </div>
       </ScrollArea>

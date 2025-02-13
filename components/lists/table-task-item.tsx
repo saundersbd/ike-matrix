@@ -73,7 +73,9 @@ export function TableTaskItem({ task }: { task: Task }) {
   return (
     <div
       className={cn(
-        "group/list-item flex items-center gap-2.5 py-3 px-8 hover:bg-zinc-100/60 transition-all duration-200"
+        "group/list-item flex items-center gap-2.5 py-3 px-8 transition-all duration-200",
+        "hover:bg-zinc-100"
+        // "border-b border-default-border/60 last:border-b-0"
       )}
     >
       <Checkbox
