@@ -55,7 +55,7 @@ export default function Home() {
       </header>
       <ScrollArea className="flex flex-col flex-1">
         <div className="flex flex-col flex-1 p-5">
-          <div className="@4xl/main:h-[calc(100svh-6.5rem)] flex flex-col @4xl/main:grid @4xl/main:grid-cols-2 @4xl/main:grid-rows-2 gap-4.5">
+          <div className="@3xl/main:h-[calc(100svh-6.5rem)] flex flex-col @3xl/main:grid @3xl/main:grid-cols-2 @3xl/main:grid-rows-2 gap-4.5">
             <QuadrantNew
               quadrant={QUADRANTS[1]}
               tasks={getSortedTasksByQuadrant(QUADRANTS[1])}

@@ -6,7 +6,7 @@ import { useWorkspace } from "@/app/contexts/WorkspaceContext";
 import { Button } from "@/components/ui/button";
 import { ListFilter, EllipsisVertical } from "lucide-react";
 import { useNewTaskDialog } from "@/components/workspace-content";
-import { NewTaskItem } from "@/components/lists/new-task-item";
+import { TableTaskItem } from "@/components/lists/table-task-item";
 import { FilterChip } from "@/components/controls/filtering/filter-chip";
 import { FilterChipRound } from "@/components/controls/filtering/filter-chip-round";
 
@@ -31,9 +31,9 @@ export default function InboxPage() {
   };
 
   return (
-    <div className="flex flex-col  bg-white/[.85] rounded-2xl h-[calc(100svh-2rem)] min-w-lg max-w-xl">
-      <header className="flex h-12 shrink-0 items-center justify-between rounded-xl px-7 mt-4">
-        <h1 className="text-3xl font-bold">Inbox</h1>
+    <div className="flex flex-col flex-1 h-[calc(100svh)]">
+      <header className="flex h-16 shrink-0 items-center justify-between p-6 border-b border-stone-300/60">
+        <h1 className="text-lg font-semibold">Inbox</h1>
         <div className="flex items-center gap-2">
           <FilterChipRound<SortOption<Task>>
             label="created date"
@@ -76,10 +76,17 @@ export default function InboxPage() {
         </div>
       </header>
       <ScrollArea className="flex flex-col flex-1">
-        <div className="flex flex-col flex-1 p-7">
-          <div className="flex flex-col">
+        <div className="flex flex-col flex-1 p-5 gap-6">
+          <div className="flex flex-col bg-stone-200/70 rounded-xl overflow-visible">
+            <div className="flex items-center gap-4 bg-white rounded-lg p-4 ring-1 ring-stone-900/[.05] shadow-xs">
+              <span className="inline-flex flex-1">Hello</span>
+              <Button size="xs">Add task</Button>
+            </div>
+            <div className="flex items-center gap-4 p-4">Content</div>
+          </div>
+          <div className="flex flex-col px-1.5">
             {sortedAndFilteredTasks.map((task) => (
-              <NewTaskItem key={task.id} task={task} />
+              <TableTaskItem key={task.id} task={task} />
             ))}
           </div>
         </div>
