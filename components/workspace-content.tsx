@@ -9,6 +9,10 @@ import {
   SidebarContent,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
+import { Ellipsis } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
 import { NewSidebar } from "@/components/layout/sidebar/new-sidebar";
 import { RightPanel } from "@/components/layout/right_panel/right-panel";
 import { navigationItems } from "@/lib/navigation";
@@ -36,6 +40,7 @@ export function WorkspaceContent({ children }: WorkspaceContentProps) {
   const [selectedQuadrant, setSelectedQuadrant] = useState<Quadrant | null>(
     null
   );
+  const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(true);
 
   const openNewTaskDialog = (quadrant?: Quadrant) => {
     setSelectedQuadrant(quadrant || null);
@@ -74,27 +79,57 @@ export function WorkspaceContent({ children }: WorkspaceContentProps) {
     return { title: "Tasks" }; // Default fallback
   };
 
+  const pageTitle = getCurrentPageTitle();
+
   return (
     <NewTaskDialogContext.Provider
       value={{ openNewTaskDialog, closeNewTaskDialog }}
     >
       <main className="relative flex h-screen">
         <MultiSidebarProvider
+          rightOpen={isRightSidebarOpen}
+          onRightOpenChange={setIsRightSidebarOpen}
           className=""
           style={
             {
-              ["--sidebar-width" as string]: "260px",
+              ["--sidebar-width" as string]: "224px",
               ["--right-sidebar-width" as string]: "260px",
             } as React.CSSProperties
           }
         >
-          <NewSidebar side="left" variant="inset" collapsible="none" />
+          <NewSidebar side="left" collapsible="none" variant="inset" />
 
-          <MultiSidebarProvider className="flex flex-1">
-            <div className="relative flex flex-col flex-1 m-2.5 ring-1 ring-stone-900/[.05] shadow-xs rounded-xl overflow-hidden">
-              {children}
+          <div className="relative flex flex-col flex-1 m-2.5 ring-1 ring-zinc-950/[.04] shadow-xs rounded-lg overflow-hidden bg-zinc-100">
+            <div className="flex flex-col flex-1 h-[calc(100svh-1.25rem)]">
+              <header className="flex h-11 shrink-0 items-center justify-between pl-6 pr-3 border-b border-default-border/60 bg-background">
+                <h1 className="text-sm font-medium">{pageTitle.title}</h1>
+                <div className="flex items-center gap-2">
+                  <Button variant="ghost" size="icon" className="size-7">
+                    <Ellipsis className="!size-4" />
+                  </Button>
+
+                  <Separator
+                    className="h-4 mx-1.5 bg-default-border/60"
+                    orientation="vertical"
+                  />
+
+                  <SidebarTrigger
+                    side="right"
+                    onClick={() => setIsRightSidebarOpen(!isRightSidebarOpen)}
+                  />
+                </div>
+              </header>
+
+              <div className="relative flex flex-1">
+                <SidebarInset className="@container/main flex flex-col flex-1">
+                  <ScrollArea className="flex flex-col flex-1">
+                    {children}
+                  </ScrollArea>
+                </SidebarInset>
+                <RightPanel side="right" />
+              </div>
             </div>
-          </MultiSidebarProvider>
+          </div>
         </MultiSidebarProvider>
       </main>
 

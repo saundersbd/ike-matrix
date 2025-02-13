@@ -32,8 +32,8 @@ export default function InboxPage() {
 
   return (
     <div className="flex flex-col flex-1 h-[calc(100svh)]">
-      <header className="flex h-16 shrink-0 items-center justify-between p-6 border-b border-stone-300/60">
-        <h1 className="text-lg font-semibold">Inbox</h1>
+      <header className="flex h-11 shrink-0 items-center justify-between px-5 border-b border-default-border/60">
+        {/* <h1 className="text-lg font-semibold">Inbox</h1>
         <div className="flex items-center gap-2">
           <FilterChipRound<SortOption<Task>>
             label="created date"
@@ -73,18 +73,18 @@ export default function InboxPage() {
               (option) => option.id === "dueDate"
             )}
           />
-        </div>
+        </div> */}
       </header>
-      <ScrollArea className="flex flex-col flex-1">
-        <div className="flex flex-col flex-1 p-5 gap-6">
-          <div className="flex flex-col bg-stone-200/70 rounded-xl overflow-visible">
-            <div className="flex items-center gap-4 bg-white rounded-lg p-4 ring-1 ring-stone-900/[.05] shadow-xs">
+      <ScrollArea className="flex flex-col flex-1 p-0">
+        <div className="container max-w-3xl mx-auto flex flex-col flex-1">
+          <div className="my-6 mx-6 flex flex-col bg-zinc-100 rounded-xl overflow-visible text-base">
+            <div className="flex items-center gap-4 bg-white rounded-lg p-4 ring-1 ring-zinc-900/[.05] shadow-xs">
               <span className="inline-flex flex-1">Hello</span>
               <Button size="xs">Add task</Button>
             </div>
             <div className="flex items-center gap-4 p-4">Content</div>
           </div>
-          <div className="flex flex-col px-1.5">
+          <div className="flex flex-col">
             {sortedAndFilteredTasks.map((task) => (
               <TableTaskItem key={task.id} task={task} />
             ))}

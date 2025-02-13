@@ -18,14 +18,8 @@ export function NewSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { tasks, projects } = useWorkspace();
 
   return (
-    <Sidebar
-      collapsible="icon"
-      className="border-r border-default-border/60 bg-stone-100"
-      {...props}
-    >
-      <SidebarHeader className="flex justify-end p-5 dark:bg-zinc-800">
-        <SidebarTrigger name="app-sidebar" />
-      </SidebarHeader>
+    <Sidebar collapsible="icon" className="bg-zinc-100" {...props}>
+      <SidebarHeader className="flex justify-end p-5 dark:bg-zinc-800"></SidebarHeader>
       <SidebarContent className="dark:bg-zinc-800">
         <NavMain items={navigationItems} />
         <SidebarSeparator />

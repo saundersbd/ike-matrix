@@ -44,10 +44,10 @@ export function NavMain({
             <SidebarMenuButton isActive={isActive(item.path)} asChild>
               <Link
                 href={item.path}
-                className="flex items-center gap-2.5 text-xs font-medium"
+                className="flex items-center gap-2.5 text-base font-medium"
               >
-                <item.icon className="!size-4 text-violet-600" />
-                <span>{item.label}</span>
+                <item.icon className="!size-4 text-zinc-600 group-data-[active=true]/menu-button:text-zinc-800" />
+                <span className="text-zinc-800">{item.label}</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

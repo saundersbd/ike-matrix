@@ -8,17 +8,17 @@
   --color-background: #fdfdfd;
   --color-foreground: var(--foreground);
 
-  --color-sidebar: var(--color-stone-100);
-  --color-sidebar-foreground: var(--color-stone-800);
+  --color-sidebar: var(--color-zinc-100);
+  --color-sidebar-foreground: var(--color-zinc-800);
   --color-sidebar-primary: hsl(var(--sidebar-primary));
-  --color-sidebar-primary-foreground: var(--color-stone-100);
-  --color-sidebar-accent: var(--color-stone-200);
-  --color-sidebar-accent-foreground: var(--color-stone-800);
-  --color-sidebar-border: var(--color-stone-200);
+  --color-sidebar-primary-foreground: var(--color-zinc-100);
+  --color-sidebar-accent: var(--color-zinc-200);
+  --color-sidebar-accent-foreground: var(--color-zinc-800);
+  --color-sidebar-border: var(--color-zinc-200);
   --color-sidebar-ring: hsl(var(--sidebar-ring));
 
-  --color-default-border: var(--color-stone-200);
-  --color-border-light: var(--color-stone-100);
+  --color-default-border: var(--color-zinc-200);
+  --color-border-light: var(--color-zinc-100);
 
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
@@ -29,14 +29,14 @@
   --font-sans: var(--font-inter);
   --font-mono: var(--font-geist-mono);
 
-  --text-xs: 0.8125rem;
-  --text-sm: 0.875rem;
-  --text-base: 0.9375rem;
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.875rem;
   --text-xl: 1.15rem;
   --text-3xl: 1.75rem;
 
   --font-weight-normal: 410;
-  --font-weight-medium: 450;
+  --font-weight-medium: 490;
   --font-weight-semibold: 500;
   --font-weight-bold: 590;
 
@@ -57,7 +57,7 @@
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-stone-200, currentColor);
+    border-color: var(--color-zinc-200, currentColor);
   }
 
   :root {

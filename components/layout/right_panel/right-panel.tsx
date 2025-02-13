@@ -1,4 +1,8 @@
-import { Sidebar, SidebarContent } from "@/components/ui/sidebar";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 
 export function RightPanel({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
