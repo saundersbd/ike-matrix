@@ -31,24 +31,10 @@ export default function Home() {
 
   return (
     <div className="flex flex-col flex-1 h-[calc(100svh)]">
-      <header className="flex h-16 shrink-0 items-center justify-between p-6 border-b border-stone-300/60">
-        <h1 className="text-lg font-semibold">Eisenhower matrix</h1>
+      <header className="flex h-9 shrink-0 items-center justify-between p-6 border-b border-default-border/60">
+        <h1 className="text-base font-medium">Eisenhower matrix</h1>
         <div className="flex items-center gap-2">
-          <FilterChipRound<SortOption<Task>>
-            label="created date"
-            options={TASK_SORT_OPTIONS}
-            onApplyFilter={(option) => setSortBy(option.id)}
-            onResetFilter={() => setSortBy("created")}
-            itemNode={(option) => <SortOptionListItem option={option} />}
-            behavior="sort"
-            getItemId={(option) => option.id}
-            getDisplayValue={(option) => option.label}
-            value={TASK_SORT_OPTIONS.find((option) => option.id === sortBy)} // Remove hardcoded value
-            defaultValue={TASK_SORT_OPTIONS.find(
-              (option) => option.id === "dueDate"
-            )}
-          />
-          <Button variant="secondary" size="icon-lg" className="rounded-full">
+          <Button variant="secondary" size="icon" className="rounded-full">
             <EllipsisVertical className="!size-4" />
           </Button>
         </div>

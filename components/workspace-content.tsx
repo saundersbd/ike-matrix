@@ -84,7 +84,7 @@ export function WorkspaceContent({ children }: WorkspaceContentProps) {
           style={
             {
               ["--sidebar-width" as string]: "260px",
-              ["--right-sidebar-width" as string]: "450px",
+              ["--right-sidebar-width" as string]: "260px",
             } as React.CSSProperties
           }
         >

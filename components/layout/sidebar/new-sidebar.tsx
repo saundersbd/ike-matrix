@@ -20,7 +20,7 @@ export function NewSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar
       collapsible="icon"
-      className="border-r border-stone-300/60"
+      className="border-r border-default-border/60 bg-stone-100"
       {...props}
     >
       <SidebarHeader className="flex justify-end p-5 dark:bg-zinc-800">

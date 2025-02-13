@@ -45,7 +45,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
     >
       <body
         className={cn(
-          "relative antialiased font-sans bg-stone-100 text-stone-800"
+          "relative antialiased font-sans bg-stone-50 text-stone-800"
         )}
       >
         <Providers>
