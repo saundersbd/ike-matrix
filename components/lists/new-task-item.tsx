@@ -73,16 +73,16 @@ export function NewTaskItem({ task }: { task: Task }) {
   return (
     <div
       className={cn(
-        "group/list-item flex flex-col gap-2 rounded-[8px] transition-all duration-200 p-3.5 bg-background/80 border border-default-border/50"
+        "group/list-item flex flex-col gap-2 rounded-[8px] transition-all duration-200 p-3.5 bg-background border border-default-border/70"
       )}
     >
       <div className="flex flex-col flex-1 gap-1">
         {(task.projectId || task.dueDate) && (
-          <div className="flex items-center gap-2 font-medium text-xs text-stone-500">
+          <div className="flex items-center gap-2 text-xs text-stone-500">
             {task.projectId && (
               <span
                 className={cn(
-                  "text-xs font-medium inline-flex items-center gap-1",
+                  "text-xs font-normal inline-flex items-center gap-1",
                   projectTheme
                 )}
               >
@@ -95,14 +95,14 @@ export function NewTaskItem({ task }: { task: Task }) {
       <div className="flex items-start flex-1 gap-2">
         <Checkbox
           className={cn(
-            "flex-shrink-0 mt-[1px] border-stone-300 group-hover/list-item:border-stone-500 group-hover/list-item:bg-stone-100/60 transition-all duration-200"
+            "flex-shrink-0 mt-[1.5px] border-stone-300 group-hover/list-item:border-stone-500 group-hover/list-item:bg-stone-100/60 transition-all duration-200"
           )}
         />
 
         <div className="flex flex-col flex-1 gap-1">
-          <p className="text-sm font-semibold leading-snug">{task.title}</p>
+          <p className="text-base font-semibold leading-snug">{task.title}</p>
           {(task.projectId || task.dueDate) && (
-            <div className="flex items-center gap-2 font-medium text-xs text-stone-500">
+            <div className="flex items-center gap-2 font-normal text-xs text-stone-500">
               {task.dueDate && (
                 <>
                   {task.dueDate && formatDueDate(task.dueDate)}
@@ -116,7 +116,7 @@ export function NewTaskItem({ task }: { task: Task }) {
                   )}
                 </>
               )}
-              {task.projectId && task.dueDate && (
+              {/* {task.projectId && task.dueDate && (
                 <Circle className="w-1 h-1 text-stone-400/60 fill-stone-400/60" />
               )}
               {task.projectId && (
@@ -129,7 +129,7 @@ export function NewTaskItem({ task }: { task: Task }) {
                   <SquareChartGantt className="size-3.5" />
                   {projects.find((p) => p.id === task.projectId)?.name}
                 </span>
-              )}
+              )} */}
             </div>
           )}
         </div>

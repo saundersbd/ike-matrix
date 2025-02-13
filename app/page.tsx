@@ -41,7 +41,7 @@ export default function Home({
 
   return (
     <div className="flex flex-col flex-1 p-5">
-      <div className="@3xl/main:h-[calc(100svh-6.5rem)] flex flex-col @3xl/main:grid @3xl/main:grid-cols-2 @3xl/main:grid-rows-2 gap-4.5">
+      <div className="flex gap-2">
         <QuadrantNew
           quadrant={QUADRANTS[1]}
           tasks={getSortedTasksByQuadrant(QUADRANTS[1])}

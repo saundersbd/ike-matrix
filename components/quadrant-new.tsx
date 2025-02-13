@@ -30,7 +30,7 @@ export function QuadrantNew({
   };
 
   return (
-    <div className="@container/quadrant flex flex-col bg-stone-100/50 rounded-2xl overflow-hidden relative">
+    <div className="@container/quadrant min-w-[21rem] flex flex-col bg-linear-to-b from-zinc-100/80 from-50% to-zinc-100/10 rounded-xl overflow-hidden relative">
       <header className="flex shrink-0 items-center justify-between pl-5 @max-6xl/main:pl-5.5 pr-3 pt-3 pb-3">
         <h2 className="text-base font-semibold">{quadrant.title}</h2>
         <Button
