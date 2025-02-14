@@ -78,14 +78,14 @@ export default function InboxPage() {
         </div> */}
       </header>
       <ScrollArea className="flex flex-col flex-1">
-        <div className="container max-w-3xl mx-auto flex flex-col flex-1 py-6">
+        <div className="flex flex-col flex-1 py-6">
           <div className="flex flex-col">
             {sortedAndFilteredTasks.map((task) => (
               <TableTaskItem key={task.id} task={task} />
             ))}
           </div>
 
-          <div className="max-w-3xl mx-auto absolute bottom-14 left-14 right-14 flex flex-col gap-4 bg-white rounded-xl p-4.5 ring-1 ring-zinc-900/[.05] shadow overflow-visible">
+          <div className="max-w-2xl mx-auto absolute bottom-12 left-12 right-12 flex flex-col gap-4 bg-white rounded-xl p-4.5 ring-1 ring-zinc-900/[.05] shadow overflow-visible">
             <TextareaAutosize
               className="grow bg-white p-0 resize-none outline-none text-lg"
               placeholder="Trim the hedges"

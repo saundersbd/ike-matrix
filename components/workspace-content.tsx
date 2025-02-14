@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import React, { useState, createContext, useContext } from "react";
 import { usePathname } from "next/navigation";
 import {
   MultiSidebarProvider,
@@ -17,6 +17,11 @@ import { navigationItems } from "@/lib/navigation";
 import { QUADRANTS, Quadrant } from "@/app/types/Quadrant";
 import { NewTaskDialog } from "@/components/dialogs/new-task-dialog";
 
+const SidebarContext = createContext<{
+  isRightSidebarOpen: boolean;
+  setIsRightSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
+} | null>(null);
+
 type WorkspaceContentProps = {
   children: React.ReactNode;
 };
@@ -31,7 +36,7 @@ export const NewTaskDialogContext = createContext<
   NewTaskDialogContextType | undefined
 >(undefined);
 
-export function WorkspaceContent({ children }: WorkspaceContentProps) {
+export function WorkspaceContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   const [isNewTaskDialogOpen, setIsNewTaskDialogOpen] = useState(false);
@@ -80,65 +85,47 @@ export function WorkspaceContent({ children }: WorkspaceContentProps) {
   const pageTitle = getCurrentPageTitle();
 
   return (
-    <NewTaskDialogContext.Provider
-      value={{ openNewTaskDialog, closeNewTaskDialog }}
+    <SidebarContext.Provider
+      value={{ isRightSidebarOpen, setIsRightSidebarOpen }}
     >
-      <main className="relative flex h-screen">
-        <MultiSidebarProvider
-          rightOpen={isRightSidebarOpen}
-          onRightOpenChange={setIsRightSidebarOpen}
-          className=""
-          style={
-            {
-              ["--sidebar-width" as string]: "248px",
-              ["--right-sidebar-width" as string]: "260px",
-            } as React.CSSProperties
-          }
-        >
-          <NewSidebar side="left" collapsible="none" variant="inset" />
+      <NewTaskDialogContext.Provider
+        value={{ openNewTaskDialog, closeNewTaskDialog }}
+      >
+        <main className="relative flex h-screen">
+          <MultiSidebarProvider
+            rightOpen={isRightSidebarOpen}
+            onRightOpenChange={setIsRightSidebarOpen}
+            className=""
+            style={
+              {
+                ["--sidebar-width" as string]: "248px",
+                ["--right-sidebar-width" as string]: "260px",
+              } as React.CSSProperties
+            }
+          >
+            <NewSidebar side="left" collapsible="none" variant="inset" />
 
-          <div className="relative flex flex-col flex-1 m-2.5 ml-[2px] ring-1 ring-zinc-950/[.04] shadow-xs rounded-lg overflow-hidden bg-zinc-50">
-            <div className="flex flex-col flex-1 h-[calc(100svh-4rem)]">
-              <header className="flex h-11 shrink-0 items-center justify-between pl-6 pr-3 border-b border-default-border/60 bg-background">
-                <h1 className="text-sm font-medium">{pageTitle.title}</h1>
-                <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="icon" className="size-7">
-                    <Ellipsis className="!size-4" />
-                  </Button>
-
-                  <Separator
-                    className="h-4 mx-1.5 bg-default-border/60"
-                    orientation="vertical"
-                  />
-
-                  <SidebarTrigger
-                    side="right"
-                    onClick={() => setIsRightSidebarOpen(!isRightSidebarOpen)}
-                  />
-                </div>
-              </header>
-
-              <div className="relative flex flex-1">
-                <SidebarInset className="@container/main min-h-8 !h-[calc(100svh-4rem)] flex flex-col flex-1">
-                  <ScrollArea type="scroll" className="flex flex-col flex-1">
-                    {children}
-                    <ScrollBar orientation="horizontal" />
-                  </ScrollArea>
-                </SidebarInset>
-                <RightPanel side="right" />
-              </div>
+            <div className="relative flex flex-col flex-1 m-2.5 ml-[2px] ring-1 ring-zinc-950/[.04] shadow-xs rounded-lg overflow-hidden bg-zinc-50">
+              {children}
             </div>
-          </div>
-        </MultiSidebarProvider>
-      </main>
+          </MultiSidebarProvider>
+        </main>
 
-      <NewTaskDialog
-        isOpen={isNewTaskDialogOpen}
-        onOpenChange={setIsNewTaskDialogOpen}
-        defaultDestination={getDestinationQuadrant()}
-      />
-    </NewTaskDialogContext.Provider>
+        <NewTaskDialog
+          isOpen={isNewTaskDialogOpen}
+          onOpenChange={setIsNewTaskDialogOpen}
+          defaultDestination={getDestinationQuadrant()}
+        />
+      </NewTaskDialogContext.Provider>
+    </SidebarContext.Provider>
   );
+}
+
+export function useSidebarContext() {
+  const ctx = useContext(SidebarContext);
+  if (!ctx)
+    throw new Error("useSidebarContext must be used inside WorkspaceContent");
+  return ctx;
 }
 
 export function useNewTaskDialog() {
