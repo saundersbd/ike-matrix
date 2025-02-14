@@ -76,8 +76,8 @@ export function NewTaskItem({ task }: { task: Task }) {
         "group/list-item flex flex-col gap-2 rounded-[8px] transition-all duration-200 p-3.5 bg-background border border-default-border/70"
       )}
     >
-      <div className="flex flex-col flex-1 gap-1">
-        {(task.projectId || task.dueDate) && (
+      {task.projectId && (
+        <div className="flex flex-col flex-1 gap-1">
           <div className="flex items-center gap-2 text-xs text-stone-500">
             {task.projectId && (
               <span
@@ -90,8 +90,8 @@ export function NewTaskItem({ task }: { task: Task }) {
               </span>
             )}
           </div>
-        )}
-      </div>
+        </div>
+      )}
       <div className="flex items-start flex-1 gap-2">
         <Checkbox
           className={cn(
