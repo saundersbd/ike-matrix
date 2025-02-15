@@ -99,7 +99,7 @@ export function WorkspaceContent({ children }: { children: React.ReactNode }) {
             style={
               {
                 ["--sidebar-width" as string]: "248px",
-                ["--right-sidebar-width" as string]: "260px",
+                ["--right-sidebar-width" as string]: "380px",
               } as React.CSSProperties
             }
           >
